@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
@@ -12,6 +13,7 @@ interface HeaderProps {
 
 export default function Header({ showHomeButton = false, aboutContent }: HeaderProps) {
     const router = useRouter();
+    const [isAboutOpen, setIsAboutOpen] = useState(false);
 
     return (
         <header className="fixed top-0 left-0 right-0 z-50 pointer-events-none">
@@ -76,7 +78,18 @@ export default function Header({ showHomeButton = false, aboutContent }: HeaderP
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: 0.1 }}
                     >
-                        <AboutOverlay content={aboutContent} />
+                        <button
+                            onClick={() => setIsAboutOpen(true)}
+                            className="inline-flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 rounded-full border border-white/10 bg-[var(--background)]/90 text-[var(--foreground)] text-sm md:text-base font-body shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur hover:bg-[var(--accent)] hover:text-[var(--background)] hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] transition-all duration-300"
+                            aria-label="关于"
+                        >
+                            关于
+                        </button>
+                        <AboutOverlay
+                            content={aboutContent}
+                            isOpen={isAboutOpen}
+                            onClose={() => setIsAboutOpen(false)}
+                        />
                     </motion.div>
                 )}
 

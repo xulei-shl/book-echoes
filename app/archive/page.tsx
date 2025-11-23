@@ -1,8 +1,7 @@
-import { getMonths } from '@/lib/content';
+import { getMonths, getAboutContent } from '@/lib/content';
 import ArchiveLayout from '@/components/ArchiveLayout';
 import MagazineCard from '@/components/MagazineCard';
 import Header from '@/components/Header';
-import { getAboutContent } from '@/lib/content';
 
 export const metadata = {
     title: '往期回顾 | 书海回响',

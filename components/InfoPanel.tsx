@@ -384,7 +384,7 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
                                     <span className="font-body">展开查看</span>
                                 </summary>
                                 <div className="mt-4 pl-6 border-l-2 border-gray-100">
-                                    <pre className="font-body text-sm leading-loose text-gray-600 whitespace-pre-wrap font-sans">
+                                    <pre className="font-catalog text-sm leading-loose text-gray-600 whitespace-pre-wrap">
                                         {book.catalog}
                                     </pre>
                                 </div>

@@ -21,7 +21,7 @@ export default function HomeHero({ images, targetLink, title, subtitle }: HomeHe
 
         const timer = setInterval(() => {
             setCurrentIndex((prev) => (prev + 1) % images.length);
-        }, 8000); // 每8秒切换一次,给图片更多加载和展示时间
+        }, 6000); // 每6秒切换一次,给图片更多加载和展示时间
 
         return () => clearInterval(timer);
     }, [images.length]);
@@ -33,8 +33,7 @@ export default function HomeHero({ images, targetLink, title, subtitle }: HomeHe
     };
 
     return (
-        <div className="relative w-full h-screen overflow-hidden flex flex-col items-center justify-center cursor-pointer group"
-            onClick={() => router.push(targetLink)}>
+        <div className="relative w-full h-screen overflow-hidden flex flex-col items-center justify-center bg-[#1a1a1a]">
 
             {/* Background Image Carousel */}
             <div className="absolute inset-0 z-0">
@@ -43,42 +42,115 @@ export default function HomeHero({ images, targetLink, title, subtitle }: HomeHe
                         <motion.div
                             key={currentIndex}
                             className="absolute inset-0"
-                            initial={{ opacity: 0, scale: 1.1, filter: 'blur(10px)' }}
+                            initial={{ opacity: 0, scale: 1.05, filter: 'blur(10px)' }}
                             animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
                             exit={{ opacity: 0, scale: 1.05, filter: 'blur(5px)' }}
-                            transition={{ duration: 2, ease: "easeInOut" }} // 延长过渡时间,使切换更平滑
+                            transition={{ duration: 2, ease: "easeInOut" }}
                         >
+                            {/* 背景模糊层 - 填充屏幕，营造氛围 */}
+                            <div className="absolute inset-0 z-0">
+                                <Image
+                                    src={images[currentIndex]}
+                                    alt="Background Blur"
+                                    fill
+                                    className="object-cover blur-3xl scale-110 opacity-40"
+                                />
+                            </div>
+
+                            {/* 主体图片层 - 完整展示，不被裁切 */}
                             <Image
                                 src={images[currentIndex]}
                                 alt={`Hero Image ${currentIndex + 1}`}
                                 fill
-                                className="object-cover opacity-80"
+                                className="object-contain z-10 relative"
                                 priority={currentIndex === 0}
                                 onError={handleImageError}
                             />
-                            {/* Overlay: 电影级渐变遮罩，顶部和底部加深以衬托文字，中间透亮 */}
-                            <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/60" />
+
+                            {/* Overlay: 电影级渐变遮罩 - 加深以增强对比 */}
+                            <div className="absolute inset-0 z-20 bg-gradient-to-b from-black/70 via-black/40 to-black/90 pointer-events-none" />
                         </motion.div>
                     )}
                 </AnimatePresence>
             </div>
 
-            {/* Central Visual Frame (Optional, if we want a frame effect) */}
-            {/* For now, full screen immersive is requested. "转变为全屏的沉浸式展示" */}
-
-            {/* Text Content */}
-            <div className="relative z-10 text-center text-[#F2F0E9] mix-blend-difference px-4">
-                <motion.h1
-                    className="font-display text-6xl md:text-8xl lg:text-9xl mb-6 tracking-tight"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5, duration: 0.8 }}
+            {/* Text Content - Dynamic Calligraphy Style */}
+            <div
+                className="relative z-10 flex flex-col items-center justify-center"
+            >
+                <motion.div
+                    className="relative flex items-center gap-0 md:gap-2 cursor-pointer group"
+                    onClick={() => router.push(targetLink)}
+                    initial={{ opacity: 0, scale: 0.9, y: 30 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
                 >
-                    书海回响
-                </motion.h1>
+                    {/* Main Title with Dynamic Sizing */}
+                    <div className="flex items-end -space-x-2 md:-space-x-4 select-none"
+                        style={{
+                            fontFamily: 'var(--font-hero-title)',
+                            color: '#E8E6DC', // Warmer Antique White for less glare
+                            textShadow: '0 4px 20px rgba(0,0,0,0.6)', // Deeper shadow
+                        }}
+                    >
+                        {/* 书 - Big */}
+                        <motion.span
+                            className="text-8xl md:text-[11rem] lg:text-[12rem] leading-none"
+                            whileHover={{ scale: 1.05, rotate: -2 }}
+                            transition={{ type: "spring", stiffness: 300 }}
+                        >
+                            書
+                        </motion.span>
+
+                        {/* 海 - Small, slightly raised */}
+                        <motion.span
+                            className="text-5xl md:text-[6rem] lg:text-[rem] leading-none mb-4 md:mb-8 opacity-90"
+                            whileHover={{ scale: 1.1, y: -10 }}
+                            transition={{ type: "spring", stiffness: 300 }}
+                        >
+                            海
+                        </motion.span>
+
+                        {/* 回 - Medium, standard baseline */}
+                        <motion.span
+                            className="text-6xl md:text-[7rem] lg:text-[9rem] leading-none opacity-95"
+                            whileHover={{ scale: 1.1, rotate: 2 }}
+                            transition={{ type: "spring", stiffness: 300 }}
+                        >
+                            回
+                        </motion.span>
+
+                        {/* 响 - Big, slightly lower */}
+                        <motion.span
+                            className="text-8xl md:text-[11rem] lg:text-[14rem] leading-none -mb-2 md:-mb-4"
+                            whileHover={{ scale: 1.05, x: 5 }}
+                            transition={{ type: "spring", stiffness: 300 }}
+                        >
+                            響
+                        </motion.span>
+                    </div>
+
+                    {/* Vertical Decorative Text */}
+                    <div className="h-[120px] md:h-[200px] w-[1px] bg-[#E8E6DC]/30 mx-1 md:mx-2" />
+
+                    <div className="flex flex-col justify-center h-full gap-2 opacity-80">
+                        <span className="writing-vertical-rl text-[10px] md:text-xs tracking-[0.4em] font-serif text-[#E8E6DC]/80">
+                            SHU
+                        </span>
+                        <span className="writing-vertical-rl text-[10px] md:text-xs tracking-[0.4em] font-serif text-[#E8E6DC]/80">
+                            HAI
+                        </span>
+                        <span className="writing-vertical-rl text-[10px] md:text-xs tracking-[0.4em] font-serif text-[#E8E6DC]/80">
+                            HUI
+                        </span>
+                        <span className="writing-vertical-rl text-[10px] md:text-xs tracking-[0.4em] font-serif text-[#E8E6DC]/80">
+                            XIANG
+                        </span>
+                    </div>
+                </motion.div>
 
                 <motion.p
-                    className="font-body text-xl md:text-2xl tracking-[0.2em] opacity-90"
+                    className="mt-8 font-body text-xl md:text-2xl tracking-[0.3em] text-[#E8E6DC] drop-shadow-md opacity-90"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.8, duration: 0.8 }}
@@ -87,9 +159,12 @@ export default function HomeHero({ images, targetLink, title, subtitle }: HomeHe
                 </motion.p>
 
                 <motion.div
-                    className="mt-12 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                    className="mt-8"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1.2, duration: 0.8, ease: "easeOut" }}
                 >
-                    <span className="border border-[#F2F0E9] px-6 py-2 rounded-full text-sm tracking-widest uppercase hover:bg-[#F2F0E9] hover:text-black transition-colors">
+                    <span className="border border-[#E8E6DC]/50 bg-black/30 backdrop-blur-sm px-8 py-3 rounded-full text-sm tracking-[0.2em] text-[#E8E6DC] uppercase hover:bg-[#E8E6DC] hover:text-[#1a1a1a] transition-all duration-300 shadow-lg cursor-pointer" onClick={() => router.push(targetLink)}>
                         Enter Issue
                     </span>
                 </motion.div>

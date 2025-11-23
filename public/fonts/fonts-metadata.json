@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2025-11-23T06:34:29.124Z",
-  "totalFonts": 4,
+  "generatedAt": "2025-11-23T13:11:28.026Z",
+  "totalFonts": 8,
   "fonts": [
     {
       "fontFamily": "ShangTuDongGuan",
@@ -45,6 +45,50 @@
       "sizeFormatted": "1.83 MB",
       "converted": true,
       "r2Key": "data/fonts/润植家如印奏章楷.woff2"
+    },
+    {
+      "fontFamily": "",
+      "filename": "平方赖江湖飞扬体.woff2",
+      "originalFilename": "平方赖江湖飞扬体.ttf",
+      "format": "woff2",
+      "url": "https://book-echoes.xulei-shl.asia/data/fonts/平方赖江湖飞扬体.woff2",
+      "size": 11931840,
+      "sizeFormatted": "11.38 MB",
+      "converted": true,
+      "r2Key": "data/fonts/平方赖江湖飞扬体.woff2"
+    },
+    {
+      "fontFamily": "ChillHuoSong",
+      "filename": "ChillHuoSong.woff2",
+      "originalFilename": "ChillHuoSong.otf",
+      "format": "woff2",
+      "url": "https://book-echoes.xulei-shl.asia/data/fonts/ChillHuoSong.woff2",
+      "size": 12572476,
+      "sizeFormatted": "11.99 MB",
+      "converted": true,
+      "r2Key": "data/fonts/ChillHuoSong.woff2"
+    },
+    {
+      "fontFamily": "PingFangLaiJiangHuLangTi2",
+      "filename": "PingFangLaiJiangHuLangTi-2.woff2",
+      "originalFilename": "PingFangLaiJiangHuLangTi-2.ttf",
+      "format": "woff2",
+      "url": "https://book-echoes.xulei-shl.asia/data/fonts/PingFangLaiJiangHuLangTi-2.woff2",
+      "size": 10690520,
+      "sizeFormatted": "10.2 MB",
+      "converted": true,
+      "r2Key": "data/fonts/PingFangLaiJiangHuLangTi-2.woff2"
+    },
+    {
+      "fontFamily": "",
+      "filename": "青柳隶书.woff2",
+      "originalFilename": "青柳隶书.ttf",
+      "format": "woff2",
+      "url": "https://book-echoes.xulei-shl.asia/data/fonts/青柳隶书.woff2",
+      "size": 2614524,
+      "sizeFormatted": "2.49 MB",
+      "converted": true,
+      "r2Key": "data/fonts/青柳隶书.woff2"
     }
   ]
 }

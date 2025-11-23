@@ -32,6 +32,24 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'ChillHuoSong';
+  src: url('https://book-echoes.xulei-shl.asia/data/fonts/ChillHuoSong.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+@font-face {
+  font-family: 'QingLiuLiShu';
+  src: url('https://book-echoes.xulei-shl.asia/data/fonts/青柳隶书.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+
 :root {
   --background: #F2F0E9;
   --foreground: #2C2C2C;
@@ -39,10 +57,22 @@
   /* Rust Red */
 
   /* Font Families - 添加系统字体作为回退 */
+
+  /*   --font-display: 上图东观体（展示用）
+--font-body: 又又意宋（正文）
+--font-accent: 润植家如印奏章楷（强调）
+--font-dock: 汇文明朝体（Dock 组件）
+--font-catalog: ChillHuoSong（目录）
+--font-hero-title: 首页标题
+--font-hero-title-alt: 备选标题 */
   --font-display: "上图东观体", "ShangTuDongGuan", "Playfair Display", "Noto Serif SC", "Source Han Serif SC", serif;
   --font-body: "又又意宋", "YouYouYiSong", "EB Garamond", "Noto Serif SC", "Source Han Serif SC", serif;
   --font-accent: "润植家如印奏章楷", "RunZhiJiaRuYinZouZhangKai", "Cormorant Garamond", "KaiTi", "STKaiti", serif;
   --font-dock: "汇文明朝体", "Noto Serif SC", "Source Han Serif SC", serif;
+  --font-catalog: "ChillHuoSong", "Noto Serif SC", "Source Han Serif SC", serif;
+
+  /* 专用标题字体 */
+  --font-hero-title: "QingLiuLiShu", "润植家如印奏章楷", "Noto Serif SC", serif;
 }
 
 @theme inline {
@@ -54,6 +84,9 @@
   --font-body: var(--font-body);
   --font-accent: var(--font-accent);
   --font-dock: var(--font-dock);
+  --font-catalog: var(--font-catalog);
+  --font-hero-title: var(--font-hero-title);
+  --font-hero-title-alt: var(--font-hero-title-alt);
 }
 
 body {
@@ -78,6 +111,10 @@ body {
 
 .font-dock {
   font-family: var(--font-dock);
+}
+
+.font-catalog {
+  font-family: var(--font-catalog);
 }
 
 .about-overlay-scroll {
@@ -137,25 +174,19 @@ body {
 .home-bg__gradient {
   position: absolute;
   inset: -10%;
-  background: radial-gradient(
-      ellipse 80% 60% at 35% 25%,
+  background: radial-gradient(ellipse 80% 60% at 35% 25%,
       rgba(255, 252, 248, 0.9) 0%,
       rgba(242, 240, 233, 0.7) 35%,
-      transparent 70%
-    ),
-    radial-gradient(
-      ellipse 70% 50% at 65% 75%,
+      transparent 70%),
+    radial-gradient(ellipse 70% 50% at 65% 75%,
       rgba(230, 223, 211, 0.4) 0%,
-      transparent 60%
-    ),
-    linear-gradient(
-      135deg,
+      transparent 60%),
+    linear-gradient(135deg,
       #FAF9F6 0%,
       #F2F0E9 25%,
       #E8E6DC 50%,
       #DDD8CC 75%,
-      #D4CFC3 100%
-    );
+      #D4CFC3 100%);
   animation: homeGradientDrift 50s ease-in-out infinite alternate;
 }
 
@@ -183,12 +214,10 @@ body {
   height: min(65vw, 800px);
   top: 5%;
   left: 5%;
-  background: radial-gradient(
-    circle,
-    rgba(255, 248, 240, 0.6) 0%,
-    rgba(242, 240, 233, 0.3) 40%,
-    transparent 70%
-  );
+  background: radial-gradient(circle,
+      rgba(255, 248, 240, 0.6) 0%,
+      rgba(242, 240, 233, 0.3) 40%,
+      transparent 70%);
   animation-delay: 0s;
 }
 
@@ -197,12 +226,10 @@ body {
   height: min(50vw, 600px);
   bottom: 10%;
   right: 10%;
-  background: radial-gradient(
-    circle,
-    rgba(166, 124, 82, 0.08) 0%,
-    rgba(139, 58, 58, 0.04) 40%,
-    transparent 70%
-  );
+  background: radial-gradient(circle,
+      rgba(166, 124, 82, 0.08) 0%,
+      rgba(139, 58, 58, 0.04) 40%,
+      transparent 70%);
   animation-delay: 2s;
 }
 
@@ -246,16 +273,20 @@ body {
   0% {
     transform: translate3d(-2%, -1.5%, 0) scale(1);
   }
+
   100% {
     transform: translate3d(3%, 2.5%, 0) scale(1.03);
   }
 }
 
 @keyframes radialPulse {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 0.3;
     transform: scale(1);
   }
+
   50% {
     opacity: 0.5;
     transform: scale(1.1);

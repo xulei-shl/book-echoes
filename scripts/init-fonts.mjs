@@ -38,7 +38,8 @@ const FONT_FAMILY_MAP = {
   '上图东观体': 'ShangTuDongGuan',
   '又又意宋': 'YouYouYiSong',
   '汇文明朝体': 'HuiWenMingChao',
-  '润植家如印奏章楷': 'RunZhiJiaRuYinZouZhangKai'
+  '润植家如印奏章楷': 'RunZhiJiaRuYinZouZhangKai',
+  '青柳隶书': 'QingLiuLiShu'
 };
 
 /**
@@ -52,26 +53,61 @@ async function main() {
     await loadEnvFiles();
     const r2Config = createR2Config();
 
+    // 加载现有元数据
+    const existingMetadata = await loadMetadata();
+
     // 步骤 1: 扫描字体文件
-    const fontFiles = await scanFontFiles();
-    console.log(`✅ 发现 ${fontFiles.length} 个字体文件\n`);
+    const allFontFiles = await scanFontFiles();
 
-    // 步骤 2: 转换字体格式
-    const convertedFonts = await convertFonts(fontFiles);
-    console.log(`✅ 转换完成 ${convertedFonts.length} 个字体\n`);
+    // 过滤已处理的字体
+    const processedFilenames = new Set((existingMetadata?.fonts || []).map(f => f.originalFilename));
+    const fontFiles = [];
+    const skippedFiles = [];
 
-    // 步骤 3: 上传到 R2
-    const uploadedFonts = await uploadFonts(convertedFonts, r2Config);
-    console.log(`✅ 上传完成 ${uploadedFonts.length} 个字体\n`);
+    for (const file of allFontFiles) {
+      if (processedFilenames.has(file.filename)) {
+        skippedFiles.push(file.filename);
+      } else {
+        fontFiles.push(file);
+      }
+    }
 
-    // 步骤 4: 生成元数据
-    await generateMetadata(uploadedFonts);
+    if (skippedFiles.length > 0) {
+      console.log(`⏭️  跳过 ${skippedFiles.length} 个已处理的字体文件`);
+    }
+
+    console.log(`✅ 发现 ${allFontFiles.length} 个字体文件 (新增 ${fontFiles.length} 个)\n`);
+
+    let uploadedFonts = [];
+
+    if (fontFiles.length > 0) {
+      // 步骤 2: 转换字体格式
+      const convertedFonts = await convertFonts(fontFiles);
+      console.log(`✅ 转换完成 ${convertedFonts.length} 个字体\n`);
+
+      // 步骤 3: 上传到 R2
+      uploadedFonts = await uploadFonts(convertedFonts, r2Config);
+      console.log(`✅ 上传完成 ${uploadedFonts.length} 个字体\n`);
+    } else {
+      console.log('✨ 没有新的字体文件需要处理。\n');
+    }
+
+    // 步骤 4: 生成元数据 (合并旧数据)
+    // 保留现有元数据中仍然存在于磁盘的文件记录
+    const currentFilenames = new Set(allFontFiles.map(f => f.filename));
+    const validExistingFonts = (existingMetadata?.fonts || []).filter(f =>
+      currentFilenames.has(f.originalFilename)
+    );
+
+    await generateMetadata(uploadedFonts, validExistingFonts);
     console.log(`✅ 生成字体元数据清单\n`);
 
     console.log('✨ 字体初始化完成！\n');
 
     // 输出使用说明
-    printUsageGuide(uploadedFonts);
+    if (uploadedFonts.length > 0) {
+      printUsageGuide(uploadedFonts);
+    }
   } catch (error) {
     console.error('\n❌ 字体初始化失败:', error.message);
     console.error(error.stack);
@@ -271,23 +307,27 @@ async function uploadFonts(fonts, r2Config) {
 /**
  * 步骤 4: 生成元数据
  */
-async function generateMetadata(fonts) {
+async function generateMetadata(newFonts, existingFonts = []) {
   console.log('📋 生成字体元数据...');
+
+  const newFontMetadata = newFonts.map(font => ({
+    fontFamily: font.fontFamily,
+    filename: font.filename,
+    originalFilename: font.originalFilename,
+    format: font.format,
+    url: font.remoteUrl || `/fonts/${font.filename}`,
+    size: font.size,
+    sizeFormatted: formatBytes(font.size),
+    converted: font.converted,
+    r2Key: font.r2Key
+  }));
+
+  const allFonts = [...existingFonts, ...newFontMetadata];
 
   const metadata = {
     generatedAt: new Date().toISOString(),
-    totalFonts: fonts.length,
-    fonts: fonts.map(font => ({
-      fontFamily: font.fontFamily,
-      filename: font.filename,
-      originalFilename: font.originalFilename,
-      format: font.format,
-      url: font.remoteUrl || `/fonts/${font.filename}`,
-      size: font.size,
-      sizeFormatted: formatBytes(font.size),
-      converted: font.converted,
-      r2Key: font.r2Key
-    }))
+    totalFonts: allFonts.length,
+    fonts: allFonts
   };
 
   await fs.writeFile(
@@ -297,6 +337,18 @@ async function generateMetadata(fonts) {
   );
 
   console.log(`  ✓ 元数据已保存到: ${METADATA_FILE}`);
+}
+
+/**
+ * 加载现有元数据
+ */
+async function loadMetadata() {
+  try {
+    const content = await fs.readFile(METADATA_FILE, 'utf-8');
+    return JSON.parse(content);
+  } catch (error) {
+    return null;
+  }
 }
 
 /**
