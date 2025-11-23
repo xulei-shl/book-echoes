@@ -226,15 +226,15 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
                 <div className="max-w-2xl mx-auto space-y-8 pb-40">
                     {/* Header */}
                     <div className="space-y-2">
-                        <h1 className="font-display text-4xl md:text-5xl text-[#E8E6DC]">{book.title}</h1>
-                        {book.subtitle && <h2 className="font-body text-xl text-gray-400">{book.subtitle}</h2>}
+                        <h1 className="font-display text-4xl md:text-5xl text-[#E8E6DC] tracking-wide">{book.title}</h1>
+                        {book.subtitle && <h2 className="font-body text-xl text-white/60 tracking-wide">{book.subtitle}</h2>}
                     </div>
 
                     {/* Rating */}
                     <div className="flex items-center gap-3">
                         <div className="flex items-baseline gap-2">
                             <span className="text-3xl font-light text-[#E8E6DC]">{book.rating}</span>
-                            <span className="text-sm text-gray-500">/ 10</span>
+                            <span className="text-sm text-white/40">/ 10</span>
                         </div>
                         <div className="flex gap-0.5">
                             {[...Array(5)].map((_, i) => {
@@ -299,28 +299,28 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
                             onMouseEnter={handleHoverStart}
                             onMouseLeave={handleHoverEnd}
                         >
-                            <span className="text-gray-500 font-light">作者</span>
-                            <span className="font-body text-[#E8E6DC]">{book.author}</span>
+                            <span className="text-white/50 font-light">作者</span>
+                            <span className="font-body text-[#E8E6DC] tracking-wide">{book.author}</span>
 
                             {book.translator && (
                                 <>
-                                    <span className="text-gray-500 font-light">译者</span>
-                                    <span className="font-body text-[#E8E6DC]">{book.translator}</span>
+                                    <span className="text-white/50 font-light">译者</span>
+                                    <span className="font-body text-[#E8E6DC] tracking-wide">{book.translator}</span>
                                 </>
                             )}
 
-                            <span className="text-gray-500 font-light">出版</span>
-                            <span className="font-body text-[#E8E6DC]">{book.publisher} · {book.pubYear}</span>
+                            <span className="text-white/50 font-light">出版</span>
+                            <span className="font-body text-[#E8E6DC] tracking-wide">{book.publisher} · {book.pubYear}</span>
 
-                            <span className="text-gray-500 font-light">页数</span>
-                            <span className="font-body text-[#E8E6DC]">{book.pages}</span>
+                            <span className="text-white/50 font-light">页数</span>
+                            <span className="font-body text-[#E8E6DC] tracking-wide">{book.pages}</span>
                         </div>
 
                         {/* 索书号与豆瓣链接 */}
                         <div className="flex flex-wrap items-center gap-4 pt-4 border-t border-white/10">
                             {book.callNumber && (
                                 <div className="flex items-center gap-2">
-                                    <span className="text-xs text-gray-400">馆藏</span>
+                                    <span className="text-xs text-white/40">馆藏</span>
                                     {book.callNumberLink ? (
                                         <a
                                             href={book.callNumberLink}
@@ -334,7 +334,7 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
                                             {book.callNumber}
                                         </a>
                                     ) : (
-                                        <span className="px-3 py-1.5 rounded-full bg-[#E8E6DC]/10 font-mono text-xs text-gray-400">
+                                        <span className="px-3 py-1.5 rounded-full bg-[#E8E6DC]/10 font-mono text-xs text-white/40">
                                             {book.callNumber}
                                         </span>
                                     )}
@@ -360,19 +360,19 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
                     {/* Deep Reading */}
                     <div className="space-y-8">
                         <section>
-                            <h3 className="font-display text-lg mb-3 text-[#E8E6DC]">内容简介</h3>
-                            <p className="font-body leading-loose text-gray-300 whitespace-pre-wrap">{book.summary}</p>
+                            <h3 className="font-display text-lg mb-3 text-[#E8E6DC] tracking-wider">内容简介</h3>
+                            <p className="font-body leading-loose text-gray-200 whitespace-pre-wrap tracking-wide text-justify">{book.summary}</p>
                         </section>
 
                         <section>
-                            <h3 className="font-display text-lg mb-3 text-[#E8E6DC]">作者简介</h3>
-                            <p className="font-body leading-loose text-gray-300">{book.authorIntro}</p>
+                            <h3 className="font-display text-lg mb-3 text-[#E8E6DC] tracking-wider">作者简介</h3>
+                            <p className="font-body leading-loose text-gray-200 tracking-wide text-justify">{book.authorIntro}</p>
                         </section>
 
                         <section>
-                            <h3 className="font-display text-lg mb-3 text-[#E8E6DC]">目录</h3>
+                            <h3 className="font-display text-lg mb-3 text-[#E8E6DC] tracking-wider">目录</h3>
                             <details className="group">
-                                <summary className="cursor-pointer inline-flex items-center gap-2 text-sm text-gray-500 hover:text-[#E8E6DC] transition-colors py-2">
+                                <summary className="cursor-pointer inline-flex items-center gap-2 text-sm text-white/40 hover:text-[#E8E6DC] transition-colors py-2">
                                     <svg
                                         className="w-4 h-4 transition-transform group-open:rotate-90"
                                         fill="none"
@@ -384,7 +384,7 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
                                     <span className="font-body">展开查看</span>
                                 </summary>
                                 <div className="mt-4 pl-6 border-l-2 border-white/10">
-                                    <pre className="font-catalog text-sm leading-loose text-gray-400 whitespace-pre-wrap">
+                                    <pre className="font-catalog text-sm leading-loose text-gray-300 whitespace-pre-wrap tracking-wide">
                                         {book.catalog}
                                     </pre>
                                 </div>

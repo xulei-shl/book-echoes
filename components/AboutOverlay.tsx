@@ -21,30 +21,30 @@ const markdownComponents: Components = {
     ),
     h2: (props) => (
         <h2
-            className="font-display text-2xl md:text-3xl text-[#E8E6DC] mt-10 mb-4 border-l-4 border-[#8B3A3A] pl-4"
+            className="font-display text-2xl md:text-3xl text-[#E8E6DC] mt-10 mb-4 border-l-4 border-[#8B3A3A] pl-4 tracking-wide"
             {...props}
         />
     ),
     h3: (props) => (
         <h3
-            className="font-display text-xl text-[#E8E6DC] mt-8 mb-3"
+            className="font-display text-xl text-[#E8E6DC] mt-8 mb-3 tracking-wide"
             {...props}
         />
     ),
     p: (props) => (
         <p
-            className="font-body leading-relaxed text-gray-300 mb-4 whitespace-pre-wrap"
+            className="font-body leading-relaxed text-gray-200 mb-4 whitespace-pre-wrap tracking-wide text-justify"
             {...props}
         />
     ),
     ul: (props) => (
-        <ul className="list-disc list-inside space-y-2 text-gray-300 mb-6" {...props} />
+        <ul className="list-disc list-inside space-y-2 text-gray-200 mb-6 tracking-wide" {...props} />
     ),
     ol: (props) => (
-        <ol className="list-decimal list-inside space-y-2 text-gray-300 mb-6" {...props} />
+        <ol className="list-decimal list-inside space-y-2 text-gray-200 mb-6 tracking-wide" {...props} />
     ),
     li: (props) => (
-        <li className="font-body leading-relaxed text-gray-300" {...props} />
+        <li className="font-body leading-relaxed text-gray-200 tracking-wide" {...props} />
     ),
     hr: () => <div className="my-10 border-t border-dashed border-white/10" />,
     strong: (props) => (
@@ -55,7 +55,7 @@ const markdownComponents: Components = {
     ),
     blockquote: (props) => (
         <blockquote
-            className="border-l-4 border-[#8B3A3A]/40 pl-4 italic text-gray-400 my-6"
+            className="border-l-4 border-[#8B3A3A]/40 pl-4 italic text-gray-300 my-6 tracking-wide"
             {...props}
         />
     ),
@@ -72,7 +72,7 @@ const markdownComponents: Components = {
         <th className="px-4 py-3 text-left font-medium text-sm" {...props} />
     ),
     td: (props) => (
-        <td className="px-4 py-3 text-sm text-gray-300 align-top" {...props} />
+        <td className="px-4 py-3 text-sm text-gray-200 align-top tracking-wide" {...props} />
     ),
     code: ({ inline, className, children, ...props }: any) => {
         if (inline) {
@@ -90,7 +90,7 @@ const markdownComponents: Components = {
         }
 
         return (
-            <pre className={clsx('bg-black/20 rounded-2xl p-4 overflow-x-auto text-sm text-gray-300 my-6', className)}>
+            <pre className={clsx('bg-black/20 rounded-2xl p-4 overflow-x-auto text-sm text-gray-200 my-6 tracking-wide', className)}>
                 <code {...props}>{children}</code>
             </pre>
         );
@@ -121,7 +121,7 @@ export default function AboutOverlay({ content, isOpen, onClose }: AboutOverlayP
                     >
                         <div className="flex items-start justify-between gap-6 mb-6 md:mb-10">
                             <div>
-                                <p className="text-sm tracking-[0.4em] uppercase text-gray-400 mb-2">About</p>
+                                <p className="text-sm tracking-[0.4em] uppercase text-white/50 mb-2">About</p>
                             </div>
                             <button
                                 type="button"
@@ -144,8 +144,8 @@ export default function AboutOverlay({ content, isOpen, onClose }: AboutOverlayP
                                     </ReactMarkdown>
                                 ) : (
                                     <div className="text-center py-12">
-                                        <p className="text-gray-500 text-lg">暂无关于内容</p>
-                                        <p className="text-gray-400 text-sm mt-2">请检查 public/About.md 文件是否存在</p>
+                                        <p className="text-white/50 text-lg">暂无关于内容</p>
+                                        <p className="text-white/30 text-sm mt-2">请检查 public/About.md 文件是否存在</p>
                                     </div>
                                 )}
                             </div>
