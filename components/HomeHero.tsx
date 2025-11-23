@@ -56,8 +56,8 @@ export default function HomeHero({ images, targetLink, title, subtitle }: HomeHe
                                 priority={currentIndex === 0}
                                 onError={handleImageError}
                             />
-                            {/* Overlay for better text readability */}
-                            <div className="absolute inset-0 bg-black/20" />
+                            {/* Overlay: 电影级渐变遮罩，顶部和底部加深以衬托文字，中间透亮 */}
+                            <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/60" />
                         </motion.div>
                     )}
                 </AnimatePresence>
