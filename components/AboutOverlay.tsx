@@ -103,7 +103,7 @@ export default function AboutOverlay({ content, isOpen, onClose }: AboutOverlayP
             {isOpen && (
                 <>
                     <motion.div
-                        className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[140]"
+                        className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[140] pointer-events-auto"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
@@ -113,7 +113,7 @@ export default function AboutOverlay({ content, isOpen, onClose }: AboutOverlayP
                         id="about-overlay"
                         role="dialog"
                         aria-modal="true"
-                        className="fixed inset-x-4 md:inset-x-16 lg:inset-x-24 top-12 bottom-12 bg-[#1a1a1a]/95 backdrop-blur-xl rounded-3xl border border-white/10 p-6 md:p-10 overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.5)] z-[150]"
+                        className="fixed inset-x-4 md:inset-x-16 lg:inset-x-24 top-12 bottom-12 bg-[#1a1a1a]/95 backdrop-blur-xl rounded-3xl border border-white/10 p-6 md:p-10 overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.5)] z-[150] pointer-events-auto"
                         initial={{ opacity: 0, y: 40 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 40 }}
