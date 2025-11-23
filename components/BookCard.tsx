@@ -81,6 +81,7 @@ export default function BookCard({ book, state, index = 0 }: BookCardProps) {
     }, [state]);
 
     const handleHoverStart = () => {
+        if (state === 'focused') return; // focused 状态下不显示预览
         setIsHovered(true);
         updatePreviewPosition();
     };
@@ -108,9 +109,11 @@ export default function BookCard({ book, state, index = 0 }: BookCardProps) {
         }
     };
 
-    // dock 状态下显示卡片图，scatter 状态下显示封面图
+
+    // dock 状态下显示卡片图,scatter 状态下显示封面图
+    // 确保有回退选项,避免图片不存在
     const previewImageSrc = state === 'dock'
-        ? (book.cardThumbnailUrl || book.cardImageUrl)
+        ? (book.cardThumbnailUrl || book.cardImageUrl || book.coverThumbnailUrl || book.coverUrl)
         : (book.cardImageUrl || book.coverUrl);
 
     const hoverPreview = isHovered ? (
@@ -224,7 +227,6 @@ export default function BookCard({ book, state, index = 0 }: BookCardProps) {
                 whileHover={{ y: -10 }}
                 onHoverStart={handleHoverStart}
                 onHoverEnd={handleHoverEnd}
-                onPointerMove={handlePointerMove}
                 style={{ zIndex: isHovered ? 120 : undefined }}
                 title={dockLabel}
                 aria-label={dockLabel}
