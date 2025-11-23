@@ -25,8 +25,8 @@ export default async function ArchivePage() {
     const years = Object.keys(monthsByYear).sort((a, b) => b.localeCompare(a));
 
     return (
-        <main className="relative min-h-screen bg-[var(--background)]">
-            <Header showHomeButton={true} aboutContent={aboutContent} />
+        <main className="relative min-h-screen bg-[#1a1a1a]">
+            <Header showHomeButton={true} aboutContent={aboutContent} theme="dark" />
 
             <ArchiveLayout years={years}>
                 {years.map(year => (

@@ -124,13 +124,13 @@ export default function BookCard({ book, state, index = 0 }: BookCardProps) {
             animate={{ opacity: 1, scale: 1 }}
         >
             <div
-                className="rounded-2xl border border-black/5 bg-[var(--background)]/95 p-3 backdrop-blur"
+                className="rounded-2xl border border-white/10 bg-[#1a1a1a]/95 p-3 backdrop-blur"
                 style={{ width: PREVIEW_WIDTH, height: PREVIEW_HEIGHT }}
             >
                 <img
                     src={previewImageSrc}
                     alt={`${book.title} cover preview`}
-                    className="w-full h-full object-contain rounded-xl bg-black/5"
+                    className="w-full h-full object-contain rounded-xl bg-black/20"
                 />
             </div>
         </motion.div>
@@ -212,10 +212,9 @@ export default function BookCard({ book, state, index = 0 }: BookCardProps) {
     if (isDock) {
         // Rotate subtle grayscale shades in the dock so each title feels distinct
         const toneSlot = index % 7;
-        const dockLightness = Math.min(35 + toneSlot * 6, 70);
-        const dockOpacity = Math.min(0.7 + toneSlot * 0.05, 0.98);
+        const dockOpacity = 0.5 + (toneSlot * 0.06); // Range: 0.5 - 0.92
         const dockTextStyle = {
-            color: `hsl(0 0% ${dockLightness}%)`,
+            color: '#E8E6DC',
             opacity: dockOpacity
         };
 

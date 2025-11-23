@@ -15,71 +15,71 @@ interface AboutOverlayProps {
 const markdownComponents: Components = {
     h1: (props) => (
         <h1
-            className="font-display text-4xl md:text-5xl text-[var(--foreground)] tracking-wide mb-6"
+            className="font-display text-4xl md:text-5xl text-[#E8E6DC] tracking-wide mb-6"
             {...props}
         />
     ),
     h2: (props) => (
         <h2
-            className="font-display text-2xl md:text-3xl text-[var(--foreground)] mt-10 mb-4 border-l-4 border-[var(--accent)] pl-4"
+            className="font-display text-2xl md:text-3xl text-[#E8E6DC] mt-10 mb-4 border-l-4 border-[#8B3A3A] pl-4"
             {...props}
         />
     ),
     h3: (props) => (
         <h3
-            className="font-display text-xl text-[var(--foreground)] mt-8 mb-3"
+            className="font-display text-xl text-[#E8E6DC] mt-8 mb-3"
             {...props}
         />
     ),
     p: (props) => (
         <p
-            className="font-body leading-relaxed text-gray-700 mb-4 whitespace-pre-wrap"
+            className="font-body leading-relaxed text-gray-300 mb-4 whitespace-pre-wrap"
             {...props}
         />
     ),
     ul: (props) => (
-        <ul className="list-disc list-inside space-y-2 text-gray-700 mb-6" {...props} />
+        <ul className="list-disc list-inside space-y-2 text-gray-300 mb-6" {...props} />
     ),
     ol: (props) => (
-        <ol className="list-decimal list-inside space-y-2 text-gray-700 mb-6" {...props} />
+        <ol className="list-decimal list-inside space-y-2 text-gray-300 mb-6" {...props} />
     ),
     li: (props) => (
-        <li className="font-body leading-relaxed text-gray-700" {...props} />
+        <li className="font-body leading-relaxed text-gray-300" {...props} />
     ),
-    hr: () => <div className="my-10 border-t border-dashed border-gray-200" />,
+    hr: () => <div className="my-10 border-t border-dashed border-white/10" />,
     strong: (props) => (
-        <strong className="text-[var(--foreground)] font-semibold" {...props} />
+        <strong className="text-[#E8E6DC] font-semibold" {...props} />
     ),
     em: (props) => (
-        <em className="text-[var(--accent)] not-italic" {...props} />
+        <em className="text-[#8B3A3A] not-italic" {...props} />
     ),
     blockquote: (props) => (
         <blockquote
-            className="border-l-4 border-[var(--accent)]/40 pl-4 italic text-gray-600 my-6"
+            className="border-l-4 border-[#8B3A3A]/40 pl-4 italic text-gray-400 my-6"
             {...props}
         />
     ),
     table: (props) => (
-        <div className="overflow-x-auto rounded-2xl border border-gray-100 my-6">
+        <div className="overflow-x-auto rounded-2xl border border-white/10 my-6">
             <table className="min-w-full divide-y divide-gray-200" {...props} />
         </div>
     ),
     thead: (props) => (
-        <thead className="bg-[var(--background)]/60 text-[var(--foreground)] uppercase text-xs tracking-widest" {...props} />
+        <thead className="bg-[#1a1a1a]/60 text-[#E8E6DC] uppercase text-xs tracking-widest" {...props} />
     ),
-    tbody: (props) => <tbody className="divide-y divide-gray-100" {...props} />,
+    tbody: (props) => <tbody className="divide-y divide-white/10" {...props} />,
     th: (props) => (
         <th className="px-4 py-3 text-left font-medium text-sm" {...props} />
     ),
     td: (props) => (
-        <td className="px-4 py-3 text-sm text-gray-700 align-top" {...props} />
+        <td className="px-4 py-3 text-sm text-gray-300 align-top" {...props} />
     ),
     code: ({ inline, className, children, ...props }: any) => {
         if (inline) {
             return (
                 <code
                     className={clsx(
-                        'font-mono text-sm px-1.5 py-0.5 rounded bg-gray-100 text-[var(--accent)]',
+                        'font-mono text-sm px-1.5 py-0.5 rounded bg-white/10 text-[#8B3A3A]',
                         className
                     )}
                     {...props}
@@ -90,7 +90,7 @@ const markdownComponents: Components = {
         }
 
         return (
-            <pre className={clsx('bg-gray-50 rounded-2xl p-4 overflow-x-auto text-sm text-gray-700 my-6', className)}>
+            <pre className={clsx('bg-black/20 rounded-2xl p-4 overflow-x-auto text-sm text-gray-300 my-6', className)}>
                 <code {...props}>{children}</code>
             </pre>
         );
@@ -103,7 +103,7 @@ export default function AboutOverlay({ content, isOpen, onClose }: AboutOverlayP
             {isOpen && (
                 <>
                     <motion.div
-                        className="fixed inset-0 bg-[var(--background)]/80 backdrop-blur-sm z-[140]"
+                        className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[140]"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
@@ -113,7 +113,7 @@ export default function AboutOverlay({ content, isOpen, onClose }: AboutOverlayP
                         id="about-overlay"
                         role="dialog"
                         aria-modal="true"
-                        className="fixed inset-x-4 md:inset-x-16 lg:inset-x-24 top-12 bottom-12 bg-[var(--background)]/95 backdrop-blur-xl rounded-3xl border border-white/10 p-6 md:p-10 overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.25)] z-[150]"
+                        className="fixed inset-x-4 md:inset-x-16 lg:inset-x-24 top-12 bottom-12 bg-[#1a1a1a]/95 backdrop-blur-xl rounded-3xl border border-white/10 p-6 md:p-10 overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.5)] z-[150]"
                         initial={{ opacity: 0, y: 40 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 40 }}
@@ -126,7 +126,7 @@ export default function AboutOverlay({ content, isOpen, onClose }: AboutOverlayP
                             <button
                                 type="button"
                                 onClick={onClose}
-                                className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-[var(--background)]/80 text-[var(--foreground)] text-2xl hover:bg-[var(--accent)] hover:text-[var(--background)] hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] transition-all duration-300"
+                                className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-[#1a1a1a]/80 text-[#E8E6DC] text-2xl hover:bg-[#8B3A3A] hover:text-[#E8E6DC] hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B3A3A] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a] transition-all duration-300"
                                 aria-label="关闭关于介绍"
                             >
                                 ×
@@ -150,7 +150,7 @@ export default function AboutOverlay({ content, isOpen, onClose }: AboutOverlayP
                                 )}
                             </div>
 
-                            <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[var(--background)] to-transparent pointer-events-none" />
+                            <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#1a1a1a] to-transparent pointer-events-none" />
                         </div>
                     </motion.div>
                 </>

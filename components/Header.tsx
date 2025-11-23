@@ -9,12 +9,17 @@ import AboutOverlay from './AboutOverlay';
 interface HeaderProps {
     showHomeButton?: boolean;
     aboutContent?: string;
+    theme?: 'light' | 'dark';
 }
 
-export default function Header({ showHomeButton = false, aboutContent }: HeaderProps) {
+export default function Header({ showHomeButton = false, aboutContent, theme = 'light' }: HeaderProps) {
     const router = useRouter();
     const pathname = usePathname();
     const [isAboutOpen, setIsAboutOpen] = useState(false);
+
+    const buttonStyles = theme === 'dark'
+        ? "border-[#E8E6DC]/10 bg-[#1a1a1a]/90 text-[#E8E6DC] hover:bg-[#8B3A3A] hover:text-[#E8E6DC] focus-visible:ring-[#8B3A3A] focus-visible:ring-offset-[#1a1a1a]"
+        : "border-white/10 bg-[var(--background)]/90 text-[var(--foreground)] hover:bg-[var(--accent)] hover:text-[var(--background)] focus-visible:ring-[var(--accent)] focus-visible:ring-offset-[var(--background)]";
 
     return (
         <header className="fixed top-0 left-0 right-0 z-50 pointer-events-none">
@@ -31,7 +36,7 @@ export default function Header({ showHomeButton = false, aboutContent }: HeaderP
                             src="/logozi_shl.jpg"
                             alt="机构Logo"
                             fill
-                            className="object-contain object-left grayscale-[30%] sepia-[15%] brightness-110 contrast-90"
+                            className={`object-contain object-left grayscale-[30%] sepia-[15%] brightness-110 contrast-90 ${theme === 'dark' ? 'invert opacity-80' : ''}`}
                             priority
                         />
                     </div>
@@ -50,7 +55,7 @@ export default function Header({ showHomeButton = false, aboutContent }: HeaderP
                     >
                         <button
                             onClick={() => router.push('/')}
-                            className="inline-flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 rounded-full border border-white/10 bg-[var(--background)]/90 text-[var(--foreground)] text-sm md:text-base font-body shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur hover:bg-[var(--accent)] hover:text-[var(--background)] hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] transition-all duration-300"
+                            className={`inline-flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 rounded-full border text-sm md:text-base font-body shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 transition-all duration-300 ${buttonStyles}`}
                             aria-label="返回首页"
                         >
                             <svg
@@ -72,7 +77,7 @@ export default function Header({ showHomeButton = false, aboutContent }: HeaderP
                         {pathname !== '/archive' && (
                             <button
                                 onClick={() => router.push('/archive')}
-                                className="inline-flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 rounded-full border border-white/10 bg-[var(--background)]/90 text-[var(--foreground)] text-sm md:text-base font-body shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur hover:bg-[var(--accent)] hover:text-[var(--background)] hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] transition-all duration-300"
+                                className={`inline-flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 rounded-full border text-sm md:text-base font-body shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 transition-all duration-300 ${buttonStyles}`}
                                 aria-label="往期回顾"
                             >
                                 <svg
@@ -104,7 +109,7 @@ export default function Header({ showHomeButton = false, aboutContent }: HeaderP
                     >
                         <button
                             onClick={() => setIsAboutOpen(true)}
-                            className="inline-flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 rounded-full border border-white/10 bg-[var(--background)]/90 text-[var(--foreground)] text-sm md:text-base font-body shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur hover:bg-[var(--accent)] hover:text-[var(--background)] hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] transition-all duration-300"
+                            className={`inline-flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 rounded-full border text-sm md:text-base font-body shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 transition-all duration-300 ${buttonStyles}`}
                             aria-label="关于"
                         >
                             关于

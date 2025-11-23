@@ -80,7 +80,7 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
             <button
                 type="button"
                 aria-label="上一条书籍"
-                className="fixed left-[calc(40%+2rem)] top-1/2 -translate-y-1/2 z-[121] inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-[var(--background)]/90 text-[var(--foreground)] text-2xl shadow-[0_10px_30px_rgba(0,0,0,0.12)] backdrop-blur hover:bg-[var(--accent)] hover:text-[var(--background)] hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] transition-all duration-300"
+                className="fixed left-[calc(40%+2rem)] top-1/2 -translate-y-1/2 z-[121] inline-flex h-12 w-12 items-center justify-center rounded-full border border-[#E8E6DC]/10 bg-[#1a1a1a]/90 text-[#E8E6DC] text-2xl shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur hover:bg-[#8B3A3A] hover:text-[#E8E6DC] hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B3A3A] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a] transition-all duration-300"
                 onClick={() => handleNavigate('prev')}
             >
                 &larr;
@@ -88,7 +88,7 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
             <button
                 type="button"
                 aria-label="下一条书籍"
-                className="fixed right-8 top-1/2 -translate-y-1/2 z-[121] inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-[var(--background)]/90 text-[var(--foreground)] text-2xl shadow-[0_10px_30px_rgba(0,0,0,0.12)] backdrop-blur hover:bg-[var(--accent)] hover:text-[var(--background)] hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] transition-all duration-300"
+                className="fixed right-8 top-1/2 -translate-y-1/2 z-[121] inline-flex h-12 w-12 items-center justify-center rounded-full border border-[#E8E6DC]/10 bg-[#1a1a1a]/90 text-[#E8E6DC] text-2xl shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur hover:bg-[#8B3A3A] hover:text-[#E8E6DC] hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B3A3A] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a] transition-all duration-300"
                 onClick={() => handleNavigate('next')}
             >
                 &rarr;
@@ -101,7 +101,7 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
                 {/* Three-dot button */}
                 <button
                     aria-label="菜单"
-                    className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-[var(--background)]/90 text-[var(--foreground)] shadow-[0_10px_30px_rgba(0,0,0,0.12)] backdrop-blur hover:bg-[var(--accent)] hover:text-[var(--background)] hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] transition-all duration-300"
+                    className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-[#E8E6DC]/10 bg-[#1a1a1a]/90 text-[#E8E6DC] shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur hover:bg-[#8B3A3A] hover:text-[#E8E6DC] hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B3A3A] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a] transition-all duration-300"
                 >
                     <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                         <circle cx="12" cy="5" r="2" />
@@ -116,7 +116,7 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
                     <button
                         onClick={() => setFocusedBookId(null)}
                         aria-label="关闭"
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-white/10 bg-[var(--background)]/95 text-[var(--foreground)] shadow-[0_10px_30px_rgba(0,0,0,0.12)] backdrop-blur hover:bg-[var(--accent)] hover:text-[var(--background)] transition-all duration-300 whitespace-nowrap"
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[#E8E6DC]/10 bg-[#1a1a1a]/95 text-[#E8E6DC] shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur hover:bg-[#8B3A3A] hover:text-[#E8E6DC] transition-all duration-300 whitespace-nowrap"
                     >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -168,7 +168,7 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
                             }
                         }}
                         aria-label="下载当前书籍"
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-white/10 bg-[var(--background)]/95 text-[var(--foreground)] shadow-[0_10px_30px_rgba(0,0,0,0.12)] backdrop-blur hover:bg-[var(--accent)] hover:text-[var(--background)] transition-all duration-300 whitespace-nowrap"
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[#E8E6DC]/10 bg-[#1a1a1a]/95 text-[#E8E6DC] shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur hover:bg-[#8B3A3A] hover:text-[#E8E6DC] transition-all duration-300 whitespace-nowrap"
                     >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -206,7 +206,7 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
                             }
                         }}
                         aria-label="下载全部数据"
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-white/10 bg-[var(--background)]/95 text-[var(--foreground)] shadow-[0_10px_30px_rgba(0,0,0,0.12)] backdrop-blur hover:bg-[var(--accent)] hover:text-[var(--background)] transition-all duration-300 whitespace-nowrap"
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[#E8E6DC]/10 bg-[#1a1a1a]/95 text-[#E8E6DC] shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur hover:bg-[#8B3A3A] hover:text-[#E8E6DC] transition-all duration-300 whitespace-nowrap"
                     >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
@@ -217,7 +217,7 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
             </div>
 
             <motion.div
-                className="fixed right-0 top-0 bottom-0 w-[60%] bg-[var(--background)]/95 backdrop-blur-md p-12 overflow-y-auto shadow-[-10px_0_30px_rgba(0,0,0,0.05)] z-[120]"
+                className="fixed right-0 top-0 bottom-0 w-[60%] bg-[#1a1a1a]/95 backdrop-blur-md p-12 overflow-y-auto shadow-[-10px_0_30px_rgba(0,0,0,0.5)] z-[120]"
                 initial={{ y: '100%' }}
                 animate={{ y: 0 }}
                 exit={{ y: '100%' }}
@@ -226,15 +226,15 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
                 <div className="max-w-2xl mx-auto space-y-8 pb-40">
                     {/* Header */}
                     <div className="space-y-2">
-                        <h1 className="font-display text-4xl md:text-5xl text-[var(--foreground)]">{book.title}</h1>
-                        {book.subtitle && <h2 className="font-body text-xl text-gray-600">{book.subtitle}</h2>}
+                        <h1 className="font-display text-4xl md:text-5xl text-[#E8E6DC]">{book.title}</h1>
+                        {book.subtitle && <h2 className="font-body text-xl text-gray-400">{book.subtitle}</h2>}
                     </div>
 
                     {/* Rating */}
                     <div className="flex items-center gap-3">
                         <div className="flex items-baseline gap-2">
-                            <span className="text-3xl font-light text-[var(--foreground)]">{book.rating}</span>
-                            <span className="text-sm text-gray-400">/ 10</span>
+                            <span className="text-3xl font-light text-[#E8E6DC]">{book.rating}</span>
+                            <span className="text-sm text-gray-500">/ 10</span>
                         </div>
                         <div className="flex gap-0.5">
                             {[...Array(5)].map((_, i) => {
@@ -246,13 +246,13 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
                                         key={i}
                                         className="w-4 h-4"
                                         viewBox="0 0 24 24"
-                                        fill={filled ? "var(--accent)" : half ? "url(#half)" : "none"}
-                                        stroke="var(--accent)"
+                                        fill={filled ? "#8B3A3A" : half ? "url(#half)" : "none"}
+                                        stroke="#8B3A3A"
                                         strokeWidth="1.5"
                                     >
                                         <defs>
                                             <linearGradient id="half">
-                                                <stop offset="50%" stopColor="var(--accent)" />
+                                                <stop offset="50%" stopColor="#8B3A3A" />
                                                 <stop offset="50%" stopColor="transparent" />
                                             </linearGradient>
                                         </defs>
@@ -264,8 +264,8 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
                     </div>
 
                     {/* Recommendation */}
-                    <div className="bg-[var(--background)] border-l-4 border-[var(--accent)] p-6 my-8 relative">
-                        <p className="font-accent text-xl leading-relaxed text-[var(--foreground)]">
+                    <div className="bg-[#1a1a1a] border-l-4 border-[#E8E6DC] p-6 my-8 relative">
+                        <p className="font-accent text-xl leading-relaxed text-[#E8E6DC]">
                             {book.recommendation || book.reason || "暂无推荐语"}
                         </p>
                     </div>
@@ -279,13 +279,13 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
                             animate={{ opacity: 1, scale: 1 }}
                         >
                             <div
-                                className="rounded-2xl border border-black/5 bg-[var(--background)]/95 p-3 backdrop-blur"
+                                className="rounded-2xl border border-white/10 bg-[#1a1a1a]/95 p-3 backdrop-blur"
                                 style={{ width: PREVIEW_WIDTH, height: PREVIEW_HEIGHT }}
                             >
                                 <img
                                     src={book.cardThumbnailUrl || book.cardImageUrl}
                                     alt={`${book.title} cover preview`}
-                                    className="w-full h-full object-contain rounded-xl bg-black/5"
+                                    className="w-full h-full object-contain rounded-xl bg-black/20"
                                 />
                             </div>
                         </motion.div>
@@ -299,25 +299,25 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
                             onMouseEnter={handleHoverStart}
                             onMouseLeave={handleHoverEnd}
                         >
-                            <span className="text-gray-400 font-light">作者</span>
-                            <span className="font-body text-[var(--foreground)]">{book.author}</span>
+                            <span className="text-gray-500 font-light">作者</span>
+                            <span className="font-body text-[#E8E6DC]">{book.author}</span>
 
                             {book.translator && (
                                 <>
-                                    <span className="text-gray-400 font-light">译者</span>
-                                    <span className="font-body text-[var(--foreground)]">{book.translator}</span>
+                                    <span className="text-gray-500 font-light">译者</span>
+                                    <span className="font-body text-[#E8E6DC]">{book.translator}</span>
                                 </>
                             )}
 
-                            <span className="text-gray-400 font-light">出版</span>
-                            <span className="font-body text-[var(--foreground)]">{book.publisher} · {book.pubYear}</span>
+                            <span className="text-gray-500 font-light">出版</span>
+                            <span className="font-body text-[#E8E6DC]">{book.publisher} · {book.pubYear}</span>
 
-                            <span className="text-gray-400 font-light">页数</span>
-                            <span className="font-body text-[var(--foreground)]">{book.pages}</span>
+                            <span className="text-gray-500 font-light">页数</span>
+                            <span className="font-body text-[#E8E6DC]">{book.pages}</span>
                         </div>
 
                         {/* 索书号与豆瓣链接 */}
-                        <div className="flex flex-wrap items-center gap-4 pt-4 border-t border-gray-100">
+                        <div className="flex flex-wrap items-center gap-4 pt-4 border-t border-white/10">
                             {book.callNumber && (
                                 <div className="flex items-center gap-2">
                                     <span className="text-xs text-gray-400">馆藏</span>
@@ -326,7 +326,7 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
                                             href={book.callNumberLink}
                                             target="_blank"
                                             rel="noreferrer"
-                                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--accent)]/10 text-[var(--accent)] font-mono text-xs hover:bg-[var(--accent)]/20 transition-colors"
+                                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#8B3A3A]/10 text-[#8B3A3A] font-mono text-xs hover:bg-[#8B3A3A]/20 transition-colors"
                                         >
                                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
@@ -334,7 +334,7 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
                                             {book.callNumber}
                                         </a>
                                     ) : (
-                                        <span className="px-3 py-1.5 rounded-full bg-gray-100 font-mono text-xs text-gray-600">
+                                        <span className="px-3 py-1.5 rounded-full bg-[#E8E6DC]/10 font-mono text-xs text-gray-400">
                                             {book.callNumber}
                                         </span>
                                     )}
@@ -360,19 +360,19 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
                     {/* Deep Reading */}
                     <div className="space-y-8">
                         <section>
-                            <h3 className="font-display text-lg mb-3 text-[var(--foreground)]">内容简介</h3>
-                            <p className="font-body leading-loose text-gray-700 whitespace-pre-wrap">{book.summary}</p>
+                            <h3 className="font-display text-lg mb-3 text-[#E8E6DC]">内容简介</h3>
+                            <p className="font-body leading-loose text-gray-300 whitespace-pre-wrap">{book.summary}</p>
                         </section>
 
                         <section>
-                            <h3 className="font-display text-lg mb-3 text-[var(--foreground)]">作者简介</h3>
-                            <p className="font-body leading-loose text-gray-700">{book.authorIntro}</p>
+                            <h3 className="font-display text-lg mb-3 text-[#E8E6DC]">作者简介</h3>
+                            <p className="font-body leading-loose text-gray-300">{book.authorIntro}</p>
                         </section>
 
                         <section>
-                            <h3 className="font-display text-lg mb-3 text-[var(--foreground)]">目录</h3>
+                            <h3 className="font-display text-lg mb-3 text-[#E8E6DC]">目录</h3>
                             <details className="group">
-                                <summary className="cursor-pointer inline-flex items-center gap-2 text-sm text-gray-500 hover:text-[var(--accent)] transition-colors py-2">
+                                <summary className="cursor-pointer inline-flex items-center gap-2 text-sm text-gray-500 hover:text-[#E8E6DC] transition-colors py-2">
                                     <svg
                                         className="w-4 h-4 transition-transform group-open:rotate-90"
                                         fill="none"
@@ -383,8 +383,8 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
                                     </svg>
                                     <span className="font-body">展开查看</span>
                                 </summary>
-                                <div className="mt-4 pl-6 border-l-2 border-gray-100">
-                                    <pre className="font-catalog text-sm leading-loose text-gray-600 whitespace-pre-wrap">
+                                <div className="mt-4 pl-6 border-l-2 border-white/10">
+                                    <pre className="font-catalog text-sm leading-loose text-gray-400 whitespace-pre-wrap">
                                         {book.catalog}
                                     </pre>
                                 </div>

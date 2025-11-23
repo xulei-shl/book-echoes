@@ -32,22 +32,22 @@ export default function Canvas({ books, month }: CanvasProps) {
     const focusedBook = books.find(b => b.id === focusedBookId);
 
     return (
-        <div className="relative w-screen h-screen overflow-hidden bg-[#F2F0E9]">
+        <div className="relative w-screen h-screen overflow-hidden bg-[#1a1a1a]">
             {/* Background Layer: Subtle Radial Gradient */}
             <div
                 className="absolute inset-0 pointer-events-none"
                 style={{
-                    background: 'radial-gradient(circle at 50% 50%, #FAF9F6 0%, #F2F0E9 60%, #E6E4DC 100%)'
+                    background: 'radial-gradient(circle at 50% 50%, #2a2a2a 0%, #1a1a1a 60%, #111111 100%)'
                 }}
             />
 
             {/* Background Layer: Typographic Watermark */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden select-none z-0">
-                <div className="relative flex flex-col items-center justify-center opacity-[0.03] transform scale-150">
-                    <div className="font-display text-[15vw] leading-none text-[var(--accent)] tracking-[0.2em] whitespace-nowrap">
+                <div className="relative flex flex-col items-center justify-center opacity-[0.05] transform scale-150">
+                    <div className="font-display text-[15vw] leading-none text-[#E8E6DC] tracking-[0.2em] whitespace-nowrap">
                         {yearCN}
                     </div>
-                    <div className="font-display text-[25vw] leading-none text-[var(--accent)] font-bold tracking-widest mt-[-2vw]">
+                    <div className="font-display text-[25vw] leading-none text-[#E8E6DC] font-bold tracking-widest mt-[-2vw]">
                         {monthCN}月
                     </div>
                 </div>
@@ -56,7 +56,7 @@ export default function Canvas({ books, month }: CanvasProps) {
             <div className="noise-overlay" />
 
             {/* Header with Logo and Home Button */}
-            <Header showHomeButton={true} />
+            <Header showHomeButton={true} theme="dark" />
 
             {/* Books Layer */}
             <div className="absolute inset-0 z-10">
