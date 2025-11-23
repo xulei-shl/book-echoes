@@ -40,6 +40,13 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'MiSansRegular';
+  src: url('https://book-echoes.xulei-shl.asia/data/fonts/MiSans-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 
 @font-face {
   font-family: 'QingLiuLiShu';
@@ -70,6 +77,7 @@
   --font-accent: "润植家如印奏章楷", "RunZhiJiaRuYinZouZhangKai", "Cormorant Garamond", "KaiTi", "STKaiti", serif;
   --font-dock: "汇文明朝体", "Noto Serif SC", "Source Han Serif SC", serif;
   --font-catalog: "ChillHuoSong", "Noto Serif SC", "Source Han Serif SC", serif;
+  --font-info-content: "MiSansRegular", "Noto Sans SC", "Source Han Sans SC", sans-serif;
 
   /* 专用标题字体 */
   --font-hero-title: "QingLiuLiShu", "润植家如印奏章楷", "Noto Serif SC", serif;
@@ -87,6 +95,7 @@
   --font-catalog: var(--font-catalog);
   --font-hero-title: var(--font-hero-title);
   --font-hero-title-alt: var(--font-hero-title-alt);
+  --font-info-content: var(--font-info-content);
 }
 
 body {
@@ -115,6 +124,10 @@ body {
 
 .font-catalog {
   font-family: var(--font-catalog);
+}
+
+.font-info-content {
+  font-family: var(--font-info-content);
 }
 
 .about-overlay-scroll {

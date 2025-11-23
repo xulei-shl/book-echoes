@@ -360,17 +360,32 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
                     {/* Deep Reading */}
                     <div className="space-y-8">
                         <section>
-                            <h3 className="font-display text-lg mb-3 text-[#E8E6DC] tracking-wider">内容简介</h3>
-                            <p className="font-body leading-loose text-gray-200 whitespace-pre-wrap tracking-wide text-justify">{book.summary}</p>
+                            <div className="relative inline-block mb-5">
+                                <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[#8B3A3A]/60 translate-x-1.5 translate-y-1.5" />
+                                <h3 className="relative border border-[#8B3A3A]/50 px-5 py-1.5 text-[#E8E6DC] font-display text-lg tracking-wider bg-[#1a1a1a]">
+                                    内容简介
+                                </h3>
+                            </div>
+                            <p className="font-info-content leading-loose text-gray-300 whitespace-pre-wrap tracking-wide text-justify">{book.summary}</p>
                         </section>
 
                         <section>
-                            <h3 className="font-display text-lg mb-3 text-[#E8E6DC] tracking-wider">作者简介</h3>
-                            <p className="font-body leading-loose text-gray-200 tracking-wide text-justify">{book.authorIntro}</p>
+                            <div className="relative inline-block mb-5">
+                                <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[#8B3A3A]/60 translate-x-1.5 translate-y-1.5" />
+                                <h3 className="relative border border-[#8B3A3A]/50 px-5 py-1.5 text-[#E8E6DC] font-display text-lg tracking-wider bg-[#1a1a1a]">
+                                    作者简介
+                                </h3>
+                            </div>
+                            <p className="font-info-content leading-loose text-gray-300 tracking-wide text-justify">{book.authorIntro}</p>
                         </section>
 
                         <section>
-                            <h3 className="font-display text-lg mb-3 text-[#E8E6DC] tracking-wider">目录</h3>
+                            <div className="relative inline-block mb-5">
+                                <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[#8B3A3A]/60 translate-x-1.5 translate-y-1.5" />
+                                <h3 className="relative border border-[#8B3A3A]/50 px-5 py-1.5 text-[#E8E6DC] font-display text-lg tracking-wider bg-[#1a1a1a]">
+                                    目录
+                                </h3>
+                            </div>
                             <details className="group">
                                 <summary className="cursor-pointer inline-flex items-center gap-2 text-sm text-white/40 hover:text-[#E8E6DC] transition-colors py-2">
                                     <svg

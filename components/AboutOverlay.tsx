@@ -33,7 +33,7 @@ const markdownComponents: Components = {
     ),
     p: (props) => (
         <p
-            className="font-body leading-relaxed text-gray-200 mb-4 whitespace-pre-wrap tracking-wide text-justify"
+            className="font-info-content leading-relaxed text-gray-200 mb-4 whitespace-pre-wrap tracking-wide text-justify"
             {...props}
         />
     ),
@@ -44,7 +44,7 @@ const markdownComponents: Components = {
         <ol className="list-decimal list-inside space-y-2 text-gray-200 mb-6 tracking-wide" {...props} />
     ),
     li: (props) => (
-        <li className="font-body leading-relaxed text-gray-200 tracking-wide" {...props} />
+        <li className="font-info-content leading-relaxed text-gray-200 tracking-wide" {...props} />
     ),
     hr: () => <div className="my-10 border-t border-dashed border-white/10" />,
     strong: (props) => (
