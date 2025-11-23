@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import AboutOverlay from './AboutOverlay';
@@ -13,6 +13,7 @@ interface HeaderProps {
 
 export default function Header({ showHomeButton = false, aboutContent }: HeaderProps) {
     const router = useRouter();
+    const pathname = usePathname();
     const [isAboutOpen, setIsAboutOpen] = useState(false);
 
     return (
@@ -42,7 +43,7 @@ export default function Header({ showHomeButton = false, aboutContent }: HeaderP
                 {/* Home Button - Center */}
                 {showHomeButton && (
                     <motion.div
-                        className="absolute left-1/2 -translate-x-1/2 pointer-events-auto"
+                        className="absolute left-1/2 -translate-x-1/2 pointer-events-auto flex items-center gap-3"
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: 0.1 }}
@@ -67,6 +68,29 @@ export default function Header({ showHomeButton = false, aboutContent }: HeaderP
                             </svg>
                             <span>首页</span>
                         </button>
+
+                        {pathname !== '/archive' && (
+                            <button
+                                onClick={() => router.push('/archive')}
+                                className="inline-flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 rounded-full border border-white/10 bg-[var(--background)]/90 text-[var(--foreground)] text-sm md:text-base font-body shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur hover:bg-[var(--accent)] hover:text-[var(--background)] hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] transition-all duration-300"
+                                aria-label="往期回顾"
+                            >
+                                <svg
+                                    className="w-4 h-4"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                                    />
+                                </svg>
+                                <span>往期</span>
+                            </button>
+                        )}
                     </motion.div>
                 )}
 
