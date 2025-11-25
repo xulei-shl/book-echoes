@@ -44,3 +44,9 @@ next-env.d.ts
 
 sources_data/
 docs/refs/
+
+# Ignore images in public/content but keep JSON files
+public/content/**/*.png
+public/content/**/*.jpg
+public/content/**/*.jpeg
+public/content/**/*.webp

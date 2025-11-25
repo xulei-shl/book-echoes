@@ -1,10 +1,13 @@
 #!/usr/bin/env node
 
 /**
- * Build Content Script
+ * Build Content Script (优化版本)
  * 
- * This script processes source data from sources_data/[month] and generates
- * structured content in content/[month] for the frontend to consume.
+ * 优化策略：
+ * 1. 直接从源目录上传图片到 R2，不复制到 public/content
+ * 2. 添加重试机制提高上传可靠性
+ * 3. 仅在 R2 上传失败时才复制到本地作为兜底
+ * 4. 减小 Git 仓库大小
  * 
  * Usage: node scripts/build-content.mjs [YYYY-MM]
  * Example: node scripts/build-content.mjs 2025-09
@@ -57,17 +60,18 @@ async function main() {
     try {
         await loadEnvFiles();
         const r2Config = createR2Config();
-        // Step 1: Clean target directory
+
+        // Step 1: Clean target directory (only JSON files, images will be in R2)
         await cleanTargetDirectory(month);
 
         // Step 2: Read and filter Excel data
         const books = await readAndFilterExcel(month);
         console.log(`✅ Found ${books.length} books marked as "${PASS_VALUE}"\n`);
 
-        // Step 3: Migrate resources for each book
+        // Step 3: Process resources (upload to R2, fallback to local)
         const assetsMap = await migrateResources(month, books, r2Config);
 
-        // Step 4: Generate metadata Excel file with filtered data
+        // Step 4: Generate metadata JSON file
         await copyMetadata(month, books, assetsMap);
 
         console.log(`\n✨ Build completed successfully for ${month}!\n`);
@@ -88,7 +92,6 @@ async function cleanTargetDirectory(month) {
         await fs.rm(targetDir, { recursive: true, force: true });
         console.log(`🧹 Cleaned directory: content/${month}`);
     } catch (error) {
-        // Directory might not exist, which is fine
         console.log(`🧹 Target directory doesn't exist yet: content/${month}`);
     }
 
@@ -135,7 +138,7 @@ async function readAndFilterExcel(month) {
 }
 
 /**
- * Step 3: Migrate resources (images) for each book
+ * Step 3: Process resources - upload to R2, fallback to local
  */
 async function migrateResources(month, books, r2Config) {
     const sourceDir = path.join(SOURCES_DIR, month);
@@ -150,151 +153,256 @@ async function migrateResources(month, books, r2Config) {
         const bookSourceDir = path.join(sourceDir, barcode);
         const bookTargetDir = path.join(targetDir, barcode);
         const picTargetDir = path.join(bookTargetDir, 'pic');
+
         const assetRecord = {
             cardImageUrl: '',
             cardThumbnailUrl: '',
             coverImageUrl: '',
             coverThumbnailUrl: '',
-            originalImageUrl: '',          // 原始图片（无后缀）
-            originalThumbnailUrl: ''       // 原始图片缩略图
+            originalImageUrl: '',
+            originalThumbnailUrl: ''
         };
 
         try {
+            // Check if source directory exists
             try {
                 await fs.access(bookSourceDir);
             } catch {
-                console.warn(`??  Skipping ${barcode}: Source directory not found`);
+                console.warn(`⚠️  Skipping ${barcode}: Source directory not found`);
                 errorCount++;
                 continue;
             }
 
+            // Create target directories (only if needed for fallback)
             await fs.mkdir(bookTargetDir, { recursive: true });
             await fs.mkdir(picTargetDir, { recursive: true });
 
-            const cardSource = path.join(bookSourceDir, `${barcode}-S.png`);
-            const cardTarget = path.join(bookTargetDir, `${barcode}.png`);
-            let cardExists = false;
-
-            try {
-                await fs.copyFile(cardSource, cardTarget);
-                cardExists = true;
-            } catch {
-                console.warn(`??  Warning: Card image not found for ${barcode}`);
-            }
-
-            // 处理原始图片（无后缀）
-            const originalSource = path.join(bookSourceDir, `${barcode}.png`);
-            const originalTarget = path.join(bookTargetDir, `${barcode}_original.png`);
-            let originalExists = false;
-
-            try {
-                await fs.copyFile(originalSource, originalTarget);
-                originalExists = true;
-            } catch {
-                console.warn(`??  Warning: Original image not found for ${barcode}`);
-            }
-
-            const coverSource = path.join(bookSourceDir, 'pic', 'cover.jpg');
-            const coverTarget = path.join(picTargetDir, 'cover.jpg');
-            let coverExists = false;
-
-            try {
-                await fs.copyFile(coverSource, coverTarget);
-                coverExists = true;
-            } catch {
-                console.warn(`??  Warning: Cover image not found for ${barcode}`);
-            }
-
-            const qrcodeSource = path.join(bookSourceDir, 'pic', 'qrcode.png');
-            const qrcodeTarget = path.join(picTargetDir, 'qrcode.png');
-
-            try {
-                await fs.copyFile(qrcodeSource, qrcodeTarget);
-            } catch {
-                console.warn(`??  Warning: QR code not found for ${barcode}`);
-            }
-
-            let cardThumbExists = false;
-            const cardThumbnailTarget = path.join(bookTargetDir, `${barcode}_thumb.jpg`);
-            if (cardExists) {
-                try {
-                    await sharp(cardSource)
-                        .resize(400, null, { withoutEnlargement: true })
-                        .jpeg({ quality: 85 })
-                        .toFile(cardThumbnailTarget);
-                    cardThumbExists = true;
-                } catch (error) {
-                    console.warn(`??  Warning: Could not generate card thumbnail for ${barcode}`);
+            // Define all image assets
+            const imageAssets = [
+                {
+                    name: 'card',
+                    sourcePath: path.join(bookSourceDir, `${barcode}-S.png`),
+                    targetPath: path.join(bookTargetDir, `${barcode}.png`),
+                    r2Key: buildR2Key(r2Config, 'content', month, barcode, `${barcode}.png`),
+                    contentType: 'image/png',
+                    urlField: 'cardImageUrl',
+                    needsThumbnail: true,
+                    thumbnailTargetPath: path.join(bookTargetDir, `${barcode}_thumb.jpg`),
+                    thumbnailR2Key: buildR2Key(r2Config, 'content', month, barcode, `${barcode}_thumb.jpg`),
+                    thumbnailUrlField: 'cardThumbnailUrl'
+                },
+                {
+                    name: 'original',
+                    sourcePath: path.join(bookSourceDir, `${barcode}.png`),
+                    targetPath: path.join(bookTargetDir, `${barcode}_original.png`),
+                    r2Key: buildR2Key(r2Config, 'content', month, barcode, `${barcode}_original.png`),
+                    contentType: 'image/png',
+                    urlField: 'originalImageUrl',
+                    needsThumbnail: true,
+                    thumbnailTargetPath: path.join(bookTargetDir, `${barcode}_original_thumb.jpg`),
+                    thumbnailR2Key: buildR2Key(r2Config, 'content', month, barcode, `${barcode}_original_thumb.jpg`),
+                    thumbnailUrlField: 'originalThumbnailUrl'
+                },
+                {
+                    name: 'cover',
+                    sourcePath: path.join(bookSourceDir, 'pic', 'cover.jpg'),
+                    targetPath: path.join(picTargetDir, 'cover.jpg'),
+                    r2Key: buildR2Key(r2Config, 'content', month, barcode, 'pic/cover.jpg'),
+                    contentType: 'image/jpeg',
+                    urlField: 'coverImageUrl',
+                    needsThumbnail: true,
+                    thumbnailTargetPath: path.join(picTargetDir, 'cover_thumb.jpg'),
+                    thumbnailR2Key: buildR2Key(r2Config, 'content', month, barcode, 'pic/cover_thumb.jpg'),
+                    thumbnailUrlField: 'coverThumbnailUrl'
+                },
+                {
+                    name: 'qrcode',
+                    sourcePath: path.join(bookSourceDir, 'pic', 'qrcode.png'),
+                    targetPath: path.join(picTargetDir, 'qrcode.png'),
+                    r2Key: buildR2Key(r2Config, 'content', month, barcode, 'pic/qrcode.png'),
+                    contentType: 'image/png',
+                    urlField: null, // QR code 不需要记录 URL
+                    needsThumbnail: false
                 }
-            }
+            ];
 
-            let coverThumbExists = false;
-            const coverThumbnailTarget = path.join(picTargetDir, 'cover_thumb.jpg');
-            if (coverExists) {
-                try {
-                    await sharp(coverSource)
-                        .resize(400, null, { withoutEnlargement: true })
-                        .jpeg({ quality: 85 })
-                        .toFile(coverThumbnailTarget);
-                    coverThumbExists = true;
-                } catch (error) {
-                    console.warn(`??  Warning: Could not generate cover thumbnail for ${barcode}`);
-                }
+            // Process each image asset
+            for (const asset of imageAssets) {
+                await processImageAsset(asset, month, barcode, r2Config, assetRecord);
             }
-
-            // 生成原始图片的缩略图
-            let originalThumbExists = false;
-            const originalThumbnailTarget = path.join(bookTargetDir, `${barcode}_original_thumb.jpg`);
-            if (originalExists) {
-                try {
-                    await sharp(originalSource)
-                        .resize(400, null, { withoutEnlargement: true })
-                        .jpeg({ quality: 85 })
-                        .toFile(originalThumbnailTarget);
-                    originalThumbExists = true;
-                } catch (error) {
-                    console.warn(`??  Warning: Could not generate original thumbnail for ${barcode}`);
-                }
-            }
-
-            await attachAssetUrls({
-                month,
-                barcode,
-                r2Config,
-                assetRecord,
-                cardExists,
-                coverExists,
-                cardThumbExists,
-                coverThumbExists,
-                originalExists,
-                originalThumbExists,
-                paths: {
-                    cardTarget,
-                    cardThumbnailTarget,
-                    coverTarget,
-                    coverThumbnailTarget,
-                    originalTarget,
-                    originalThumbnailTarget
-                }
-            });
 
             successCount++;
             assetsMap.set(barcode, assetRecord);
-            console.log(`Processed: ${barcode}`);
+            console.log(`✅ Processed: ${barcode}`);
         } catch (error) {
-            console.error(`Error processing ${barcode}:`, error.message);
+            console.error(`❌ Error processing ${barcode}:`, error.message);
             errorCount++;
         }
     }
 
-    console.log(`
-?? Migration Summary:`);
-    console.log(`   ??Success: ${successCount}`);
-    console.log(`   ??Errors: ${errorCount}`);
+    console.log(`\n📊 Migration Summary:`);
+    console.log(`   ✅ Success: ${successCount}`);
+    console.log(`   ❌ Errors: ${errorCount}`);
 
     return assetsMap;
 }
 
+/**
+ * Process single image asset: upload to R2, fallback to local
+ */
+async function processImageAsset(asset, month, barcode, r2Config, assetRecord) {
+    // Check if source file exists
+    try {
+        await fs.access(asset.sourcePath);
+    } catch {
+        console.warn(`⚠️  ${asset.name} not found for ${barcode}`);
+        return;
+    }
+
+    // 1. Try to upload original image to R2 (with retry)
+    const remoteUrl = await uploadFileToR2WithRetry(
+        r2Config,
+        asset.sourcePath,
+        asset.r2Key,
+        asset.contentType
+    );
+
+    if (remoteUrl) {
+        // R2 upload successful, use remote URL
+        if (asset.urlField) {
+            assetRecord[asset.urlField] = remoteUrl;
+        }
+    } else {
+        // R2 upload failed, copy to local as fallback
+        console.warn(`⚠️  R2 upload failed for ${asset.name}, falling back to local copy`);
+        try {
+            await fs.copyFile(asset.sourcePath, asset.targetPath);
+            if (asset.urlField) {
+                const relativePath = buildLocalContentPath(month, barcode, path.basename(asset.targetPath));
+                assetRecord[asset.urlField] = buildLocalPublicUrl(relativePath);
+            }
+        } catch (error) {
+            console.error(`❌ Failed to copy ${asset.name} to local: ${error.message}`);
+            return;
+        }
+    }
+
+    // 2. Process thumbnail if needed
+    if (asset.needsThumbnail) {
+        // Generate thumbnail to buffer
+        const thumbnailBuffer = await generateThumbnail(asset.sourcePath);
+
+        if (thumbnailBuffer) {
+            // Try to upload thumbnail to R2 (with retry)
+            const thumbnailRemoteUrl = await uploadBufferToR2WithRetry(
+                r2Config,
+                thumbnailBuffer,
+                asset.thumbnailR2Key,
+                'image/jpeg'
+            );
+
+            if (thumbnailRemoteUrl) {
+                // R2 upload successful
+                assetRecord[asset.thumbnailUrlField] = thumbnailRemoteUrl;
+            } else {
+                // R2 upload failed, save to local
+                console.warn(`⚠️  R2 upload failed for ${asset.name} thumbnail, falling back to local copy`);
+                try {
+                    await fs.writeFile(asset.thumbnailTargetPath, thumbnailBuffer);
+                    const relativePath = buildLocalContentPath(month, barcode, path.basename(asset.thumbnailTargetPath));
+                    assetRecord[asset.thumbnailUrlField] = buildLocalPublicUrl(relativePath);
+                } catch (error) {
+                    console.error(`❌ Failed to save ${asset.name} thumbnail to local: ${error.message}`);
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Generate thumbnail, return Buffer
+ */
+async function generateThumbnail(sourcePath) {
+    try {
+        return await sharp(sourcePath)
+            .resize(400, null, { withoutEnlargement: true })
+            .jpeg({ quality: 85 })
+            .toBuffer();
+    } catch (error) {
+        console.warn(`⚠️  Could not generate thumbnail for ${sourcePath}: ${error.message}`);
+        return null;
+    }
+}
+
+/**
+ * Upload file to R2 with retry mechanism
+ */
+async function uploadFileToR2WithRetry(r2Config, filePath, key, contentType, maxRetries = 3) {
+    if (!r2Config?.shouldUpload || !r2Config.client || !r2Config.bucket) {
+        return null;
+    }
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+            const fileBuffer = await fs.readFile(filePath);
+            await r2Config.client.send(new PutObjectCommand({
+                Bucket: r2Config.bucket,
+                Key: key,
+                Body: fileBuffer,
+                ContentType: contentType
+            }));
+
+            const publicBase = r2Config.publicUrl?.replace(/\/$/, '');
+            if (publicBase) {
+                return `${publicBase}/${key}`;
+            }
+            return null;
+        } catch (error) {
+            if (attempt === maxRetries) {
+                console.warn(`⚠️  Failed to upload ${key} after ${maxRetries} attempts: ${error.message}`);
+                return null;
+            }
+            console.warn(`⚠️  Upload attempt ${attempt}/${maxRetries} failed for ${key}, retrying...`);
+            // Exponential backoff
+            await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
+        }
+    }
+    return null;
+}
+
+/**
+ * Upload buffer to R2 with retry mechanism
+ */
+async function uploadBufferToR2WithRetry(r2Config, buffer, key, contentType, maxRetries = 3) {
+    if (!r2Config?.shouldUpload || !r2Config.client || !r2Config.bucket) {
+        return null;
+    }
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+            await r2Config.client.send(new PutObjectCommand({
+                Bucket: r2Config.bucket,
+                Key: key,
+                Body: buffer,
+                ContentType: contentType
+            }));
+
+            const publicBase = r2Config.publicUrl?.replace(/\/$/, '');
+            if (publicBase) {
+                return `${publicBase}/${key}`;
+            }
+            return null;
+        } catch (error) {
+            if (attempt === maxRetries) {
+                console.warn(`⚠️  Failed to upload buffer ${key} after ${maxRetries} attempts: ${error.message}`);
+                return null;
+            }
+            console.warn(`⚠️  Upload attempt ${attempt}/${maxRetries} failed for ${key}, retrying...`);
+            await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
+        }
+    }
+    return null;
+}
 
 /**
  * Generate encoded call number link for catalog lookup
@@ -315,39 +423,38 @@ function buildCallNumberLink(callNumberRaw) {
 
 /**
  * Step 4: Generate metadata JSON file with only filtered approved books
- * Only includes fields needed by the frontend to optimize performance
  */
 async function copyMetadata(month, books, assetsMap = new Map()) {
     const targetDir = path.join(CONTENT_DIR, month);
     const targetJson = path.join(targetDir, 'metadata.json');
 
-    // Define fields needed by frontend (based on PRD 4.2)
+    // Define fields needed by frontend
     const frontendFields = [
-        '书目条码',      // Unique ID / Image index
-        '豆瓣书名',      // Main title
-        '豆瓣副标题',    // Subtitle
-        '豆瓣原作名',    // Original title
-        '豆瓣作者',      // Author
-        '豆瓣译者',      // Translator
-        '豆瓣出版社',    // Publisher
-        '豆瓣出版年',    // Publication year
-        '豆瓣页数',      // Page count
-        '豆瓣评分',      // Rating
-        '豆瓣评价人数',  // Number of ratings
-        '索书号',        // Call number (important business data)
-        'ISBN',          // ISBN
-        '人工推荐语',    // Manual recommendation (Priority 1)
-        '初评理由',      // Initial review reason (Priority 2)
-        '豆瓣内容简介',  // Content description
-        '豆瓣作者简介',  // Author bio
-        '豆瓣目录',      // Table of contents
-        '豆瓣链接',      // Douban link
-        '豆瓣封面图片链接', // Cover image link (backup)
-        '豆瓣定价',      // Price
-        '豆瓣装帧',      // Binding
-        '豆瓣丛书',      // Series
-        '豆瓣出品方',     // Producer
-        '索书号链接'     // Generated call number search link
+        '书目条码',
+        '豆瓣书名',
+        '豆瓣副标题',
+        '豆瓣原作名',
+        '豆瓣作者',
+        '豆瓣译者',
+        '豆瓣出版社',
+        '豆瓣出版年',
+        '豆瓣页数',
+        '豆瓣评分',
+        '豆瓣评价人数',
+        '索书号',
+        'ISBN',
+        '人工推荐语',
+        '初评理由',
+        '豆瓣内容简介',
+        '豆瓣作者简介',
+        '豆瓣目录',
+        '豆瓣链接',
+        '豆瓣封面图片链接',
+        '豆瓣定价',
+        '豆瓣装帧',
+        '豆瓣丛书',
+        '豆瓣出品方',
+        '索书号链接'
     ];
 
     // Filter books to only include frontend-needed fields
@@ -358,12 +465,14 @@ async function copyMetadata(month, books, assetsMap = new Map()) {
                 filtered[field] = book[field];
             }
         });
+
         if (filtered['索书号']) {
             const callNumberLink = buildCallNumberLink(filtered['索书号']);
             if (callNumberLink) {
                 filtered['索书号链接'] = callNumberLink;
             }
         }
+
         const barcode = String(book[BARCODE_COLUMN]);
         const assets = assetsMap.get(barcode);
 
@@ -400,88 +509,6 @@ async function copyMetadata(month, books, assetsMap = new Map()) {
     console.log(`   📦 Size reduction: ${reduction}% (${(originalSize / 1024).toFixed(1)}KB → ${(optimizedSize / 1024).toFixed(1)}KB)`);
 }
 
-async function attachAssetUrls({
-    month,
-    barcode,
-    r2Config,
-    assetRecord,
-    cardExists,
-    coverExists,
-    cardThumbExists,
-    coverThumbExists,
-    originalExists,
-    originalThumbExists,
-    paths
-}) {
-    if (cardExists) {
-        const relativePath = buildLocalContentPath(month, barcode, `${barcode}.png`);
-        const remoteUrl = await uploadFileToR2(
-            r2Config,
-            paths.cardTarget,
-            buildR2Key(r2Config, 'content', month, barcode, `${barcode}.png`),
-            'image/png'
-        );
-        assetRecord.cardImageUrl = selectAssetUrl(remoteUrl, relativePath);
-    }
-
-    if (cardThumbExists) {
-        const relativePath = buildLocalContentPath(month, barcode, `${barcode}_thumb.jpg`);
-        const remoteUrl = await uploadFileToR2(
-            r2Config,
-            paths.cardThumbnailTarget,
-            buildR2Key(r2Config, 'content', month, barcode, `${barcode}_thumb.jpg`),
-            'image/jpeg'
-        );
-        assetRecord.cardThumbnailUrl = selectAssetUrl(remoteUrl, relativePath);
-    }
-
-    if (coverExists) {
-        const relativePath = buildLocalContentPath(month, barcode, 'pic', 'cover.jpg');
-        const remoteUrl = await uploadFileToR2(
-            r2Config,
-            paths.coverTarget,
-            buildR2Key(r2Config, 'content', month, barcode, 'pic/cover.jpg'),
-            'image/jpeg'
-        );
-        assetRecord.coverImageUrl = selectAssetUrl(remoteUrl, relativePath);
-    }
-
-    if (coverThumbExists) {
-        const relativePath = buildLocalContentPath(month, barcode, 'pic', 'cover_thumb.jpg');
-        const remoteUrl = await uploadFileToR2(
-            r2Config,
-            paths.coverThumbnailTarget,
-            buildR2Key(r2Config, 'content', month, barcode, 'pic/cover_thumb.jpg'),
-            'image/jpeg'
-        );
-        assetRecord.coverThumbnailUrl = selectAssetUrl(remoteUrl, relativePath);
-    }
-
-    // 上传原始图片
-    if (originalExists) {
-        const relativePath = buildLocalContentPath(month, barcode, `${barcode}_original.png`);
-        const remoteUrl = await uploadFileToR2(
-            r2Config,
-            paths.originalTarget,
-            buildR2Key(r2Config, 'content', month, barcode, `${barcode}_original.png`),
-            'image/png'
-        );
-        assetRecord.originalImageUrl = selectAssetUrl(remoteUrl, relativePath);
-    }
-
-    // 上传原始图片缩略图
-    if (originalThumbExists) {
-        const relativePath = buildLocalContentPath(month, barcode, `${barcode}_original_thumb.jpg`);
-        const remoteUrl = await uploadFileToR2(
-            r2Config,
-            paths.originalThumbnailTarget,
-            buildR2Key(r2Config, 'content', month, barcode, `${barcode}_original_thumb.jpg`),
-            'image/jpeg'
-        );
-        assetRecord.originalThumbnailUrl = selectAssetUrl(remoteUrl, relativePath);
-    }
-}
-
 function buildLocalContentPath(month, barcode, ...segments) {
     return path.posix.join('content', month, barcode, ...segments);
 }
@@ -493,16 +520,6 @@ function buildLocalPublicUrl(relativePath) {
     return `/${relativePath.replace(/^\/+/, '')}`;
 }
 
-function selectAssetUrl(remoteUrl, relativePath) {
-    if (remoteUrl) {
-        return remoteUrl;
-    }
-    if (relativePath) {
-        return buildLocalPublicUrl(relativePath);
-    }
-    return '';
-}
-
 function buildR2Key(r2Config, ...segments) {
     const cleaned = segments
         .filter(Boolean)
@@ -512,28 +529,6 @@ function buildR2Key(r2Config, ...segments) {
         cleaned.unshift(base);
     }
     return cleaned.filter(Boolean).join('/');
-}
-
-async function uploadFileToR2(r2Config, filePath, key, contentType) {
-    if (!r2Config?.shouldUpload || !r2Config.client || !r2Config.bucket) {
-        return null;
-    }
-    try {
-        const fileBuffer = await fs.readFile(filePath);
-        await r2Config.client.send(new PutObjectCommand({
-            Bucket: r2Config.bucket,
-            Key: key,
-            Body: fileBuffer,
-            ContentType: contentType
-        }));
-        const publicBase = r2Config.publicUrl?.replace(/\/$/, '');
-        if (publicBase) {
-            return `${publicBase}/${key}`;
-        }
-    } catch (error) {
-        console.warn(`⚠️  Failed to upload ${key}: ${error.message}`);
-    }
-    return null;
 }
 
 function createR2Config() {
