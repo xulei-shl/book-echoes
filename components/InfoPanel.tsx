@@ -3,22 +3,14 @@
 import { motion } from 'framer-motion';
 import { Book } from '@/types';
 import { useStore } from '@/store/useStore';
-import { useState, useCallback, useRef, useEffect } from 'react';
 
 interface InfoPanelProps {
     book: Book;
     books: Book[];
 }
 
-const PREVIEW_WIDTH = 480;
-const PREVIEW_HEIGHT = 680;
-const PREVIEW_OFFSET = 16;
-
 export default function InfoPanel({ book, books }: InfoPanelProps) {
     const { setFocusedBookId } = useStore();
-    const [isHovered, setIsHovered] = useState(false);
-    const [previewPosition, setPreviewPosition] = useState({ x: 0, y: 0 });
-    const metadataRef = useRef<HTMLDivElement | null>(null);
 
     const handleNavigate = (direction: 'prev' | 'next') => {
         if (!books?.length) {
@@ -31,47 +23,6 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
         const delta = direction === 'next' ? 1 : -1;
         const nextIndex = (currentIndex + delta + books.length) % books.length;
         setFocusedBookId(books[nextIndex].id);
-    };
-
-    const updatePreviewPosition = useCallback(() => {
-        if (typeof window === 'undefined' || !metadataRef.current) {
-            return;
-        }
-        const rect = metadataRef.current.getBoundingClientRect();
-        let left = rect.left - PREVIEW_WIDTH - PREVIEW_OFFSET;
-        if (left < PREVIEW_OFFSET) {
-            left = rect.right + PREVIEW_OFFSET;
-        }
-        let top = rect.top;
-        if (window.innerHeight - rect.top < PREVIEW_HEIGHT + PREVIEW_OFFSET) {
-            top = window.innerHeight - PREVIEW_HEIGHT - PREVIEW_OFFSET;
-        }
-        top = Math.max(PREVIEW_OFFSET, top);
-        left = Math.max(PREVIEW_OFFSET, left);
-        setPreviewPosition({ x: left, y: top });
-    }, []);
-
-    useEffect(() => {
-        if (!isHovered) {
-            return;
-        }
-        updatePreviewPosition();
-        const handleReposition = () => updatePreviewPosition();
-        window.addEventListener('scroll', handleReposition);
-        window.addEventListener('resize', handleReposition);
-        return () => {
-            window.removeEventListener('scroll', handleReposition);
-            window.removeEventListener('resize', handleReposition);
-        };
-    }, [isHovered, updatePreviewPosition]);
-
-    const handleHoverStart = () => {
-        setIsHovered(true);
-        updatePreviewPosition();
-    };
-
-    const handleHoverEnd = () => {
-        setIsHovered(false);
     };
 
     return (
@@ -270,34 +221,10 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
                         </p>
                     </div>
 
-                    {/* 悬浮预览图片 */}
-                    {isHovered && (
-                        <motion.div
-                            className="pointer-events-none fixed z-[200] drop-shadow-2xl"
-                            style={{ left: previewPosition.x, top: previewPosition.y }}
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                        >
-                            <div
-                                className="rounded-2xl border border-white/10 bg-[#1a1a1a]/95 p-3 backdrop-blur"
-                                style={{ width: PREVIEW_WIDTH, height: PREVIEW_HEIGHT }}
-                            >
-                                <img
-                                    src={book.cardThumbnailUrl || book.cardImageUrl}
-                                    alt={`${book.title} cover preview`}
-                                    className="w-full h-full object-contain rounded-xl bg-black/20"
-                                />
-                            </div>
-                        </motion.div>
-                    )}
-
                     {/* Metadata */}
                     <div className="space-y-6">
                         <div
-                            ref={metadataRef}
                             className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-4 text-sm"
-                            onMouseEnter={handleHoverStart}
-                            onMouseLeave={handleHoverEnd}
                         >
                             <span className="text-white/50 font-light">作者</span>
                             <span className="font-body text-[#E8E6DC] tracking-wide">{book.author}</span>
