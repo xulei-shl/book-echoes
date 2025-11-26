@@ -63,10 +63,10 @@ export default function ArchiveYearNav({ years, activeYear, onYearSelect }: Arch
                     const distance = Math.abs(index - currentIndex);
 
                     // 计算视觉属性
-                    // 距离越远，透明度越低，缩放越小
-                    const opacity = isActive ? 1 : Math.max(0.2, 0.8 - distance * 0.3);
-                    const scale = isActive ? 1.2 : Math.max(0.6, 1 - distance * 0.15);
-                    const x = isActive ? -20 : 0; // 激活时向左突出
+                    // 优化：非聚焦年份透明度调高，模糊度降低，使其更清晰
+                    const opacity = isActive ? 1 : Math.max(0.3, 0.7 - distance * 0.2);
+                    const scale = isActive ? 1.3 : Math.max(0.7, 1 - distance * 0.1);
+                    const x = isActive ? -30 : 0; // 激活时向左突出更多
 
                     return (
                         <motion.button
@@ -78,7 +78,7 @@ export default function ArchiveYearNav({ years, activeYear, onYearSelect }: Arch
                                 opacity,
                                 scale,
                                 x,
-                                filter: isActive ? 'blur(0px)' : `blur(${distance * 1}px)`, // 简单的景深效果
+                                filter: isActive ? 'blur(0px)' : `blur(${distance * 0.5}px)`, // 减少模糊，更清晰
                             }}
                             transition={{
                                 type: "spring",
@@ -91,21 +91,24 @@ export default function ArchiveYearNav({ years, activeYear, onYearSelect }: Arch
                                 className={`
                                     font-display tracking-widest transition-colors duration-300
                                     ${isActive
-                                        ? 'text-4xl md:text-5xl text-[#C9A063] font-bold shadow-amber-500/20 drop-shadow-lg'
-                                        : 'text-2xl md:text-3xl text-gray-500 group-hover:text-[#C9A063]/70'
+                                        ? 'text-5xl md:text-6xl text-white font-black drop-shadow-[0_0_15px_rgba(201,160,99,0.8)]' // 激活：纯白+强金光，与顶部金色区分
+                                        : 'text-2xl md:text-3xl text-white/40 group-hover:text-white/80' // 非激活：半透白，比灰色更亮
                                     }
                                 `}
                             >
                                 {year}
                             </span>
 
-                            {/* 激活状态指示点 */}
+                            {/* 激活状态指示器：增加连接线，增强设计感 */}
                             {isActive && (
                                 <motion.div
-                                    layoutId="activeYearDot"
-                                    className="absolute -right-[38px] w-2 h-2 rounded-full bg-[#C9A063] shadow-[0_0_10px_rgba(201,160,99,0.8)]"
+                                    layoutId="activeYearIndicator"
+                                    className="absolute -right-[45px] flex items-center"
                                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                                />
+                                >
+                                    <div className="w-6 h-[1px] bg-[#C9A063] mr-2 shadow-[0_0_5px_rgba(201,160,99,0.8)]" />
+                                    <div className="w-2 h-2 rounded-full bg-[#C9A063] shadow-[0_0_10px_rgba(201,160,99,1)]" />
+                                </motion.div>
                             )}
                         </motion.button>
                     );
