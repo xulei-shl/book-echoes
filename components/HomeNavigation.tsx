@@ -23,7 +23,7 @@ export default function HomeNavigation({ aboutContent }: HomeNavigationProps) {
             >
                 <Link
                     href="/archive"
-                    className="font-display text-lg md:text-xl text-[#E8E6DC] hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.4)] transition-all duration-300 hover:scale-105"
+                    className="font-display text-lg md:text-xl text-[#E8E6DC] hover:text-[#8B3A3A] hover:drop-shadow-[0_0_12px_rgba(139,58,58,0.6)] transition-all duration-300 hover:scale-105"
                 >
                     往期回顾
                 </Link>
@@ -34,7 +34,7 @@ export default function HomeNavigation({ aboutContent }: HomeNavigationProps) {
                         e.stopPropagation();
                         setIsAboutOpen(true);
                     }}
-                    className="font-display text-lg md:text-xl text-[#E8E6DC] hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.4)] transition-all duration-300 hover:scale-105 cursor-pointer"
+                    className="font-display text-lg md:text-xl text-[#E8E6DC] hover:text-[#8B3A3A] hover:drop-shadow-[0_0_12px_rgba(139,58,58,0.6)] transition-all duration-300 hover:scale-105 cursor-pointer"
                 >
                     关于
                 </button>
