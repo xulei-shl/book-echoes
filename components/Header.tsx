@@ -25,7 +25,7 @@ export default function Header({ showHomeButton = false, aboutContent, theme = '
         <header className="fixed top-0 left-0 right-0 z-50 pointer-events-none">
             <div className="relative flex items-center justify-between px-6 py-6 md:px-8 md:py-8">
                 {/* Logo - Left */}
-                <motion.div
+                {/* <motion.div
                     className="pointer-events-auto"
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -40,7 +40,7 @@ export default function Header({ showHomeButton = false, aboutContent, theme = '
                             priority
                         />
                     </div>
-                </motion.div>
+                </motion.div> */}
 
                 {/* Spacer for center alignment */}
                 <div className="flex-1" />

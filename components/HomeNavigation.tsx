@@ -44,7 +44,7 @@ export default function HomeNavigation({ aboutContent }: HomeNavigationProps) {
                         书海回响 — 那些被悄悄归还的一本好书
                     </p>
                     <p className="font-body text-xs text-[#E8E6DC]/80">
-                        @ 上海图书馆
+                        @ XXX 图书馆
                     </p>
                 </div>
             </motion.div>
