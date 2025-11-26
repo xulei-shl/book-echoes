@@ -27,8 +27,30 @@ function getMonthCharacter(monthId: string): string {
     return '月';
 }
 
+// 辅助函数:获取初始年份(当前年份或最接近的年份)
+function getInitialYear(years: string[]): string {
+    if (years.length === 0) return '';
+
+    const currentYear = new Date().getFullYear().toString();
+
+    // 如果当前年份在列表中,直接返回
+    if (years.includes(currentYear)) {
+        return currentYear;
+    }
+
+    // 否则找到最接近当前年份的年份
+    const sortedYears = [...years].sort((a, b) => parseInt(b) - parseInt(a));
+    const currentYearNum = parseInt(currentYear);
+
+    // 找到第一个小于等于当前年份的年份
+    const closestYear = sortedYears.find(year => parseInt(year) <= currentYearNum);
+
+    // 如果找到了,返回它;否则返回最小的年份
+    return closestYear || sortedYears[sortedYears.length - 1];
+}
+
 export default function ArchiveContent({ years, monthsByYear }: ArchiveContentProps) {
-    const [activeYear, setActiveYear] = useState(years[0]);
+    const [activeYear, setActiveYear] = useState(getInitialYear(years));
 
     return (
         <div className="relative z-10 pt-32 pb-20 px-4 md:px-8">
