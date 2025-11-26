@@ -31,7 +31,7 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
             <button
                 type="button"
                 aria-label="上一条书籍"
-                className="fixed left-[calc(40%+2rem)] top-1/2 -translate-y-1/2 z-[121] inline-flex h-12 w-12 items-center justify-center rounded-full border border-[#E8E6DC]/10 bg-[#1a1a1a]/90 text-[#E8E6DC] text-2xl shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur hover:bg-[#8B3A3A] hover:text-[#E8E6DC] hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B3A3A] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a] transition-all duration-300"
+                className="fixed left-[calc(40%+2rem)] top-1/2 -translate-y-1/2 z-[121] inline-flex h-12 w-12 items-center justify-center rounded-full border border-[#E8E6DC]/10 bg-[#1a1a1a]/90 text-[#E8E6DC] text-2xl shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur hover:bg-[#C9A063] hover:text-[#1a1a1a] hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C9A063] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a] transition-all duration-300"
                 onClick={() => handleNavigate('prev')}
             >
                 &larr;
@@ -39,7 +39,7 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
             <button
                 type="button"
                 aria-label="下一条书籍"
-                className="fixed right-8 top-1/2 -translate-y-1/2 z-[121] inline-flex h-12 w-12 items-center justify-center rounded-full border border-[#E8E6DC]/10 bg-[#1a1a1a]/90 text-[#E8E6DC] text-2xl shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur hover:bg-[#8B3A3A] hover:text-[#E8E6DC] hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B3A3A] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a] transition-all duration-300"
+                className="fixed right-8 top-1/2 -translate-y-1/2 z-[121] inline-flex h-12 w-12 items-center justify-center rounded-full border border-[#E8E6DC]/10 bg-[#1a1a1a]/90 text-[#E8E6DC] text-2xl shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur hover:bg-[#C9A063] hover:text-[#1a1a1a] hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C9A063] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a] transition-all duration-300"
                 onClick={() => handleNavigate('next')}
             >
                 &rarr;
@@ -52,7 +52,7 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
                 {/* Three-dot button */}
                 <button
                     aria-label="菜单"
-                    className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-[#E8E6DC]/10 bg-[#1a1a1a]/90 text-[#E8E6DC] shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur hover:bg-[#8B3A3A] hover:text-[#E8E6DC] hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B3A3A] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a] transition-all duration-300"
+                    className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-[#E8E6DC]/10 bg-[#1a1a1a]/90 text-[#E8E6DC] shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur hover:bg-[#C9A063] hover:text-[#1a1a1a] hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C9A063] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a] transition-all duration-300"
                 >
                     <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                         <circle cx="12" cy="5" r="2" />
@@ -67,7 +67,7 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
                     <button
                         onClick={() => setFocusedBookId(null)}
                         aria-label="关闭"
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[#E8E6DC]/10 bg-[#1a1a1a]/95 text-[#E8E6DC] shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur hover:bg-[#8B3A3A] hover:text-[#E8E6DC] transition-all duration-300 whitespace-nowrap"
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[#E8E6DC]/10 bg-[#1a1a1a]/95 text-[#E8E6DC] shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur hover:bg-[#C9A063] hover:text-[#1a1a1a] transition-all duration-300 whitespace-nowrap"
                     >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -119,7 +119,7 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
                             }
                         }}
                         aria-label="下载当前书籍"
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[#E8E6DC]/10 bg-[#1a1a1a]/95 text-[#E8E6DC] shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur hover:bg-[#8B3A3A] hover:text-[#E8E6DC] transition-all duration-300 whitespace-nowrap"
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[#E8E6DC]/10 bg-[#1a1a1a]/95 text-[#E8E6DC] shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur hover:bg-[#C9A063] hover:text-[#1a1a1a] transition-all duration-300 whitespace-nowrap"
                     >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -157,7 +157,7 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
                             }
                         }}
                         aria-label="下载全部数据"
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[#E8E6DC]/10 bg-[#1a1a1a]/95 text-[#E8E6DC] shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur hover:bg-[#8B3A3A] hover:text-[#E8E6DC] transition-all duration-300 whitespace-nowrap"
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[#E8E6DC]/10 bg-[#1a1a1a]/95 text-[#E8E6DC] shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur hover:bg-[#C9A063] hover:text-[#1a1a1a] transition-all duration-300 whitespace-nowrap"
                     >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
@@ -253,7 +253,7 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
                                             href={book.callNumberLink}
                                             target="_blank"
                                             rel="noreferrer"
-                                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#8B3A3A]/10 text-[#8B3A3A] font-mono text-xs hover:bg-[#8B3A3A]/20 transition-colors"
+                                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#C9A063]/10 text-[#C9A063] font-mono text-xs hover:bg-[#C9A063]/20 transition-colors"
                                         >
                                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
@@ -288,8 +288,8 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
                     <div className="space-y-8">
                         <section>
                             <div className="relative inline-block mb-5">
-                                <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[#8B3A3A]/60 translate-x-1.5 translate-y-1.5" />
-                                <h3 className="relative border border-[#8B3A3A]/50 px-5 py-1.5 text-[#E8E6DC] font-display text-lg tracking-wider bg-[#1a1a1a]">
+                                <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[#C9A063]/60 translate-x-1.5 translate-y-1.5" />
+                                <h3 className="relative border border-[#C9A063]/50 px-5 py-1.5 text-[#E8E6DC] font-display text-lg tracking-wider bg-[#1a1a1a]">
                                     内容简介
                                 </h3>
                             </div>
@@ -298,8 +298,8 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
 
                         <section>
                             <div className="relative inline-block mb-5">
-                                <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[#8B3A3A]/60 translate-x-1.5 translate-y-1.5" />
-                                <h3 className="relative border border-[#8B3A3A]/50 px-5 py-1.5 text-[#E8E6DC] font-display text-lg tracking-wider bg-[#1a1a1a]">
+                                <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[#C9A063]/60 translate-x-1.5 translate-y-1.5" />
+                                <h3 className="relative border border-[#C9A063]/50 px-5 py-1.5 text-[#E8E6DC] font-display text-lg tracking-wider bg-[#1a1a1a]">
                                     作者简介
                                 </h3>
                             </div>
@@ -308,13 +308,13 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
 
                         <section>
                             <div className="relative inline-block mb-5">
-                                <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[#8B3A3A]/60 translate-x-1.5 translate-y-1.5" />
-                                <h3 className="relative border border-[#8B3A3A]/50 px-5 py-1.5 text-[#E8E6DC] font-display text-lg tracking-wider bg-[#1a1a1a]">
+                                <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[#C9A063]/60 translate-x-1.5 translate-y-1.5" />
+                                <h3 className="relative border border-[#C9A063]/50 px-5 py-1.5 text-[#E8E6DC] font-display text-lg tracking-wider bg-[#1a1a1a]">
                                     目录
                                 </h3>
                             </div>
                             <details className="group">
-                                <summary className="cursor-pointer inline-flex items-center gap-2 text-sm text-white/40 hover:text-[#E8E6DC] transition-colors py-2">
+                                <summary className="cursor-pointer inline-flex items-center gap-2 text-sm text-white/40 hover:text-[#C9A063] transition-colors py-2">
                                     <svg
                                         className="w-4 h-4 transition-transform group-open:rotate-90"
                                         fill="none"

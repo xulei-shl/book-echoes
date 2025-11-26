@@ -78,7 +78,7 @@ export default function ArchiveGrid({ months, aboutContent }: ArchiveGridProps) 
                 - Cells are background colored
                 - Added overflow-y-auto for scrolling
             */}
-            <div className={`grid ${getGridCols()} h-full w-full gap-[2px] p-[2px] bg-[var(--accent)]/20 overflow-y-auto pt-24 pb-12`}>
+            <div className={`grid ${getGridCols()} h-full w-full gap-[2px] p-[2px] bg-[var(--accent)]/35 overflow-y-auto pt-24 pb-12`}>
                 {months.map((month) => {
                     const bigChar = getBigMonthChar(month.label, month.id);
                     const isHovered = hoveredId === month.id;

@@ -60,8 +60,18 @@
 :root {
   --background: #F2F0E9;
   --foreground: #2C2C2C;
+
+  /* 品牌主色 - 用于结构性元素 */
   --accent: #8B3A3A;
+  --accent-primary: #8B3A3A;
   /* Rust Red */
+
+  /* 交互辅助色 - 用于悬停、链接等交互元素 */
+  --accent-interactive: #C9A063;
+  --accent-interactive-light: #D4A574;
+
+  /* 信息辅助色 */
+  --accent-info: #7B9DAE;
 
   /* Font Families - 添加系统字体作为回退 */
 
@@ -87,6 +97,10 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-accent: var(--accent);
+  --color-accent-primary: var(--accent-primary);
+  --color-accent-interactive: var(--accent-interactive);
+  --color-accent-interactive-light: var(--accent-interactive-light);
+  --color-accent-info: var(--accent-info);
 
   --font-display: var(--font-display);
   --font-body: var(--font-body);

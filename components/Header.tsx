@@ -18,8 +18,8 @@ export default function Header({ showHomeButton = false, aboutContent, theme = '
     const [isAboutOpen, setIsAboutOpen] = useState(false);
 
     const buttonStyles = theme === 'dark'
-        ? "border-[#E8E6DC]/10 bg-[#1a1a1a]/90 text-[#E8E6DC] hover:bg-[#8B3A3A] hover:text-[#E8E6DC] focus-visible:ring-[#8B3A3A] focus-visible:ring-offset-[#1a1a1a]"
-        : "border-white/10 bg-[var(--background)]/90 text-[var(--foreground)] hover:bg-[var(--accent)] hover:text-[var(--background)] focus-visible:ring-[var(--accent)] focus-visible:ring-offset-[var(--background)]";
+        ? "border-[#E8E6DC]/10 bg-[#1a1a1a]/90 text-[#E8E6DC] hover:bg-[#C9A063] hover:text-[#1a1a1a] focus-visible:ring-[#C9A063] focus-visible:ring-offset-[#1a1a1a]"
+        : "border-white/10 bg-[var(--background)]/90 text-[var(--foreground)] hover:bg-[#C9A063] hover:text-white focus-visible:ring-[#C9A063] focus-visible:ring-offset-[var(--background)]";
 
     return (
         <header className="fixed top-0 left-0 right-0 z-50 pointer-events-none">
