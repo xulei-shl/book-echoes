@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 import ArchiveYearNav from './ArchiveYearNav';
 
 interface ArchiveLayoutProps {
@@ -9,6 +9,8 @@ interface ArchiveLayoutProps {
 }
 
 export default function ArchiveLayout({ years, children }: ArchiveLayoutProps) {
+    const [activeYear, setActiveYear] = useState(years[0] || '');
+
     return (
         <div className="relative min-h-screen bg-[#1a1a1a] overflow-hidden">
             {/* Background Grid System */}
@@ -41,7 +43,11 @@ export default function ArchiveLayout({ years, children }: ArchiveLayoutProps) {
                 <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12">
                     {/* Left Sidebar - Year Navigation */}
                     <aside className="md:col-span-2 hidden md:block sticky top-32 h-fit">
-                        <ArchiveYearNav years={years} />
+                        <ArchiveYearNav
+                            years={years}
+                            activeYear={activeYear}
+                            onYearSelect={setActiveYear}
+                        />
                     </aside>
 
                     {/* Right Content - Cover Grid */}
