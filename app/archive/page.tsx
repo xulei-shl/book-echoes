@@ -46,9 +46,9 @@ export default async function ArchivePage() {
             <ArchiveLayout years={years}>
                 {years.map(year => (
                     <section key={year} id={`year-${year}`} className="mb-20">
-                        <h2 className="font-display text-3xl md:text-4xl text-[#8B3A3A] mb-8 border-b border-[#8B3A3A]/20 pb-4 flex items-end gap-4">
+                        <h2 className="font-display text-3xl md:text-4xl text-[#C9A063] mb-8 border-b border-[#C9A063]/20 pb-4 flex items-end gap-4">
                             {year}
-                            <span className="text-sm font-mono text-[#8B3A3A]/40 mb-1 tracking-widest">ARCHIVE COLLECTION</span>
+                            <span className="text-sm font-mono text-[#C9A063]/40 mb-1 tracking-widest">ARCHIVE COLLECTION</span>
                         </h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
                             {monthsByYear[year].map((month, index) => {
@@ -57,12 +57,12 @@ export default async function ArchivePage() {
                                 return (
                                     <div
                                         key={month.id}
-                                        className="relative group p-6 border border-[#8B3A3A]/20 bg-[#1a1a1a]/50 hover:border-[#8B3A3A]/60 hover:bg-[#8B3A3A]/5 transition-all duration-500 overflow-hidden"
+                                        className="relative group p-6 border border-[#C9A063]/20 bg-[#1a1a1a]/50 hover:border-[#C9A063]/60 hover:bg-[#C9A063]/5 transition-all duration-500 overflow-hidden"
                                     >
                                         {/* 大型繁体汉字背景 - 右下角位置 */}
                                         <div className="absolute -bottom-14 -right-10 pointer-events-none select-none">
                                             <span
-                                                className="font-display text-[16rem] md:text-[18rem] leading-none text-[#8B3A3A] transition-all duration-700 ease-out block"
+                                                className="font-display text-[16rem] md:text-[18rem] leading-none text-[#C9A063] transition-all duration-700 ease-out block"
                                                 style={{
                                                     opacity: 0.12,
                                                     transform: 'rotate(-5deg)',
@@ -75,7 +75,7 @@ export default async function ArchivePage() {
                                         {/* 悬停时的汉字动画效果 */}
                                         <div className="absolute -bottom-14 -right-10 pointer-events-none select-none opacity-0 group-hover:opacity-100 transition-opacity duration-700">
                                             <span
-                                                className="font-display text-[16rem] md:text-[18rem] leading-none text-[#8B3A3A] transition-all duration-700 ease-out block"
+                                                className="font-display text-[16rem] md:text-[18rem] leading-none text-[#C9A063] transition-all duration-700 ease-out block"
                                                 style={{
                                                     opacity: 0.18,
                                                     transform: 'rotate(-5deg) scale(1.05)',
@@ -86,16 +86,16 @@ export default async function ArchivePage() {
                                         </div>
 
                                         {/* Corner Accents - Top Left */}
-                                        <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-[#8B3A3A]/40 group-hover:border-[#8B3A3A] group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-500 z-10" />
+                                        <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-[#C9A063]/40 group-hover:border-[#C9A063] group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-500 z-10" />
                                         {/* Corner Accents - Top Right */}
-                                        <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-[#8B3A3A]/40 group-hover:border-[#8B3A3A] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-500 z-10" />
+                                        <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-[#C9A063]/40 group-hover:border-[#C9A063] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-500 z-10" />
                                         {/* Corner Accents - Bottom Left */}
-                                        <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-[#8B3A3A]/40 group-hover:border-[#8B3A3A] group-hover:-translate-x-0.5 group-hover:translate-y-0.5 transition-all duration-500 z-10" />
+                                        <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-[#C9A063]/40 group-hover:border-[#C9A063] group-hover:-translate-x-0.5 group-hover:translate-y-0.5 transition-all duration-500 z-10" />
                                         {/* Corner Accents - Bottom Right */}
-                                        <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-[#8B3A3A]/40 group-hover:border-[#8B3A3A] group-hover:translate-x-0.5 group-hover:translate-y-0.5 transition-all duration-500 z-10" />
+                                        <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-[#C9A063]/40 group-hover:border-[#C9A063] group-hover:translate-x-0.5 group-hover:translate-y-0.5 transition-all duration-500 z-10" />
 
                                         {/* Technical Label */}
-                                        <div className="absolute top-2 left-3 text-[10px] font-mono text-[#8B3A3A]/60 tracking-widest opacity-70 group-hover:opacity-100 transition-opacity z-10">
+                                        <div className="absolute top-2 left-3 text-[10px] font-mono text-[#C9A063]/60 tracking-widest opacity-70 group-hover:opacity-100 transition-opacity z-10">
                                             {month.id.replace('-', '.')} // SEQ.{String(monthsByYear[year].length - index).padStart(2, '0')}
                                         </div>
 

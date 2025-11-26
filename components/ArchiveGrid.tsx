@@ -78,7 +78,7 @@ export default function ArchiveGrid({ months, aboutContent }: ArchiveGridProps) 
                 - Cells are background colored
                 - Added overflow-y-auto for scrolling
             */}
-            <div className={`grid ${getGridCols()} h-full w-full gap-[2px] p-[2px] bg-[var(--accent)]/35 overflow-y-auto pt-24 pb-12`}>
+            <div className={`grid ${getGridCols()} h-full w-full gap-[2px] p-[2px] bg-[var(--accent-interactive)]/30 overflow-y-auto pt-24 pb-12`}>
                 {months.map((month) => {
                     const bigChar = getBigMonthChar(month.label, month.id);
                     const isHovered = hoveredId === month.id;
@@ -99,7 +99,7 @@ export default function ArchiveGrid({ months, aboutContent }: ArchiveGridProps) 
                             */}
                             <div className="absolute -bottom-10 -left-10 z-0 pointer-events-none select-none overflow-hidden">
                                 <motion.span
-                                    className="font-display text-[12rem] md:text-[16rem] leading-none text-[var(--accent)]"
+                                    className="font-display text-[12rem] md:text-[16rem] leading-none text-[var(--accent-interactive)]"
                                     initial={{ opacity: 0.03, x: 0 }}
                                     animate={{
                                         opacity: isHovered ? 0.08 : 0.03,
@@ -120,16 +120,16 @@ export default function ArchiveGrid({ months, aboutContent }: ArchiveGridProps) 
                                 {/* Top: Volume Number & Year (Small, Technical) */}
                                 <div className="flex justify-between items-start">
                                     <div className="flex flex-col gap-1">
-                                        <span className="font-body text-xs md:text-sm tracking-[0.2em] text-[var(--accent)] uppercase opacity-80">
+                                        <span className="font-body text-xs md:text-sm tracking-[0.2em] text-[var(--accent-interactive)] uppercase opacity-80">
                                             {year}
                                         </span>
-                                        <span className="font-body text-xs md:text-sm tracking-[0.2em] text-[var(--accent)] uppercase opacity-60">
+                                        <span className="font-body text-xs md:text-sm tracking-[0.2em] text-[var(--accent-interactive)] uppercase opacity-60">
                                             {month.vol}
                                         </span>
                                     </div>
                                     {/* Decorative small square */}
                                     <motion.div
-                                        className="w-1.5 h-1.5 bg-[var(--accent)]"
+                                        className="w-1.5 h-1.5 bg-[var(--accent-interactive)]"
                                         animate={{ opacity: isHovered ? 1 : 0.3 }}
                                     />
                                 </div>
@@ -189,7 +189,7 @@ export default function ArchiveGrid({ months, aboutContent }: ArchiveGridProps) 
 
                             {/* Hover Overlay (Subtle Tint) */}
                             <motion.div
-                                className="absolute inset-0 bg-[var(--accent)] pointer-events-none"
+                                className="absolute inset-0 bg-[var(--accent-interactive)] pointer-events-none"
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: isHovered ? 0.02 : 0 }}
                             />
@@ -221,13 +221,13 @@ export default function ArchiveGrid({ months, aboutContent }: ArchiveGridProps) 
                                 {months.find(m => m.id === selectedId)?.label}
                             </motion.h2>
                             <motion.div
-                                className="h-[1px] w-24 bg-[var(--accent)] mb-6"
+                                className="h-[1px] w-24 bg-[var(--accent-interactive)] mb-6"
                                 initial={{ width: 0 }}
                                 animate={{ width: 96 }}
                                 transition={{ delay: 0.3 }}
                             />
                             <motion.span
-                                className="font-body text-xl md:text-2xl text-[var(--accent)] tracking-widest"
+                                className="font-body text-xl md:text-2xl text-[var(--accent-interactive)] tracking-widest"
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ delay: 0.4 }}

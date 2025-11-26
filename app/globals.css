@@ -146,7 +146,7 @@ body {
 
 .about-overlay-scroll {
   scrollbar-width: thin;
-  scrollbar-color: var(--accent) transparent;
+  scrollbar-color: var(--accent-interactive) transparent;
 }
 
 .about-overlay-scroll::-webkit-scrollbar {
@@ -158,12 +158,12 @@ body {
 }
 
 .about-overlay-scroll::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), var(--accent));
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), var(--accent-interactive));
   border-radius: 999px;
 }
 
 .about-overlay-scroll::-webkit-scrollbar-thumb:hover {
-  background: var(--accent);
+  background: var(--accent-interactive);
 }
 
 /* 首页封面区统一容器,避免卡片无限拉伸 */

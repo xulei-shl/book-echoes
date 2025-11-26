@@ -94,7 +94,7 @@ export default function MagazineCard({ month, isLatest = false, className = '' }
                     </div>
                 ) : (
                     <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="text-center text-[#8B3A3A]/40">
+                        <div className="text-center text-[#C9A063]/40">
                             <p className="font-display text-sm">等待书籍归档</p>
                         </div>
                     </div>
@@ -104,16 +104,16 @@ export default function MagazineCard({ month, isLatest = false, className = '' }
                 <div className="absolute inset-0 flex flex-col justify-end p-6 pointer-events-none z-30">
                     {isLatest && (
                         <div className="inline-flex items-center gap-2 mb-2 w-fit">
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-mono border border-[#8B3A3A]/50 text-[#8B3A3A] bg-[#8B3A3A]/10">
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-mono border border-[#C9A063]/50 text-[#C9A063] bg-[#C9A063]/10">
                                 LATEST
                             </span>
                         </div>
                     )}
 
-                    <div className="flex items-center justify-between border-t border-[#8B3A3A]/30 pt-2">
+                    <div className="flex items-center justify-between border-t border-[#C9A063]/30 pt-2">
                         <span className="font-body text-lg text-[#E8E6DC]/80">{month.vol}</span>
                         {month.bookCount > 0 && (
-                            <span className="font-mono text-xs text-[#8B3A3A]/80">
+                            <span className="font-mono text-xs text-[#C9A063]/80">
                                 {month.bookCount} BOOKS
                             </span>
                         )}

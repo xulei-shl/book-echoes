@@ -21,7 +21,7 @@ export default function ArchiveYearNav({ years, activeYear }: ArchiveYearNavProp
                 <motion.button
                     key={year}
                     onClick={() => scrollToYear(year)}
-                    className={`text-left font-display text-2xl md:text-3xl transition-colors duration-300 ${activeYear === year ? 'text-[#8B3A3A]' : 'text-gray-500 hover:text-[#E8E6DC]'
+                    className={`text-left font-display text-2xl md:text-3xl transition-colors duration-300 ${activeYear === year ? 'text-[#C9A063]' : 'text-gray-500 hover:text-[#E8E6DC]'
                         }`}
                     whileHover={{ x: 5 }}
                 >

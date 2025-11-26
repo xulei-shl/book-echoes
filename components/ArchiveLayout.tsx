@@ -17,8 +17,8 @@ export default function ArchiveLayout({ years, children }: ArchiveLayoutProps) {
                 <div className="absolute inset-0"
                     style={{
                         backgroundImage: `
-                            linear-gradient(to right, rgba(139, 58, 58, 0.08) 1px, transparent 1px),
-                            linear-gradient(to bottom, rgba(139, 58, 58, 0.08) 1px, transparent 1px)
+                            linear-gradient(to right, rgba(201, 160, 99, 0.08) 1px, transparent 1px),
+                            linear-gradient(to bottom, rgba(201, 160, 99, 0.08) 1px, transparent 1px)
                         `,
                         backgroundSize: '60px 60px'
                     }}
@@ -28,8 +28,8 @@ export default function ArchiveLayout({ years, children }: ArchiveLayoutProps) {
                 <div className="absolute inset-0"
                     style={{
                         backgroundImage: `
-                            linear-gradient(to right, rgba(139, 58, 58, 0.12) 1px, transparent 1px),
-                            linear-gradient(to bottom, rgba(139, 58, 58, 0.12) 1px, transparent 1px)
+                            linear-gradient(to right, rgba(201, 160, 99, 0.12) 1px, transparent 1px),
+                            linear-gradient(to bottom, rgba(201, 160, 99, 0.12) 1px, transparent 1px)
                         `,
                         backgroundSize: '300px 300px'
                     }}
