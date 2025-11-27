@@ -137,11 +137,26 @@ export default function BookCard({ book, state, index = 0 }: BookCardProps) {
     ) : null;
 
     const [randX, randY, randRot] = seededRandoms(book.id, 3);
-    const initialScatterPosition = useMemo(() => ({
-        x: randX * maxW,
-        y: randY * maxH,
-        rotation: randRot * 30 - 15
-    }), [randX, randY, randRot, maxW, maxH]);
+    const initialScatterPosition = useMemo(() => {
+        let x = randX * maxW;
+        let y = randY * maxH;
+
+        // 避开左下角 Dock 区域 (大约占宽度的 40%, 高度的底部 40%)
+        // Dock is max-w-[38vw], fixed at bottom-left
+        const isBottomLeft = x < maxW * 0.4 && y > maxH * 0.6;
+
+        if (isBottomLeft) {
+            // 如果落在左下角,将其向右平移,避开 Dock
+            // 这样既保留了随机性,又避免了重叠
+            x += maxW * 0.4;
+        }
+
+        return {
+            x,
+            y,
+            rotation: randRot * 30 - 15
+        };
+    }, [randX, randY, randRot, maxW, maxH]);
 
     const storedScatterPosition = scatterPositions[book.id];
 
