@@ -1,15 +1,15 @@
 'use client';
 
-import { motion, PanInfo } from 'framer-motion';
 import { Book } from '@/types';
 import { useStore } from '@/store/useStore';
 import { seededRandoms } from '@/lib/seededRandom';
-import { useRef, useState, useEffect, useCallback, useMemo } from 'react';
-import Image from 'next/image';
-
-const PREVIEW_WIDTH = 480;
-const PREVIEW_HEIGHT = 680;
-const PREVIEW_OFFSET = 16;
+import { useRef, useState, useEffect, useMemo } from 'react';
+import DockCard from './BookCard/DockCard';
+import FocusedCard from './BookCard/FocusedCard';
+import ScatterCard from './BookCard/ScatterCard';
+import HoverPreview from './BookCard/HoverPreview';
+import { usePreviewPosition } from './BookCard/usePreviewPosition';
+import { useHoverHandlers } from './BookCard/useHoverHandlers';
 
 interface BookCardProps {
     book: Book;
@@ -19,10 +19,15 @@ interface BookCardProps {
 
 const CARD_WIDTH = 192;
 const CARD_HEIGHT = 288;
-export default function BookCard({ book, state, index = 0 }: BookCardProps) {
-    const { setFocusedBookId, focusedBookId, scatterPositions, setScatterPosition } = useStore();
-    const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
 
+export default function BookCard({ book, state, index = 0 }: BookCardProps) {
+    const { focusedBookId, scatterPositions, setScatterPosition } = useStore();
+    const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+    const cardRef = useRef<HTMLDivElement>(null);
+    const [dragConstraints, setDragConstraints] = useState({ left: 0, right: 0, top: 0, bottom: 0 });
+
+
+    // 窗口尺寸监听
     useEffect(() => {
         const updateSize = () => {
             setWindowSize({ width: window.innerWidth, height: window.innerHeight });
@@ -35,149 +40,33 @@ export default function BookCard({ book, state, index = 0 }: BookCardProps) {
     const maxW = windowSize.width > 0 ? windowSize.width - CARD_WIDTH - 40 : 1720;
     const maxH = windowSize.height > 0 ? windowSize.height - CARD_HEIGHT - 40 : 780;
     const isFocused = focusedBookId === book.id;
-    const isDragging = useRef(false);
-    const cardRef = useRef<HTMLDivElement | null>(null);
-    const [dragConstraints, setDragConstraints] = useState({ left: 0, right: 0, top: 0, bottom: 0 });
-    const [currentZIndex, setCurrentZIndex] = useState(10);
-    const [isHovered, setIsHovered] = useState(false);
-    const [previewPosition, setPreviewPosition] = useState({ x: 0, y: 0 });
-    const latestScatterPosition = useRef<{ x: number; y: number; rotation: number } | null>(null);
 
-    // 使用节流优化预览位置更新,避免频繁重渲染
-    const updatePreviewPositionThrottled = useCallback(() => {
-        if (typeof window === 'undefined' || !cardRef.current) {
-            return;
-        }
-        const rect = cardRef.current.getBoundingClientRect();
-        let left = rect.right + PREVIEW_OFFSET;
-        if (window.innerWidth - rect.right < PREVIEW_WIDTH + PREVIEW_OFFSET) {
-            left = rect.left - PREVIEW_WIDTH - PREVIEW_OFFSET;
-        }
-        let top = rect.top;
-        if (window.innerHeight - rect.top < PREVIEW_HEIGHT + PREVIEW_OFFSET) {
-            top = window.innerHeight - PREVIEW_HEIGHT - PREVIEW_OFFSET;
-        }
-        top = Math.max(PREVIEW_OFFSET, top);
-        left = Math.max(PREVIEW_OFFSET, left);
-        setPreviewPosition({ x: left, y: top });
-    }, []);
+    // 使用自定义 hooks
+    const { previewPosition, updatePreviewPosition } = usePreviewPosition(false, cardRef);
+    const {
+        isHovered,
+        setIsHovered,
+        handleHoverStart,
+        handleHoverEnd,
+        handlePointerMove
+    } = useHoverHandlers(state, cardRef, updatePreviewPosition);
 
-    // 节流函数,限制更新频率为约 60fps
-    const updatePreviewPosition = useCallback(() => {
-        let timeoutId: NodeJS.Timeout | null = null;
-        return () => {
-            if (timeoutId) return;
-            timeoutId = setTimeout(() => {
-                updatePreviewPositionThrottled();
-                timeoutId = null;
-            }, 16); // ~60fps
-        };
-    }, [updatePreviewPositionThrottled])();
-
-    useEffect(() => {
-        if (!isHovered) {
-            return;
-        }
-        updatePreviewPosition();
-        const handleReposition = () => updatePreviewPosition();
-        window.addEventListener('scroll', handleReposition);
-        window.addEventListener('resize', handleReposition);
-        return () => {
-            window.removeEventListener('scroll', handleReposition);
-            window.removeEventListener('resize', handleReposition);
-        };
-    }, [isHovered, updatePreviewPosition]);
-
+    // focused 状态下清除悬停
     useEffect(() => {
         if (state === 'focused') {
             setIsHovered(false);
         }
-    }, [state]);
+    }, [state, setIsHovered]);
 
-    const handleHoverStart = () => {
-        if (state === 'focused') return; // focused 状态下不显示预览
-        setIsHovered(true);
-        updatePreviewPosition();
-    };
-
-    const handleHoverEnd = () => {
-        setIsHovered(false);
-    };
-
-    // 节流优化鼠标移动处理
-    const handlePointerMoveThrottled = useCallback((event: React.PointerEvent) => {
-        if (!cardRef.current) return;
-
-        // 检查鼠标是否真的在卡片元素上
-        const rect = cardRef.current.getBoundingClientRect();
-        const isInside =
-            event.clientX >= rect.left &&
-            event.clientX <= rect.right &&
-            event.clientY >= rect.top &&
-            event.clientY <= rect.bottom;
-
-        if (!isInside && isHovered) {
-            // 鼠标已经移出卡片,但悬浮状态还是 true,强制清除
-            setIsHovered(false);
-        } else if (isInside && isHovered) {
-            updatePreviewPosition();
-        }
-    }, [isHovered, updatePreviewPosition]);
-
-    const handlePointerMove = useMemo(() => {
-        let rafId: number | null = null;
-        return (event: React.PointerEvent) => {
-            if (rafId) return;
-            rafId = requestAnimationFrame(() => {
-                handlePointerMoveThrottled(event);
-                rafId = null;
-            });
-        };
-    }, [handlePointerMoveThrottled]);
-
-
-    // dock 状态下显示卡片图,scatter 状态下显示封面图
-    // 确保有回退选项,避免图片不存在
-    const previewImageSrc = state === 'dock'
-        ? (book.cardThumbnailUrl || book.cardImageUrl || book.coverThumbnailUrl || book.coverUrl)
-        : (book.cardImageUrl || book.coverUrl);
-
-    const hoverPreview = isHovered ? (
-        <motion.div
-            className="pointer-events-none fixed z-[200] drop-shadow-2xl"
-            style={{ left: previewPosition.x, top: previewPosition.y }}
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-        >
-            <div
-                className="rounded-2xl border border-white/10 bg-[#1a1a1a]/95 p-3 backdrop-blur"
-                style={{ width: PREVIEW_WIDTH, height: PREVIEW_HEIGHT }}
-            >
-                <Image
-                    src={previewImageSrc}
-                    alt={`${book.title} cover preview`}
-                    fill
-                    sizes="480px"
-                    className="object-contain rounded-xl bg-black/20"
-                    priority={false}
-                    loading="lazy"
-                />
-            </div>
-        </motion.div>
-    ) : null;
-
+    // 计算散落位置
     const [randX, randY, randRot] = seededRandoms(book.id, 3);
     const initialScatterPosition = useMemo(() => {
         let x = randX * maxW;
         let y = randY * maxH;
 
-        // 避开左下角 Dock 区域 (大约占宽度的 40%, 高度的底部 40%)
-        // Dock is max-w-[38vw], fixed at bottom-left
+        // 避开左下角 Dock 区域
         const isBottomLeft = x < maxW * 0.4 && y > maxH * 0.6;
-
         if (isBottomLeft) {
-            // 如果落在左下角,将其向右平移,避开 Dock
-            // 这样既保留了随机性,又避免了重叠
             x += maxW * 0.4;
         }
 
@@ -190,7 +79,7 @@ export default function BookCard({ book, state, index = 0 }: BookCardProps) {
 
     const storedScatterPosition = scatterPositions[book.id];
 
-    // Calculate drag constraints on client side only
+    // 计算拖拽约束
     useEffect(() => {
         if (state === 'scatter' && typeof window !== 'undefined') {
             setDragConstraints({
@@ -202,6 +91,7 @@ export default function BookCard({ book, state, index = 0 }: BookCardProps) {
         }
     }, [state]);
 
+    // 初始化散落位置
     useEffect(() => {
         if (state === 'scatter' && !storedScatterPosition && windowSize.width > 0) {
             setScatterPosition(book.id, initialScatterPosition);
@@ -210,197 +100,58 @@ export default function BookCard({ book, state, index = 0 }: BookCardProps) {
 
     const scatterTarget = storedScatterPosition ?? initialScatterPosition;
 
-    useEffect(() => {
-        if (state === 'scatter') {
-            latestScatterPosition.current = scatterTarget;
-        }
-    }, [state, scatterTarget.x, scatterTarget.y, scatterTarget.rotation]);
+    // 预览图片源
+    const previewImageSrc = state === 'dock'
+        ? (book.cardThumbnailUrl || book.cardImageUrl || book.coverThumbnailUrl || book.coverUrl)
+        : (book.cardImageUrl || book.coverUrl);
 
-    const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
-
-    const handleDragStart = () => {
-        isDragging.current = true;
-        setCurrentZIndex(80);
-        setIsHovered(false);
-    };
-
-    const handleDragEnd = (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-        const basePosition = latestScatterPosition.current ?? scatterTarget;
-        const rightLimit = dragConstraints.right || maxW;
-        const bottomLimit = dragConstraints.bottom || maxH;
-        const constrained = {
-            x: clamp(basePosition.x + info.offset.x, dragConstraints.left, rightLimit),
-            y: clamp(basePosition.y + info.offset.y, dragConstraints.top, bottomLimit),
-            rotation: basePosition.rotation
-        };
-        setScatterPosition(book.id, constrained);
-        latestScatterPosition.current = constrained;
-
-        // Reset dragging state after a short delay to prevent click from firing
-        setTimeout(() => {
-            isDragging.current = false;
-            setCurrentZIndex(10);
-        }, 100);
-    };
-
-    const isDock = state === 'dock';
-    const isFocusedView = state === 'focused';
-    const shouldRenderHoverPreview = !isFocusedView;
+    // 根据状态渲染不同的卡片
+    const shouldRenderHoverPreview = state !== 'focused';
 
     let cardContent: React.ReactElement | null = null;
 
-    const normalizedTitle = book.title.trim();
-    const normalizedSubtitle = book.subtitle?.trim();
-    const dockLabel = normalizedSubtitle ? `${normalizedTitle} : ${normalizedSubtitle}` : normalizedTitle;
-    const dockVerticalText = dockLabel.replace(/\s+/g, '').split('').join('\n');
-
-    if (isDock) {
-        // Rotate subtle grayscale shades in the dock so each title feels distinct
-        const toneSlot = index % 7;
-        const dockOpacity = 0.5 + (toneSlot * 0.06); // Range: 0.5 - 0.92
-        const dockTextStyle = {
-            color: '#E8E6DC',
-            opacity: dockOpacity
-        };
-
+    if (state === 'dock') {
         cardContent = (
-            <motion.div
-                ref={cardRef}
-                className="relative min-w-[20px] h-32 cursor-pointer transition-transform duration-200 ease-out flex items-end justify-center"
-                onClick={() => setFocusedBookId(book.id)}
-                whileHover={{ y: -10 }}
+            <DockCard
+                book={book}
+                index={index}
+                isHovered={isHovered}
+                cardRef={cardRef}
                 onHoverStart={handleHoverStart}
                 onHoverEnd={handleHoverEnd}
-                style={{ zIndex: isHovered ? 120 : undefined }}
-                title={dockLabel}
-                aria-label={dockLabel}
-            >
-                <span
-                    className="font-dock text-lg tracking-[0.3em] leading-7 whitespace-pre text-center"
-                    style={dockTextStyle}
-                >
-                    {dockVerticalText}
-                </span>
-            </motion.div>
+            />
         );
-    } else if (isFocusedView) {
-        if (isFocused) {
-            cardContent = (
-                <motion.div
-                    layoutId={`book-${book.id}`}
-                    className="absolute left-[10%] top-[10%] w-[30%] h-[80%] z-50 shadow-2xl"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1, x: 0, y: 0, rotate: 0, scale: 1 }}
-                    transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                >
-                    <Image
-                        src={book.coverUrl}
-                        alt={book.title}
-                        fill
-                        sizes="30vw"
-                        className="object-contain rounded-md"
-                        priority={true}
-                    />
-                </motion.div>
-            );
-        } else {
-            const [backgroundX, backgroundY, backgroundRot] = seededRandoms(book.id, 3);
-            const viewportWidth = 1920;
-            const viewportHeight = 1080;
-
-            cardContent = (
-                <motion.div
-                    className="absolute w-48 h-72 opacity-5 pointer-events-none grayscale blur-sm"
-                    initial={false}
-                    animate={{
-                        x: backgroundX * viewportWidth,
-                        y: backgroundY * viewportHeight,
-                        rotate: backgroundRot * 30 - 15
-                    }}
-                    suppressHydrationWarning
-                >
-                    <Image
-                        src={book.coverThumbnailUrl || book.coverUrl}
-                        alt={book.title}
-                        fill
-                        sizes="192px"
-                        className="object-cover rounded-md"
-                        loading="lazy"
-                        priority={false}
-                    />
-                </motion.div>
-            );
-        }
+    } else if (state === 'focused') {
+        cardContent = <FocusedCard book={book} isFocused={isFocused} />;
     } else {
-        const scatterInitial = storedScatterPosition ? {
-            x: scatterTarget.x,
-            y: scatterTarget.y,
-            scale: 1,
-            opacity: 1,
-            rotate: scatterTarget.rotation
-        } : {
-            x: scatterTarget.x,
-            y: scatterTarget.y,
-            scale: 0.9,
-            opacity: 0,
-            rotate: scatterTarget.rotation
-        };
-
         cardContent = (
-            <motion.div
-                ref={cardRef}
-                layoutId={`book-${book.id}`}
-                className="absolute w-48 h-72 cursor-grab active:cursor-grabbing shadow-lg hover:shadow-2xl"
-                drag
+            <ScatterCard
+                book={book}
+                index={index}
+                scatterTarget={scatterTarget}
+                storedScatterPosition={storedScatterPosition}
                 dragConstraints={dragConstraints}
-                dragMomentum={false}
-                dragElastic={0.1}
-                whileDrag={{ scale: 1.1, rotate: 0 }}
-                onDragStart={handleDragStart}
-                onDragEnd={handleDragEnd}
+                maxW={maxW}
+                maxH={maxH}
+                isHovered={isHovered}
+                cardRef={cardRef}
                 onHoverStart={handleHoverStart}
                 onHoverEnd={handleHoverEnd}
                 onPointerMove={handlePointerMove}
-                initial={scatterInitial}
-                animate={{
-                    x: scatterTarget.x,
-                    y: scatterTarget.y,
-                    scale: 1,
-                    opacity: 1,
-                    rotate: scatterTarget.rotation
-                }}
-                transition={{
-                    type: "spring",
-                    stiffness: 80,
-                    damping: 15,
-                    mass: 1,
-                    delay: index * 0.02 // Slight stagger for burst effect
-                }}
-                onClick={() => {
-                    // Only focus if not dragging
-                    if (!isDragging.current) {
-                        setFocusedBookId(book.id);
-                    }
-                }}
-                style={{ zIndex: isHovered ? 120 : currentZIndex }}
-                suppressHydrationWarning
-            >
-                <Image
-                    src={book.coverThumbnailUrl || book.coverUrl}
-                    alt={book.title}
-                    fill
-                    sizes="(max-width: 768px) 50vw, 192px"
-                    className="object-cover rounded-md pointer-events-none"
-                    loading={index < 6 ? 'eager' : 'lazy'}
-                    priority={index < 3}
-                />
-            </motion.div>
+            />
         );
     }
 
     return (
         <>
-            {shouldRenderHoverPreview && hoverPreview}
+            {shouldRenderHoverPreview && (
+                <HoverPreview
+                    isVisible={isHovered}
+                    position={previewPosition}
+                    imageSrc={previewImageSrc}
+                    alt={`${book.title} cover preview`}
+                />
+            )}
             {cardContent}
         </>
     );
