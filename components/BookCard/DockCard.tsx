@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { Book } from '@/types';
 import { useStore } from '@/store/useStore';
+import { DockCardConfig } from '../Dock';
 
 interface DockCardProps {
     book: Book;
@@ -11,6 +12,7 @@ interface DockCardProps {
     cardRef: React.RefObject<HTMLDivElement | null>;
     onHoverStart: () => void;
     onHoverEnd: () => void;
+    config?: DockCardConfig;
 }
 
 export default function DockCard({
@@ -19,7 +21,8 @@ export default function DockCard({
     isHovered,
     cardRef,
     onHoverStart,
-    onHoverEnd
+    onHoverEnd,
+    config
 }: DockCardProps) {
     const { setFocusedBookId } = useStore();
 
@@ -36,21 +39,33 @@ export default function DockCard({
         opacity: dockOpacity
     };
 
+    // 使用配置参数或默认值
+    const minWidth = config?.minWidth ?? 24;
+    const tracking = config?.tracking ?? '0.3em';
+    const fontSize = config?.fontSize ?? 'text-lg';
+
     return (
         <motion.div
             ref={cardRef}
-            className="relative min-w-[20px] h-32 cursor-pointer transition-transform duration-200 ease-out flex items-end justify-center"
+            className={`relative h-32 cursor-pointer transition-transform duration-200 ease-out flex items-end justify-center`}
+            style={{
+                minWidth: `${minWidth}px`,
+                zIndex: isHovered ? 120 : undefined
+            }}
             onClick={() => setFocusedBookId(book.id)}
             whileHover={{ y: -10 }}
             onHoverStart={onHoverStart}
             onHoverEnd={onHoverEnd}
-            style={{ zIndex: isHovered ? 120 : undefined }}
             title={dockLabel}
             aria-label={dockLabel}
         >
             <span
-                className="font-dock text-lg tracking-[0.3em] leading-7 whitespace-pre text-center"
-                style={dockTextStyle}
+                className={`font-dock ${fontSize} whitespace-pre text-center`}
+                style={{
+                    ...dockTextStyle,
+                    letterSpacing: tracking,
+                    lineHeight: '1.75rem'
+                }}
             >
                 {dockVerticalText}
             </span>

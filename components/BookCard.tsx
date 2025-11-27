@@ -10,17 +10,19 @@ import ScatterCard from './BookCard/ScatterCard';
 import HoverPreview from './BookCard/HoverPreview';
 import { usePreviewPosition } from './BookCard/usePreviewPosition';
 import { useHoverHandlers } from './BookCard/useHoverHandlers';
+import { DockCardConfig } from './Dock';
 
 interface BookCardProps {
     book: Book;
     state: 'scatter' | 'focused' | 'dock';
     index?: number;
+    dockConfig?: DockCardConfig;
 }
 
 const CARD_WIDTH = 192;
 const CARD_HEIGHT = 288;
 
-export default function BookCard({ book, state, index = 0 }: BookCardProps) {
+export default function BookCard({ book, state, index = 0, dockConfig }: BookCardProps) {
     const { focusedBookId, scatterPositions, setScatterPosition } = useStore();
     const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
     const cardRef = useRef<HTMLDivElement>(null);
@@ -119,6 +121,7 @@ export default function BookCard({ book, state, index = 0 }: BookCardProps) {
                 cardRef={cardRef}
                 onHoverStart={handleHoverStart}
                 onHoverEnd={handleHoverEnd}
+                config={dockConfig}
             />
         );
     } else if (state === 'focused') {
