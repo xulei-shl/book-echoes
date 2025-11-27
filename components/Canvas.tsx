@@ -15,12 +15,17 @@ interface CanvasProps {
 }
 
 export default function Canvas({ books, month }: CanvasProps) {
-    const { focusedBookId, setViewMode, setSelectedMonth } = useStore();
+    const { focusedBookId, setViewMode, setSelectedMonth, clearScatterPositions } = useStore();
 
     useEffect(() => {
         setViewMode('canvas');
         setSelectedMonth(month);
-    }, [month, setViewMode, setSelectedMonth]);
+
+        // 组件卸载时清理散布位置,防止内存泄漏
+        return () => {
+            clearScatterPositions();
+        };
+    }, [month, setViewMode, setSelectedMonth, clearScatterPositions]);
 
     const [yearStr, monthStr] = month.split('-');
     const yearInt = parseInt(yearStr);

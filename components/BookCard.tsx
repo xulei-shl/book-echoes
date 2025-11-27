@@ -5,6 +5,7 @@ import { Book } from '@/types';
 import { useStore } from '@/store/useStore';
 import { seededRandoms } from '@/lib/seededRandom';
 import { useRef, useState, useEffect, useCallback, useMemo } from 'react';
+import Image from 'next/image';
 
 const PREVIEW_WIDTH = 480;
 const PREVIEW_HEIGHT = 680;
@@ -42,7 +43,8 @@ export default function BookCard({ book, state, index = 0 }: BookCardProps) {
     const [previewPosition, setPreviewPosition] = useState({ x: 0, y: 0 });
     const latestScatterPosition = useRef<{ x: number; y: number; rotation: number } | null>(null);
 
-    const updatePreviewPosition = useCallback(() => {
+    // 使用节流优化预览位置更新,避免频繁重渲染
+    const updatePreviewPositionThrottled = useCallback(() => {
         if (typeof window === 'undefined' || !cardRef.current) {
             return;
         }
@@ -59,6 +61,18 @@ export default function BookCard({ book, state, index = 0 }: BookCardProps) {
         left = Math.max(PREVIEW_OFFSET, left);
         setPreviewPosition({ x: left, y: top });
     }, []);
+
+    // 节流函数,限制更新频率为约 60fps
+    const updatePreviewPosition = useCallback(() => {
+        let timeoutId: NodeJS.Timeout | null = null;
+        return () => {
+            if (timeoutId) return;
+            timeoutId = setTimeout(() => {
+                updatePreviewPositionThrottled();
+                timeoutId = null;
+            }, 16); // ~60fps
+        };
+    }, [updatePreviewPositionThrottled])();
 
     useEffect(() => {
         if (!isHovered) {
@@ -90,7 +104,8 @@ export default function BookCard({ book, state, index = 0 }: BookCardProps) {
         setIsHovered(false);
     };
 
-    const handlePointerMove = (event: React.PointerEvent) => {
+    // 节流优化鼠标移动处理
+    const handlePointerMoveThrottled = useCallback((event: React.PointerEvent) => {
         if (!cardRef.current) return;
 
         // 检查鼠标是否真的在卡片元素上
@@ -107,7 +122,18 @@ export default function BookCard({ book, state, index = 0 }: BookCardProps) {
         } else if (isInside && isHovered) {
             updatePreviewPosition();
         }
-    };
+    }, [isHovered, updatePreviewPosition]);
+
+    const handlePointerMove = useMemo(() => {
+        let rafId: number | null = null;
+        return (event: React.PointerEvent) => {
+            if (rafId) return;
+            rafId = requestAnimationFrame(() => {
+                handlePointerMoveThrottled(event);
+                rafId = null;
+            });
+        };
+    }, [handlePointerMoveThrottled]);
 
 
     // dock 状态下显示卡片图,scatter 状态下显示封面图
@@ -127,10 +153,14 @@ export default function BookCard({ book, state, index = 0 }: BookCardProps) {
                 className="rounded-2xl border border-white/10 bg-[#1a1a1a]/95 p-3 backdrop-blur"
                 style={{ width: PREVIEW_WIDTH, height: PREVIEW_HEIGHT }}
             >
-                <img
+                <Image
                     src={previewImageSrc}
                     alt={`${book.title} cover preview`}
-                    className="w-full h-full object-contain rounded-xl bg-black/20"
+                    fill
+                    sizes="480px"
+                    className="object-contain rounded-xl bg-black/20"
+                    priority={false}
+                    loading="lazy"
                 />
             </div>
         </motion.div>
@@ -263,10 +293,13 @@ export default function BookCard({ book, state, index = 0 }: BookCardProps) {
                     animate={{ opacity: 1, x: 0, y: 0, rotate: 0, scale: 1 }}
                     transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                 >
-                    <img
+                    <Image
                         src={book.coverUrl}
                         alt={book.title}
-                        className="w-full h-full object-contain rounded-md"
+                        fill
+                        sizes="30vw"
+                        className="object-contain rounded-md"
+                        priority={true}
                     />
                 </motion.div>
             );
@@ -286,10 +319,14 @@ export default function BookCard({ book, state, index = 0 }: BookCardProps) {
                     }}
                     suppressHydrationWarning
                 >
-                    <img
+                    <Image
                         src={book.coverThumbnailUrl || book.coverUrl}
                         alt={book.title}
-                        className="w-full h-full object-cover rounded-md"
+                        fill
+                        sizes="192px"
+                        className="object-cover rounded-md"
+                        loading="lazy"
+                        priority={false}
                     />
                 </motion.div>
             );
@@ -348,10 +385,14 @@ export default function BookCard({ book, state, index = 0 }: BookCardProps) {
                 style={{ zIndex: isHovered ? 120 : currentZIndex }}
                 suppressHydrationWarning
             >
-                <img
+                <Image
                     src={book.coverThumbnailUrl || book.coverUrl}
                     alt={book.title}
-                    className="w-full h-full object-cover rounded-md pointer-events-none"
+                    fill
+                    sizes="(max-width: 768px) 50vw, 192px"
+                    className="object-cover rounded-md pointer-events-none"
+                    loading={index < 6 ? 'eager' : 'lazy'}
+                    priority={index < 3}
                 />
             </motion.div>
         );

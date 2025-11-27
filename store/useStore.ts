@@ -10,6 +10,7 @@ interface BookState {
     setSelectedMonth: (month: string | null) => void;
     setFocusedBookId: (id: string | null) => void;
     setScatterPosition: (id: string, pos: { x: number; y: number; rotation: number }) => void;
+    clearScatterPositions: () => void; // 清理散布位置,防止内存泄漏
 }
 
 export const useStore = create<BookState>((set) => ({
@@ -28,4 +29,5 @@ export const useStore = create<BookState>((set) => ({
                 [id]: pos
             }
         })),
+    clearScatterPositions: () => set({ scatterPositions: {} }),
 }));
