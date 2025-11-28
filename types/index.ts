@@ -22,6 +22,8 @@ export interface Book {
     coverThumbnailUrl?: string;
     cardImageUrl?: string;
     cardThumbnailUrl?: string;
+    originalImageUrl?: string;
+    originalThumbnailUrl?: string;
 }
 
 export interface MonthData {

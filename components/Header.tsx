@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
@@ -16,6 +16,23 @@ export default function Header({ showHomeButton = false, aboutContent, theme = '
     const router = useRouter();
     const pathname = usePathname();
     const [isAboutOpen, setIsAboutOpen] = useState(false);
+    const [isVisible, setIsVisible] = useState(true);
+    const [lastScrollY, setLastScrollY] = useState(0);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const currentScrollY = window.scrollY;
+            if (currentScrollY > lastScrollY && currentScrollY > 50) {
+                setIsVisible(false);
+            } else {
+                setIsVisible(true);
+            }
+            setLastScrollY(currentScrollY);
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [lastScrollY]);
 
     const buttonStyles = theme === 'dark'
         ? "border-[#E8E6DC]/10 bg-[#1a1a1a]/90 text-[#E8E6DC] hover:bg-[#C9A063] hover:text-[#1a1a1a] focus-visible:ring-[#C9A063] focus-visible:ring-offset-[#1a1a1a]"
@@ -49,8 +66,8 @@ export default function Header({ showHomeButton = false, aboutContent, theme = '
                 <motion.div
                     className="absolute left-1/2 -translate-x-1/2 pointer-events-auto flex items-center gap-3 z-10"
                     initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.1 }}
+                    animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : -20 }}
+                    transition={{ duration: 0.3 }}
                 >
                     {showHomeButton && (
                         <>
@@ -98,6 +115,30 @@ export default function Header({ showHomeButton = false, aboutContent, theme = '
                                 </button>
                             )}
                         </>
+                    )}
+
+                    {/* Random Walk Button */}
+                    {(pathname === '/archive' || (pathname && pathname !== '/' && !pathname.startsWith('/random'))) && (
+                        <button
+                            onClick={() => router.push('/random')}
+                            className={`inline-flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 rounded-full border text-sm md:text-base font-body shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 transition-all duration-300 ${buttonStyles}`}
+                            aria-label="随机漫步"
+                        >
+                            <svg
+                                className="w-4 h-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+                                />
+                            </svg>
+                            <span>漫步</span>
+                        </button>
                     )}
 
                     {/* About Button */}

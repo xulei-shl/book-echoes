@@ -18,9 +18,14 @@ async function getMonthData(month: string): Promise<Book[]> {
     let filePath = '';
 
     const subjectMatch = month.match(/^(\d{4})-subject-(.+)$/);
+    const sleepingMatch = month.match(/^(\d{4})-sleeping-(.+)$/);
+
     if (subjectMatch) {
         const [_, year, name] = subjectMatch;
         filePath = path.join(process.cwd(), 'public', 'content', year, 'subject', decodeURIComponent(name), 'metadata.json');
+    } else if (sleepingMatch) {
+        const [_, year, name] = sleepingMatch;
+        filePath = path.join(process.cwd(), 'public', 'content', year, 'new', decodeURIComponent(name), 'metadata.json');
     } else {
         const monthMatch = month.match(/^(\d{4})-\d{2}$/);
         if (monthMatch) {
@@ -87,6 +92,16 @@ export async function generateStaticParams() {
                 subjectEntries
                     .filter(e => e.isDirectory())
                     .forEach(e => params.push({ month: `${year}-subject-${e.name}` }));
+            }
+
+            // Sleeping Beauties (new)
+            const sleepingDirEntry = entries.find(e => e.isDirectory() && e.name === 'new');
+            if (sleepingDirEntry) {
+                const sleepingPath = path.join(yearPath, 'new');
+                const sleepingEntries = await fs.readdir(sleepingPath, { withFileTypes: true });
+                sleepingEntries
+                    .filter(e => e.isDirectory())
+                    .forEach(e => params.push({ month: `${year}-sleeping-${e.name}` }));
             }
         }
     } catch (e) {

@@ -58,5 +58,7 @@ export function transformMetadataToBook(item: MetadataEntry, month: string): Boo
         coverThumbnailUrl: resolveImageUrl(item.coverThumbnailUrl ? String(item.coverThumbnailUrl) : undefined, legacyCoverThumbnailPath(month, id)),
         cardImageUrl: resolveImageUrl(item.cardImageUrl ? String(item.cardImageUrl) : undefined, legacyCardImagePath(month, id)),
         cardThumbnailUrl: resolveImageUrl(item.cardThumbnailUrl ? String(item.cardThumbnailUrl) : undefined, legacyCardThumbnailPath(month, id)),
+        originalImageUrl: resolveImageUrl(item.originalImageUrl ? String(item.originalImageUrl) : undefined),
+        originalThumbnailUrl: resolveImageUrl(item.originalThumbnailUrl ? String(item.originalThumbnailUrl) : undefined),
     };
 }

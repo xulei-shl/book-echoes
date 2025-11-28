@@ -222,3 +222,30 @@ export async function getAboutContent() {
     return '';
   }
 }
+
+export async function getAllBooksRandomized(): Promise<Book[]> {
+  const archiveData = await getArchiveData();
+  const allBooks: Book[] = [];
+
+  archiveData.forEach(yearData => {
+    // Helper to process items
+    const processItems = (items: ArchiveItem[]) => {
+      items.forEach(item => {
+        item.books.forEach(book => {
+          // Inject sourceId for routing
+          allBooks.push({
+            ...book,
+            sourceId: item.id
+          });
+        });
+      });
+    };
+
+    processItems(yearData.months);
+    processItems(yearData.subjects);
+    processItems(yearData.sleepingBeauties);
+  });
+
+  // Shuffle the books
+  return allBooks.sort(() => Math.random() - 0.5);
+}
