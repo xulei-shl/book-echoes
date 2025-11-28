@@ -35,8 +35,8 @@ export default function Header({ showHomeButton = false, aboutContent, theme = '
     }, [lastScrollY]);
 
     const buttonStyles = theme === 'dark'
-        ? "border-[#E8E6DC]/10 bg-[#1a1a1a]/90 text-[#E8E6DC] hover:bg-[#C9A063] hover:text-[#1a1a1a] focus-visible:ring-[#C9A063] focus-visible:ring-offset-[#1a1a1a]"
-        : "border-white/10 bg-[var(--background)]/90 text-[var(--foreground)] hover:bg-[#C9A063] hover:text-white focus-visible:ring-[#C9A063] focus-visible:ring-offset-[var(--background)]";
+        ? "btn-random btn-random--dark px-4 py-2 md:px-5 md:py-2.5 text-sm md:text-base font-body tracking-widest hover:scale-105"
+        : "btn-random px-4 py-2 md:px-5 md:py-2.5 text-sm md:text-base font-body tracking-widest hover:scale-105";
 
     return (
         <header className="fixed top-0 left-0 right-0 z-50 pointer-events-none">
@@ -73,7 +73,7 @@ export default function Header({ showHomeButton = false, aboutContent, theme = '
                         <>
                             <button
                                 onClick={() => router.push('/')}
-                                className={`inline-flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 rounded-full border text-sm md:text-base font-body shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 transition-all duration-300 ${buttonStyles}`}
+                                className={buttonStyles}
                                 aria-label="返回首页"
                             >
                                 <svg
@@ -95,9 +95,9 @@ export default function Header({ showHomeButton = false, aboutContent, theme = '
                             {pathname !== '/archive' && (
                                 <button
                                     onClick={() => router.push('/archive')}
-                                    className={`inline-flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 rounded-full border text-sm md:text-base font-body shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 transition-all duration-300 ${buttonStyles}`}
-                                    aria-label="往期回顾"
-                                >
+                                className={buttonStyles}
+                                aria-label="往期回顾"
+                            >
                                     <svg
                                         className="w-4 h-4"
                                         fill="none"
@@ -121,7 +121,7 @@ export default function Header({ showHomeButton = false, aboutContent, theme = '
                     {(pathname === '/archive' || (pathname && pathname !== '/' && !pathname.startsWith('/random'))) && (
                         <button
                             onClick={() => router.push('/random')}
-                            className={`inline-flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 rounded-full border text-sm md:text-base font-body shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 transition-all duration-300 ${buttonStyles}`}
+                            className={buttonStyles}
                             aria-label="随机漫步"
                         >
                             <svg
@@ -145,7 +145,7 @@ export default function Header({ showHomeButton = false, aboutContent, theme = '
                     {aboutContent && (
                         <button
                             onClick={() => setIsAboutOpen(true)}
-                            className={`inline-flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 rounded-full border text-sm md:text-base font-body shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 transition-all duration-300 ${buttonStyles}`}
+                            className={buttonStyles}
                             aria-label="关于"
                         >
                             <svg

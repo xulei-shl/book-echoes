@@ -31,7 +31,7 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
             <button
                 type="button"
                 aria-label="上一条书籍"
-                className="fixed left-[calc(40%+2rem)] top-1/2 -translate-y-1/2 z-[121] inline-flex h-12 w-12 items-center justify-center rounded-full border border-[#E8E6DC]/10 bg-[#1a1a1a]/90 text-[#E8E6DC] text-2xl shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur hover:bg-[#C9A063] hover:text-[#1a1a1a] hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C9A063] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a] transition-all duration-300"
+                className="btn-random btn-random--dark btn-random--circle btn-random--circle-lg fixed left-[calc(40%+2rem)] top-1/2 -translate-y-1/2 z-[121] text-2xl shadow-[0_10px_30px_rgba(0,0,0,0.5)] hover:scale-105"
                 onClick={() => handleNavigate('prev')}
             >
                 &larr;
@@ -39,7 +39,7 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
             <button
                 type="button"
                 aria-label="下一条书籍"
-                className="fixed right-8 top-1/2 -translate-y-1/2 z-[121] inline-flex h-12 w-12 items-center justify-center rounded-full border border-[#E8E6DC]/10 bg-[#1a1a1a]/90 text-[#E8E6DC] text-2xl shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur hover:bg-[#C9A063] hover:text-[#1a1a1a] hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C9A063] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a] transition-all duration-300"
+                className="btn-random btn-random--dark btn-random--circle btn-random--circle-lg fixed right-8 top-1/2 -translate-y-1/2 z-[121] text-2xl shadow-[0_10px_30px_rgba(0,0,0,0.5)] hover:scale-105"
                 onClick={() => handleNavigate('next')}
             >
                 &rarr;
@@ -52,7 +52,7 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
                 {/* Three-dot button */}
                 <button
                     aria-label="菜单"
-                    className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-[#E8E6DC]/10 bg-[#1a1a1a]/90 text-[#E8E6DC] shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur hover:bg-[#C9A063] hover:text-[#1a1a1a] hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C9A063] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a] transition-all duration-300"
+                    className="btn-random btn-random--dark btn-random--circle shadow-[0_10px_30px_rgba(0,0,0,0.5)] hover:scale-105"
                 >
                     <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                         <circle cx="12" cy="5" r="2" />
@@ -67,7 +67,7 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
                     <button
                         onClick={() => setFocusedBookId(null)}
                         aria-label="关闭"
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[#E8E6DC]/10 bg-[#1a1a1a]/95 text-[#E8E6DC] shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur hover:bg-[#C9A063] hover:text-[#1a1a1a] transition-all duration-300 whitespace-nowrap"
+                        className="btn-random btn-random--dark px-4 py-2 text-sm shadow-[0_10px_30px_rgba(0,0,0,0.5)] whitespace-nowrap"
                     >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -138,7 +138,7 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
                             }
                         }}
                         aria-label="下载当前书籍"
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[#E8E6DC]/10 bg-[#1a1a1a]/95 text-[#E8E6DC] shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur hover:bg-[#C9A063] hover:text-[#1a1a1a] transition-all duration-300 whitespace-nowrap"
+                        className="btn-random btn-random--dark px-4 py-2 text-sm shadow-[0_10px_30px_rgba(0,0,0,0.5)] whitespace-nowrap"
                     >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -197,7 +197,7 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
                             }
                         }}
                         aria-label="下载全部数据"
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[#E8E6DC]/10 bg-[#1a1a1a]/95 text-[#E8E6DC] shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur hover:bg-[#C9A063] hover:text-[#1a1a1a] transition-all duration-300 whitespace-nowrap"
+                        className="btn-random btn-random--dark px-4 py-2 text-sm shadow-[0_10px_30px_rgba(0,0,0,0.5)] whitespace-nowrap"
                     >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />

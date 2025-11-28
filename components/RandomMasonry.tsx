@@ -40,13 +40,18 @@ export default function RandomMasonry({ initialBooks }: RandomMasonryProps) {
         <div className="min-h-screen bg-[var(--background)]">
             {/* Header Navigation */}
             <div className="fixed top-0 left-0 right-0 z-50 flex justify-center items-start pt-6 pointer-events-none">
-                <div className="flex items-center gap-6 pointer-events-auto bg-[#F2F0E9]/90 backdrop-blur-md px-8 py-3 rounded-full shadow-sm border border-[#D4CFC3]/50 transition-all hover:shadow-md hover:bg-[#F2F0E9]">
-                    <Link href="/" className="font-display text-[var(--foreground)] hover:text-[var(--accent)] transition-colors text-lg tracking-widest">
-                        首页
+                <div className="flex items-center gap-3 pointer-events-auto">
+                    <Link href="/" className="btn-random px-4 py-2 md:px-5 md:py-2.5 text-sm md:text-base font-body tracking-widest">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                        </svg>
+                        <span>首页</span>
                     </Link>
-                    <div className="w-px h-4 bg-[#D4CFC3]"></div>
-                    <Link href="/archive" className="font-display text-[var(--foreground)] hover:text-[var(--accent)] transition-colors text-lg tracking-widest">
-                        往期
+                    <Link href="/archive" className="btn-random px-4 py-2 md:px-5 md:py-2.5 text-sm md:text-base font-body tracking-widest">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                        </svg>
+                        <span>往期</span>
                     </Link>
                 </div>
             </div>
@@ -88,7 +93,7 @@ export default function RandomMasonry({ initialBooks }: RandomMasonryProps) {
             {/* Shuffle Button */}
             <button
                 onClick={shuffle}
-                className="fixed bottom-12 right-12 bg-[var(--accent)] text-[#F2F0E9] p-4 rounded-full shadow-lg hover:shadow-2xl hover:bg-[var(--accent-primary)] transition-all hover:scale-110 z-50 group border border-white/10"
+                className="btn-random btn-random--dark btn-random--circle btn-random--circle-lg fixed bottom-12 right-12 shadow-lg hover:scale-110 z-50 group border border-white/10"
                 aria-label="Shuffle"
             >
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:rotate-180 transition-transform duration-700 ease-in-out">

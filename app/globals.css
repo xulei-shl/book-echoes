@@ -344,3 +344,44 @@ body {
     letter-spacing: 0.3em;
   }
 }
+
+@layer components {
+  /* 统一的随机漫步按钮样式，便于跨页面复用 */
+  .btn-random {
+    @apply inline-flex items-center gap-2 rounded-full border border-[#D4CFC3]/60 bg-[#F2F0E9]/90 text-[var(--foreground)] font-display shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C9A063]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent;
+    transform-origin: center;
+  }
+
+  .btn-random:hover,
+  .btn-random:focus-visible {
+    color: #1a1a1a;
+    background-color: #C9A063;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.18);
+    transform: translateY(-1px);
+  }
+
+  .btn-random--dark {
+    @apply border-[#E8E6DC]/15 bg-[#1a1a1a]/90 text-[#E8E6DC] focus-visible:ring-offset-[#1a1a1a];
+  }
+
+  .btn-random--circle {
+    width: 3.25rem;
+    height: 3.25rem;
+    padding: 0;
+    border-radius: 999px;
+    justify-content: center;
+  }
+
+  .btn-random--circle-lg {
+    width: 4rem;
+    height: 4rem;
+  }
+
+  .btn-random svg {
+    transition: transform 0.35s ease;
+  }
+
+  .btn-random:hover svg {
+    transform: scale(1.05);
+  }
+}
