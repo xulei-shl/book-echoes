@@ -125,17 +125,14 @@ export default function RandomMasonry({ initialBooks }: RandomMasonryProps) {
                             className="break-inside-avoid mb-6 group relative cursor-pointer"
                             onClick={() => router.push(`/${book.month}`)}
                         >
-                            <div
-                                className="relative overflow-hidden rounded-sm shadow-[0_15px_45px_rgba(0,0,0,0.45)] hover:shadow-[0_25px_60px_rgba(0,0,0,0.6)] transition-all duration-500 bg-[#1c1915] border border-[#d4a5741a]"
-                                style={{ minHeight: cardHeight }}
-                            >
+                            <div className="relative overflow-hidden rounded-sm shadow-[0_15px_45px_rgba(0,0,0,0.45)] hover:shadow-[0_25px_60px_rgba(0,0,0,0.6)] transition-all duration-500 bg-[#1c1915] border border-[#d4a5741a]">
                                 {/* Image */}
                                 <img
                                     src={book.originalImageUrl || book.originalThumbnailUrl || book.cardImageUrl || book.coverUrl}
                                     alt={book.title}
-                                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                                    className="w-full h-auto object-contain transition-transform duration-1000 group-hover:scale-100"
                                     loading="lazy"
-                                    style={{ minHeight: cardHeight }}
+                                    style={{ maxHeight: cardHeight }}
                                 />
 
                                 {/* Overlay */}
