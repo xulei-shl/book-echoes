@@ -1,7 +1,6 @@
-import { getMonths, getAboutContent } from '@/lib/content';
+import { getArchiveData, getAboutContent } from '@/lib/content';
 import Header from '@/components/Header';
 import ArchiveContent from '@/components/ArchiveContent';
-import { MonthData } from '@/lib/content';
 
 export const metadata = {
     title: '往期回顾 | 书海回响',
@@ -9,20 +8,10 @@ export const metadata = {
 };
 
 export default async function ArchivePage() {
-    const months = await getMonths();
+    const archiveData = await getArchiveData();
     const aboutContent = await getAboutContent();
 
-    // Group months by year
-    const monthsByYear: Record<string, MonthData[]> = {};
-    months.forEach(month => {
-        const year = month.id.split('-')[0];
-        if (!monthsByYear[year]) {
-            monthsByYear[year] = [];
-        }
-        monthsByYear[year].push(month);
-    });
-
-    const existingYears = Object.keys(monthsByYear);
+    const existingYears = archiveData.map(data => data.year);
     const futureYears = ['2028', '2027', '2026'];
     const years = Array.from(new Set([...futureYears, ...existingYears])).sort((a, b) => b.localeCompare(a));
 
@@ -55,7 +44,7 @@ export default async function ArchivePage() {
                 />
             </div>
 
-            <ArchiveContent years={years} monthsByYear={monthsByYear} />
+            <ArchiveContent years={years} archiveData={archiveData} />
         </main>
     );
 }

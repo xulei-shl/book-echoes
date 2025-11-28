@@ -1,15 +1,13 @@
 'use client';
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ArchiveYearNav from './ArchiveYearNav';
 import MagazineCard from './MagazineCard';
-
-import { MonthData } from '@/lib/content';
+import { YearArchiveData, ArchiveItem } from '@/lib/content';
 
 interface ArchiveContentProps {
     years: string[];
-    monthsByYear: Record<string, MonthData[]>;
+    archiveData: YearArchiveData[];
 }
 
 // 辅助函数：将月份转换为繁体汉字
@@ -49,8 +47,36 @@ function getInitialYear(years: string[]): string {
     return closestYear || sortedYears[sortedYears.length - 1];
 }
 
-export default function ArchiveContent({ years, monthsByYear }: ArchiveContentProps) {
+export default function ArchiveContent({ years, archiveData }: ArchiveContentProps) {
     const [activeYear, setActiveYear] = useState(getInitialYear(years));
+    const [activeTab, setActiveTab] = useState<'month' | 'subject' | 'sleeping_beauty'>('month');
+
+    // Reset tab to month when year changes
+    // Reset tab to month when year changes
+    useEffect(() => {
+        setActiveTab('month');
+    }, [activeYear]);
+
+    const currentYearData = archiveData.find(d => d.year === activeYear);
+    const months = currentYearData?.months || [];
+    const subjects = currentYearData?.subjects || [];
+    const sleepingBeauties = currentYearData?.sleepingBeauties || [];
+
+    const hasMonths = months.length > 0;
+    const hasSubjects = subjects.length > 0;
+    const hasSleepingBeauties = sleepingBeauties.length > 0;
+
+    // Determine what to show
+    let itemsToShow: ArchiveItem[] = [];
+    if (activeTab === 'month') {
+        itemsToShow = months;
+    } else if (activeTab === 'subject') {
+        itemsToShow = subjects;
+    } else if (activeTab === 'sleeping_beauty') {
+        itemsToShow = sleepingBeauties;
+    }
+
+    const isEmpty = itemsToShow.length === 0;
 
     return (
         <div className="relative z-10 pt-32 pb-20 px-4 md:px-8">
@@ -68,31 +94,87 @@ export default function ArchiveContent({ years, monthsByYear }: ArchiveContentPr
                 <main className="md:col-span-10 min-h-[60vh]">
                     <AnimatePresence mode="wait">
                         <motion.div
-                            key={activeYear}
+                            key={`${activeYear}-${activeTab}`}
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -20 }}
                             transition={{ duration: 0.4, ease: "easeOut" }}
                         >
-                            <div className="mb-8 border-b border-[#C9A063]/20 pb-4 flex items-end gap-4">
-                                <h2 className="font-display text-3xl md:text-4xl text-[#C9A063]">
-                                    {activeYear}
-                                </h2>
-                                <span className="text-sm font-mono text-[#C9A063]/40 mb-1 tracking-widest">ARCHIVE COLLECTION</span>
+                            <div className="mb-8 border-b border-[#C9A063]/20 pb-4 flex flex-col md:flex-row md:items-end gap-4 justify-between">
+                                <div className="flex items-end gap-4">
+                                    <h2 className="font-display text-3xl md:text-4xl text-[#C9A063]">
+                                        {activeYear}
+                                    </h2>
+                                    <span className="text-sm font-mono text-[#C9A063]/40 mb-1 tracking-widest">ARCHIVE COLLECTION</span>
+                                </div>
+
+                                {/* Tab Switcher */}
+                                {(hasMonths || hasSubjects || hasSleepingBeauties) && (
+                                    <div className="flex items-center gap-6 mb-1">
+                                        <button
+                                            onClick={() => setActiveTab('month')}
+                                            className={`text-sm tracking-widest transition-colors duration-300 relative pb-1 ${activeTab === 'month'
+                                                ? 'text-[#C9A063]'
+                                                : 'text-[#C9A063]/40 hover:text-[#C9A063]/70'
+                                                }`}
+                                        >
+                                            月份牌
+                                            {activeTab === 'month' && (
+                                                <motion.div
+                                                    layoutId="activeTabIndicator"
+                                                    className="absolute bottom-0 left-0 right-0 h-[1px] bg-[#C9A063]"
+                                                />
+                                            )}
+                                        </button>
+                                        <button
+                                            onClick={() => setActiveTab('sleeping_beauty')}
+                                            className={`text-sm tracking-widest transition-colors duration-300 relative pb-1 ${activeTab === 'sleeping_beauty'
+                                                ? 'text-[#C9A063]'
+                                                : 'text-[#C9A063]/40 hover:text-[#C9A063]/70'
+                                                }`}
+                                        >
+                                            睡美人
+                                            {activeTab === 'sleeping_beauty' && (
+                                                <motion.div
+                                                    layoutId="activeTabIndicator"
+                                                    className="absolute bottom-0 left-0 right-0 h-[1px] bg-[#C9A063]"
+                                                />
+                                            )}
+                                        </button>
+                                        <button
+                                            onClick={() => setActiveTab('subject')}
+                                            className={`text-sm tracking-widest transition-colors duration-300 relative pb-1 ${activeTab === 'subject'
+                                                ? 'text-[#C9A063]'
+                                                : 'text-[#C9A063]/40 hover:text-[#C9A063]/70'
+                                                }`}
+                                        >
+                                            主题卡
+                                            {activeTab === 'subject' && (
+                                                <motion.div
+                                                    layoutId="activeTabIndicator"
+                                                    className="absolute bottom-0 left-0 right-0 h-[1px] bg-[#C9A063]"
+                                                />
+                                            )}
+                                        </button>
+                                    </div>
+                                )}
                             </div>
 
-                            {(!monthsByYear[activeYear] || monthsByYear[activeYear].length === 0) ? (
+                            {isEmpty ? (
                                 <div className="flex flex-col items-center justify-center h-[400px] text-[#C9A063]/40 font-display text-xl tracking-widest border border-[#C9A063]/10 bg-[#1a1a1a]/30">
                                     COMING SOON
                                 </div>
                             ) : (
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
-                                    {monthsByYear[activeYear].map((month, index) => {
-                                        const monthChar = getMonthCharacter(month.id);
+                                    {itemsToShow.map((item, index) => {
+                                        // For subjects, we might not have monthChar, or we can use first char of label
+                                        const monthChar = activeTab === 'month'
+                                            ? getMonthCharacter(item.id)
+                                            : item.label.charAt(0); // Use first char for subject as background
 
                                         return (
                                             <div
-                                                key={month.id}
+                                                key={item.id}
                                                 className="relative group p-6 border border-[#C9A063]/20 bg-[#1a1a1a]/50 hover:border-[#C9A063]/60 hover:bg-[#C9A063]/5 transition-all duration-500 overflow-hidden"
                                             >
                                                 {/* 大型繁体汉字背景 - 右下角位置 */}
@@ -129,11 +211,12 @@ export default function ArchiveContent({ years, monthsByYear }: ArchiveContentPr
 
                                                 {/* Technical Label */}
                                                 <div className="absolute top-2 left-3 text-[10px] font-mono text-[#C9A063]/60 tracking-widest opacity-70 group-hover:opacity-100 transition-opacity z-10">
-                                                    {month.id.replace('-', '.')}
+                                                    {activeTab === 'month' ? item.id.replace('-', '.') : item.id}
                                                 </div>
 
                                                 {/* Card Content */}
-                                                <MagazineCard month={month} className="h-[360px] relative z-10" />
+                                                {/* MagazineCard expects MonthData, which is compatible with ArchiveItem */}
+                                                <MagazineCard month={item} className="h-[360px] relative z-10" />
                                             </div>
                                         );
                                     })}

@@ -15,7 +15,22 @@ interface PageProps {
 
 // Function to get data for a specific month
 async function getMonthData(month: string): Promise<Book[]> {
-    const filePath = path.join(process.cwd(), 'public', 'content', month, 'metadata.json');
+    let filePath = '';
+
+    const subjectMatch = month.match(/^(\d{4})-subject-(.+)$/);
+    if (subjectMatch) {
+        const [_, year, name] = subjectMatch;
+        filePath = path.join(process.cwd(), 'public', 'content', year, 'subject', decodeURIComponent(name), 'metadata.json');
+    } else {
+        const monthMatch = month.match(/^(\d{4})-\d{2}$/);
+        if (monthMatch) {
+            const year = monthMatch[1];
+            filePath = path.join(process.cwd(), 'public', 'content', year, month, 'metadata.json');
+        } else {
+            // Fallback
+            filePath = path.join(process.cwd(), 'public', 'content', month, 'metadata.json');
+        }
+    }
 
     try {
         const fileContents = await fs.readFile(filePath, 'utf8');
@@ -30,7 +45,9 @@ async function getMonthData(month: string): Promise<Book[]> {
 
 export default async function MonthPage({ params }: PageProps) {
     const { month } = await params;
-    const books = await getMonthData(month);
+    // Decode month param just in case
+    const decodedMonth = decodeURIComponent(month);
+    const books = await getMonthData(decodedMonth);
 
     if (!books || books.length === 0) {
         return (
@@ -40,17 +57,40 @@ export default async function MonthPage({ params }: PageProps) {
         );
     }
 
-    return <Canvas books={books} month={month} />;
+    return <Canvas books={books} month={decodedMonth} />;
 }
 
 export async function generateStaticParams() {
     const contentDir = path.join(process.cwd(), 'public', 'content');
+    const params: { month: string }[] = [];
+
     try {
-        const months = await fs.readdir(contentDir);
-        return months.filter(m => !m.startsWith('.')).map((month) => ({
-            month,
-        }));
+        const yearEntries = await fs.readdir(contentDir, { withFileTypes: true });
+        const yearDirs = yearEntries
+            .filter(entry => entry.isDirectory() && /^\d{4}$/.test(entry.name))
+            .map(entry => entry.name);
+
+        for (const year of yearDirs) {
+            const yearPath = path.join(contentDir, year);
+            const entries = await fs.readdir(yearPath, { withFileTypes: true });
+
+            // Months
+            entries
+                .filter(e => e.isDirectory() && e.name !== 'subject' && !e.name.startsWith('.'))
+                .forEach(e => params.push({ month: e.name }));
+
+            // Subjects
+            const subjectDirEntry = entries.find(e => e.isDirectory() && e.name === 'subject');
+            if (subjectDirEntry) {
+                const subjectPath = path.join(yearPath, 'subject');
+                const subjectEntries = await fs.readdir(subjectPath, { withFileTypes: true });
+                subjectEntries
+                    .filter(e => e.isDirectory())
+                    .forEach(e => params.push({ month: `${year}-subject-${e.name}` }));
+            }
+        }
     } catch (e) {
-        return [];
+        console.error("Error generating static params:", e);
     }
+    return params;
 }
