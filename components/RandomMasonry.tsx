@@ -123,7 +123,7 @@ export default function RandomMasonry({ initialBooks }: RandomMasonryProps) {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.8, delay: Math.min(index * 0.03, 1.5), ease: [0.22, 1, 0.36, 1] }}
                             className="break-inside-avoid mb-6 group relative cursor-pointer"
-                            onClick={() => router.push(`/${book.month}`)}
+                            onClick={() => router.push(`/${book.month}?focus=${book.id}`)}
                         >
                             <div className="relative overflow-hidden rounded-sm shadow-[0_15px_45px_rgba(0,0,0,0.45)] hover:shadow-[0_25px_60px_rgba(0,0,0,0.6)] transition-all duration-500 bg-[#1c1915] border border-[#d4a5741a]">
                                 {/* Image */}

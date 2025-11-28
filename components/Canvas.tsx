@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Book } from '@/types';
 import BookCard from './BookCard';
 import InfoPanel from './InfoPanel';
@@ -8,6 +8,7 @@ import Dock from './Dock';
 import Header from './Header';
 import { useStore } from '@/store/useStore';
 import { AnimatePresence } from 'framer-motion';
+import { useSearchParams } from 'next/navigation';
 
 interface CanvasProps {
     books: Book[];
@@ -15,7 +16,16 @@ interface CanvasProps {
 }
 
 export default function Canvas({ books, month }: CanvasProps) {
-    const { focusedBookId, setViewMode, setSelectedMonth, clearScatterPositions } = useStore();
+    const {
+        focusedBookId,
+        setViewMode,
+        setSelectedMonth,
+        clearScatterPositions,
+        setFocusedBookId
+    } = useStore();
+    const searchParams = useSearchParams();
+    const focusId = searchParams?.get('focus');
+    const appliedFocusRef = useRef<string | null>(null);
 
     useEffect(() => {
         setViewMode('canvas');
@@ -26,6 +36,21 @@ export default function Canvas({ books, month }: CanvasProps) {
             clearScatterPositions();
         };
     }, [month, setViewMode, setSelectedMonth, clearScatterPositions]);
+
+    useEffect(() => {
+        if (!focusId) {
+            appliedFocusRef.current = null;
+            return;
+        }
+        if (appliedFocusRef.current === focusId) {
+            return;
+        }
+        const targetExists = books.some(book => book.id === focusId);
+        if (targetExists) {
+            setFocusedBookId(focusId);
+            appliedFocusRef.current = focusId;
+        }
+    }, [books, focusId, setFocusedBookId]);
 
     const [yearStr, monthStr] = month.split('-');
     const yearInt = parseInt(yearStr);
