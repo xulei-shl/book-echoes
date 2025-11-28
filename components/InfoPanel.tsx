@@ -77,34 +77,53 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
 
                     {/* Download current book button */}
                     <button
-                        onClick={() => {
+                        onClick={async () => {
                             try {
-                                // 准备书籍 JSON 数据
-                                const bookData = {
-                                    书目条码: book.id,
-                                    豆瓣书名: book.title,
-                                    豆瓣副标题: book.subtitle,
-                                    豆瓣作者: book.author,
-                                    豆瓣译者: book.translator,
-                                    豆瓣出版社: book.publisher,
-                                    豆瓣出版年: book.pubYear,
-                                    豆瓣页数: book.pages,
-                                    豆瓣评分: book.rating,
-                                    索书号: book.callNumber,
-                                    索书号链接: book.callNumberLink,
-                                    豆瓣链接: book.doubanLink,
-                                    ISBN: book.isbn,
-                                    人工推荐语: book.recommendation,
-                                    初评理由: book.reason,
-                                    豆瓣内容简介: book.summary,
-                                    豆瓣作者简介: book.authorIntro,
-                                    豆瓣目录: book.catalog,
-                                    条码图片: book.cardImageUrl,
-                                    缩略图: book.cardThumbnailUrl,
-                                };
+                                const month = book.month;
+                                if (!month) {
+                                    alert('无法确定月份路径');
+                                    return;
+                                }
 
-                                // 直接下载 JSON 文件
-                                const blob = new Blob([JSON.stringify(bookData, null, 2)], { type: 'application/json' });
+                                // 构建路径获取完整的 metadata.json
+                                let metadataPath = '';
+
+                                if (month.includes('-subject-')) {
+                                    // 主题卡: 2025-subject-科幻 -> /content/2025/subject/科幻/metadata.json
+                                    const parts = month.split('-subject-');
+                                    const year = parts[0];
+                                    const subjectName = parts[1];
+                                    metadataPath = `/content/${year}/subject/${subjectName}/metadata.json`;
+                                } else if (month.includes('-sleeping-')) {
+                                    // 睡美人: 2025-sleeping-xxx -> /content/2025/new/xxx/metadata.json
+                                    const parts = month.split('-sleeping-');
+                                    const year = parts[0];
+                                    const newName = parts[1];
+                                    metadataPath = `/content/${year}/new/${newName}/metadata.json`;
+                                } else {
+                                    // 月份牌: 2025-08 -> /content/2025/2025-08/metadata.json
+                                    const year = month.split('-')[0];
+                                    metadataPath = `/content/${year}/${month}/metadata.json`;
+                                }
+
+                                // 获取完整的 metadata.json
+                                const response = await fetch(metadataPath);
+                                if (!response.ok) {
+                                    throw new Error(`HTTP error! status: ${response.status}`);
+                                }
+                                const metadata = await response.json();
+
+                                // 从 metadata 中找到当前书籍的完整数据
+                                // 注意：metadata.json 中的字段是 '书目条码'，可能是字符串或数字
+                                const fullBookData = metadata.find((item: any) => String(item['书目条码']) === String(book.id));
+
+                                if (!fullBookData) {
+                                    console.error('查找失败:', { bookId: book.id, metadataLength: metadata.length });
+                                    throw new Error('未找到该书籍的完整数据');
+                                }
+
+                                // 下载完整的书籍数据
+                                const blob = new Blob([JSON.stringify(fullBookData, null, 2)], { type: 'application/json' });
                                 const url = URL.createObjectURL(blob);
                                 const a = document.createElement('a');
                                 a.href = url;
