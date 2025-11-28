@@ -135,10 +135,12 @@ export default function RandomMasonry({ initialBooks }: RandomMasonryProps) {
                                     style={{ maxHeight: cardHeight }}
                                 />
 
-                                {/* Overlay */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6 backdrop-blur-[1px]">
-                                    <h3 className="text-[#F2F0E9] font-bold text-lg font-display tracking-wide drop-shadow-md line-clamp-2 leading-relaxed">{book.title}</h3>
-                                    <p className="text-[#D4A574] text-xs mt-2 font-accent tracking-wider">{getLabel(book.month)}</p>
+                                {/* 悬浮遮罩：提高題名对比度，避免亮底部干扰 */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6 backdrop-blur-[1.5px]">
+                                    <div className="bg-black/55 backdrop-blur-sm rounded-sm px-3 py-2 shadow-[0_8px_25px_rgba(0,0,0,0.45)]">
+                                        <h3 className="text-[#F2F0E9] font-bold text-lg font-display tracking-wide line-clamp-2 leading-relaxed">{book.title}</h3>
+                                        <p className="text-[#D4A574] text-xs mt-2 font-accent tracking-wider">{getLabel(book.month)}</p>
+                                    </div>
                                 </div>
                             </div>
                         </motion.div>
