@@ -41,44 +41,52 @@ export default function RandomMasonry({ initialBooks }: RandomMasonryProps) {
     const getCardHeight = (index: number) => baseCardHeight * heightVariants[index % heightVariants.length];
 
     return (
-        <div className="relative min-h-screen overflow-hidden bg-[#080808] text-[#F2F0E9]">
-            {/* 背景层：以随机漫步为灵感的暗色流线光影 */}
+        <div className="relative min-h-screen overflow-hidden bg-[#0b0b0b] text-[#F2F0E9]">
+            {/* 背景层：延续往期回顾页面的网格秩序与微光 */}
             <div className="absolute inset-0 z-0 pointer-events-none">
+                {/* 基础暗色渐变，保证和谐基底 */}
                 <div
-                    className="absolute inset-0 opacity-90"
+                    className="absolute inset-0"
                     style={{
-                        backgroundImage: 'linear-gradient(125deg, #050505 0%, #0a0a0a 45%, #1b1110 100%)'
+                        backgroundImage: 'linear-gradient(135deg, #050505 0%, #101010 45%, #1a1410 100%)'
                     }}
                 />
+                {/* 细致网格 */}
                 <div
-                    className="absolute inset-0 opacity-[0.85]"
+                    className="absolute inset-0 opacity-80 mix-blend-screen"
                     style={{
                         backgroundImage: `
-                            radial-gradient(circle at 18% 22%, rgba(212, 165, 116, 0.32), transparent 55%),
-                            radial-gradient(circle at 78% 6%, rgba(105, 168, 214, 0.22), transparent 50%),
-                            radial-gradient(circle at 70% 88%, rgba(214, 131, 97, 0.25), transparent 55%)
+                            linear-gradient(to right, rgba(201, 160, 99, 0.06) 1px, transparent 1px),
+                            linear-gradient(to bottom, rgba(201, 160, 99, 0.06) 1px, transparent 1px)
                         `,
-                        filter: 'blur(60px)'
+                        backgroundSize: '60px 60px'
                     }}
                 />
+                {/* 主网格 */}
                 <div
-                    className="absolute inset-0 opacity-45 mix-blend-screen"
+                    className="absolute inset-0 opacity-70 mix-blend-screen"
                     style={{
                         backgroundImage: `
-                            repeating-conic-gradient(from 85deg at 20% 45%, rgba(212, 165, 116, 0.2) 0deg 10deg, transparent 10deg 24deg),
-                            repeating-conic-gradient(from 240deg at 78% 60%, rgba(255, 255, 255, 0.08) 0deg 6deg, transparent 6deg 18deg)
+                            linear-gradient(to right, rgba(201, 160, 99, 0.12) 1px, transparent 1px),
+                            linear-gradient(to bottom, rgba(201, 160, 99, 0.12) 1px, transparent 1px)
                         `,
-                        transform: 'scale(1.2)'
+                        backgroundSize: '300px 300px'
                     }}
                 />
+                {/* 纵向扫描线条 */}
+                <div className="absolute inset-y-0 left-1/2 w-px bg-gradient-to-b from-transparent via-[#d4a57433] to-transparent opacity-60" />
+                <div className="absolute inset-y-0 left-1/4 w-px bg-gradient-to-b from-transparent via-[#d4a57422] to-transparent opacity-50" />
+                <div className="absolute inset-y-0 right-1/6 w-px bg-gradient-to-b from-transparent via-[#d4a57422] to-transparent opacity-50" />
+                {/* 柔和光晕 */}
                 <div
-                    className="absolute inset-0 opacity-35 mix-blend-screen"
+                    className="absolute inset-0 opacity-70"
                     style={{
                         backgroundImage: `
-                            linear-gradient(135deg, rgba(255, 255, 255, 0.05), transparent 65%),
-                            radial-gradient(circle at 40% -20%, rgba(255, 191, 120, 0.15), transparent 45%)
+                            radial-gradient(circle at 20% 25%, rgba(212, 165, 116, 0.2), transparent 55%),
+                            radial-gradient(circle at 75% 15%, rgba(255, 255, 255, 0.08), transparent 45%),
+                            radial-gradient(circle at 65% 80%, rgba(214, 131, 97, 0.18), transparent 55%)
                         `,
-                        backdropFilter: 'blur(4px)'
+                        filter: 'blur(45px)'
                     }}
                 />
             </div>
