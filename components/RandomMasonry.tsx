@@ -89,7 +89,7 @@ export default function RandomMasonry({ initialBooks }: RandomMasonryProps) {
                                 top: `${line.y}%`,
                                 width: line.orientation === 'h' ? line.length : '2px',
                                 height: line.orientation === 'v' ? line.length : '2px',
-                                boxShadow: '0 0 15px rgba(201, 160, 99, 0.3), 0 0 30px rgba(201, 160, 99, 0.15)'
+                                boxShadow: '0 0 15px rgba(201, 160, 99, 0.1), 0 0 30px rgba(201, 160, 99, 0.05)'
                             }}
                             animate={{
                                 x: line.orientation === 'h' ? [-50, 50, -50] : 0,
@@ -111,9 +111,9 @@ export default function RandomMasonry({ initialBooks }: RandomMasonryProps) {
                     className="absolute inset-0 opacity-100"
                     style={{
                         backgroundImage: `
-                            radial-gradient(circle at 15% 20%, rgba(212, 165, 116, 0.25), transparent 45%),
-                            radial-gradient(circle at 85% 80%, rgba(201, 160, 99, 0.20), transparent 45%),
-                            radial-gradient(circle at 50% 50%, rgba(214, 131, 97, 0.15), transparent 60%)
+                            radial-gradient(circle at 15% 20%, rgba(212, 165, 116, 0.08), transparent 45%),
+                            radial-gradient(circle at 85% 80%, rgba(201, 160, 99, 0.06), transparent 45%),
+                            radial-gradient(circle at 50% 50%, rgba(214, 131, 97, 0.05), transparent 60%)
                         `,
                         filter: 'blur(60px)'
                     }}
