@@ -10,15 +10,38 @@ interface RandomMasonryProps {
     initialBooks: Book[];
 }
 
+interface LineParticle {
+    id: number;
+    orientation: 'h' | 'v';
+    x: number;
+    y: number;
+    length: string;
+    duration: number;
+    delay: number;
+}
+
 export default function RandomMasonry({ initialBooks }: RandomMasonryProps) {
     const [books, setBooks] = useState(initialBooks);
+    // Generate drifting lines on client side
+    const [lines, setLines] = useState<LineParticle[]>([]);
     const router = useRouter();
     const baseCardHeight = 360;
     const heightVariants = [1.05, 1.3, 1.55, 1.2];
 
-    // Shuffle on mount to ensure randomness on client side as well
     useEffect(() => {
         setBooks([...initialBooks].sort(() => Math.random() - 0.5));
+
+        // Generate orthogonal lines - 增加数量和长度以提高可见度
+        const newLines = [...Array(80)].map((_, i) => ({
+            id: i,
+            orientation: Math.random() > 0.5 ? 'h' : 'v',
+            x: Math.random() * 100,
+            y: Math.random() * 100,
+            length: Math.random() * 300 + 100 + 'px', // 增加线条长度
+            duration: Math.random() * 20 + 20,
+            delay: Math.random() * 10
+        }));
+        setLines(newLines as any);
     }, [initialBooks]);
 
     const shuffle = () => {
@@ -42,51 +65,57 @@ export default function RandomMasonry({ initialBooks }: RandomMasonryProps) {
 
     return (
         <div className="relative min-h-screen overflow-hidden bg-[#0b0b0b] text-[#F2F0E9]">
-            {/* 背景层：延续往期回顾页面的网格秩序与微光 */}
-            <div className="absolute inset-0 z-0 pointer-events-none">
-                {/* 基础暗色渐变，保证和谐基底 */}
+            {/* Noise Texture - 调整z-index避免遮挡背景 */}
+            <div className="noise-overlay" style={{ zIndex: 20 }} />
+
+            {/* 背景层：漂浮的线条网络 */}
+            <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+                {/* 基础暗色渐变 */}
                 <div
                     className="absolute inset-0"
                     style={{
-                        backgroundImage: 'linear-gradient(135deg, #050505 0%, #101010 45%, #1a1410 100%)'
+                        backgroundImage: 'linear-gradient(180deg, #050505 0%, #121212 100%)'
                     }}
                 />
-                {/* 细致网格 */}
+
+                {/* 漂浮线条 - 模拟解构的网格 */}
+                <div className="absolute inset-0">
+                    {lines.map((line) => (
+                        <motion.div
+                            key={line.id}
+                            className="absolute bg-[#C9A063]/50"
+                            style={{
+                                left: `${line.x}%`,
+                                top: `${line.y}%`,
+                                width: line.orientation === 'h' ? line.length : '2px',
+                                height: line.orientation === 'v' ? line.length : '2px',
+                                boxShadow: '0 0 15px rgba(201, 160, 99, 0.3), 0 0 30px rgba(201, 160, 99, 0.15)'
+                            }}
+                            animate={{
+                                x: line.orientation === 'h' ? [-50, 50, -50] : 0,
+                                y: line.orientation === 'v' ? [-50, 50, -50] : 0,
+                                opacity: [0.3, 0.6, 0.3]
+                            }}
+                            transition={{
+                                duration: line.duration,
+                                repeat: Infinity,
+                                ease: "linear",
+                                delay: line.delay
+                            }}
+                        />
+                    ))}
+                </div>
+
+                {/* 柔和光晕 - 增强可见度 */}
                 <div
-                    className="absolute inset-0 opacity-80 mix-blend-screen"
+                    className="absolute inset-0 opacity-100"
                     style={{
                         backgroundImage: `
-                            linear-gradient(to right, rgba(201, 160, 99, 0.06) 1px, transparent 1px),
-                            linear-gradient(to bottom, rgba(201, 160, 99, 0.06) 1px, transparent 1px)
+                            radial-gradient(circle at 15% 20%, rgba(212, 165, 116, 0.25), transparent 45%),
+                            radial-gradient(circle at 85% 80%, rgba(201, 160, 99, 0.20), transparent 45%),
+                            radial-gradient(circle at 50% 50%, rgba(214, 131, 97, 0.15), transparent 60%)
                         `,
-                        backgroundSize: '60px 60px'
-                    }}
-                />
-                {/* 主网格 */}
-                <div
-                    className="absolute inset-0 opacity-70 mix-blend-screen"
-                    style={{
-                        backgroundImage: `
-                            linear-gradient(to right, rgba(201, 160, 99, 0.12) 1px, transparent 1px),
-                            linear-gradient(to bottom, rgba(201, 160, 99, 0.12) 1px, transparent 1px)
-                        `,
-                        backgroundSize: '300px 300px'
-                    }}
-                />
-                {/* 纵向扫描线条 */}
-                <div className="absolute inset-y-0 left-1/2 w-px bg-gradient-to-b from-transparent via-[#d4a57433] to-transparent opacity-60" />
-                <div className="absolute inset-y-0 left-1/4 w-px bg-gradient-to-b from-transparent via-[#d4a57422] to-transparent opacity-50" />
-                <div className="absolute inset-y-0 right-1/6 w-px bg-gradient-to-b from-transparent via-[#d4a57422] to-transparent opacity-50" />
-                {/* 柔和光晕 */}
-                <div
-                    className="absolute inset-0 opacity-70"
-                    style={{
-                        backgroundImage: `
-                            radial-gradient(circle at 20% 25%, rgba(212, 165, 116, 0.2), transparent 55%),
-                            radial-gradient(circle at 75% 15%, rgba(255, 255, 255, 0.08), transparent 45%),
-                            radial-gradient(circle at 65% 80%, rgba(214, 131, 97, 0.18), transparent 55%)
-                        `,
-                        filter: 'blur(45px)'
+                        filter: 'blur(60px)'
                     }}
                 />
             </div>
@@ -116,35 +145,35 @@ export default function RandomMasonry({ initialBooks }: RandomMasonryProps) {
                     {books.map((book, index) => {
                         const cardHeight = getCardHeight(index);
                         return (
-                        <motion.div
-                            key={`${book.id}-${index}`}
-                            layout
-                            initial={{ opacity: 0, y: 30 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.8, delay: Math.min(index * 0.03, 1.5), ease: [0.22, 1, 0.36, 1] }}
-                            className="break-inside-avoid mb-6 group relative cursor-pointer"
-                            onClick={() => router.push(`/${book.month}?focus=${book.id}`)}
-                        >
-                            <div className="relative overflow-hidden rounded-sm shadow-[0_15px_45px_rgba(0,0,0,0.45)] hover:shadow-[0_25px_60px_rgba(0,0,0,0.6)] transition-all duration-500 bg-[#1c1915] border border-[#d4a5741a]">
-                                {/* Image */}
-                                <img
-                                    src={book.originalImageUrl || book.originalThumbnailUrl || book.cardImageUrl || book.coverUrl}
-                                    alt={book.title}
-                                    className="w-full h-auto object-contain transition-transform duration-1000 group-hover:scale-100"
-                                    loading="lazy"
-                                    style={{ maxHeight: cardHeight }}
-                                />
+                            <motion.div
+                                key={`${book.id}-${index}`}
+                                layout
+                                initial={{ opacity: 0, y: 30 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.8, delay: Math.min(index * 0.03, 1.5), ease: [0.22, 1, 0.36, 1] }}
+                                className="break-inside-avoid mb-6 group relative cursor-pointer"
+                                onClick={() => router.push(`/${book.month}?focus=${book.id}`)}
+                            >
+                                <div className="relative overflow-hidden rounded-sm shadow-[0_15px_45px_rgba(0,0,0,0.45)] hover:shadow-[0_25px_60px_rgba(0,0,0,0.6)] transition-all duration-500 bg-[#1c1915] border border-[#d4a5741a]">
+                                    {/* Image */}
+                                    <img
+                                        src={book.originalImageUrl || book.originalThumbnailUrl || book.cardImageUrl || book.coverUrl}
+                                        alt={book.title}
+                                        className="w-full h-auto object-contain transition-transform duration-1000 group-hover:scale-100"
+                                        loading="lazy"
+                                        style={{ maxHeight: cardHeight }}
+                                    />
 
-                                {/* 悬浮遮罩：提高題名对比度，避免亮底部干扰 */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6 backdrop-blur-[1.5px]">
-                                    <div className="bg-black/55 backdrop-blur-sm rounded-sm px-3 py-2 shadow-[0_8px_25px_rgba(0,0,0,0.45)]">
-                                        <h3 className="text-[#F2F0E9] font-bold text-lg font-display tracking-wide line-clamp-2 leading-relaxed">{book.title}</h3>
-                                        <p className="text-[#D4A574] text-xs mt-2 font-accent tracking-wider">{getLabel(book.month)}</p>
+                                    {/* 悬浮遮罩：提高題名对比度，避免亮底部干扰 */}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6 backdrop-blur-[1.5px]">
+                                        <div className="bg-black/55 backdrop-blur-sm rounded-sm px-3 py-2 shadow-[0_8px_25px_rgba(0,0,0,0.45)]">
+                                            <h3 className="text-[#F2F0E9] font-bold text-lg font-display tracking-wide line-clamp-2 leading-relaxed">{book.title}</h3>
+                                            <p className="text-[#D4A574] text-xs mt-2 font-accent tracking-wider">{getLabel(book.month)}</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </motion.div>
-                    );
+                            </motion.div>
+                        );
                     })}
                 </div>
             </div>
