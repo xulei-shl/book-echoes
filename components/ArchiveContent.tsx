@@ -92,6 +92,67 @@ export default function ArchiveContent({ years, archiveData }: ArchiveContentPro
 
                 {/* Right Content - Cover Grid */}
                 <main className="md:col-span-10 min-h-[60vh]">
+                    <div className="mb-8 border-b border-[#C9A063]/20 pb-4 flex flex-col md:flex-row md:items-end gap-4 justify-between">
+                        {/* Tab Switcher - Left Side */}
+                        {(hasMonths || hasSubjects || hasSleepingBeauties) && (
+                            <div className="flex items-center gap-6 mb-1 order-2 md:order-1">
+                                <button
+                                    onClick={() => setActiveTab('month')}
+                                    className={`text-sm tracking-widest transition-colors duration-300 relative pb-1 ${activeTab === 'month'
+                                        ? 'text-[#C9A063]'
+                                        : 'text-[#C9A063]/40 hover:text-[#C9A063]/70'
+                                        }`}
+                                >
+                                    月份牌
+                                    {activeTab === 'month' && (
+                                        <motion.div
+                                            layoutId="activeTabIndicator"
+                                            className="absolute bottom-0 left-0 right-0 h-[1px] bg-[#C9A063]"
+                                        />
+                                    )}
+                                </button>
+                                <button
+                                    onClick={() => setActiveTab('sleeping_beauty')}
+                                    className={`text-sm tracking-widest transition-colors duration-300 relative pb-1 ${activeTab === 'sleeping_beauty'
+                                        ? 'text-[#C9A063]'
+                                        : 'text-[#C9A063]/40 hover:text-[#C9A063]/70'
+                                        }`}
+                                >
+                                    睡美人
+                                    {activeTab === 'sleeping_beauty' && (
+                                        <motion.div
+                                            layoutId="activeTabIndicator"
+                                            className="absolute bottom-0 left-0 right-0 h-[1px] bg-[#C9A063]"
+                                        />
+                                    )}
+                                </button>
+                                <button
+                                    onClick={() => setActiveTab('subject')}
+                                    className={`text-sm tracking-widest transition-colors duration-300 relative pb-1 ${activeTab === 'subject'
+                                        ? 'text-[#C9A063]'
+                                        : 'text-[#C9A063]/40 hover:text-[#C9A063]/70'
+                                        }`}
+                                >
+                                    主题卡
+                                    {activeTab === 'subject' && (
+                                        <motion.div
+                                            layoutId="activeTabIndicator"
+                                            className="absolute bottom-0 left-0 right-0 h-[1px] bg-[#C9A063]"
+                                        />
+                                    )}
+                                </button>
+                            </div>
+                        )}
+
+                        {/* Title - Right Side */}
+                        <div className="flex items-end gap-4 order-1 md:order-2 ml-auto">
+                            <h2 className="font-display text-3xl md:text-4xl text-[#C9A063]">
+                                {activeYear}
+                            </h2>
+                            <span className="text-sm font-mono text-[#C9A063]/40 mb-1 tracking-widest">ARCHIVE COLLECTION</span>
+                        </div>
+                    </div>
+
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={`${activeYear}-${activeTab}`}
@@ -100,66 +161,6 @@ export default function ArchiveContent({ years, archiveData }: ArchiveContentPro
                             exit={{ opacity: 0, y: -20 }}
                             transition={{ duration: 0.4, ease: "easeOut" }}
                         >
-                            <div className="mb-8 border-b border-[#C9A063]/20 pb-4 flex flex-col md:flex-row md:items-end gap-4 justify-between">
-                                <div className="flex items-end gap-4">
-                                    <h2 className="font-display text-3xl md:text-4xl text-[#C9A063]">
-                                        {activeYear}
-                                    </h2>
-                                    <span className="text-sm font-mono text-[#C9A063]/40 mb-1 tracking-widest">ARCHIVE COLLECTION</span>
-                                </div>
-
-                                {/* Tab Switcher */}
-                                {(hasMonths || hasSubjects || hasSleepingBeauties) && (
-                                    <div className="flex items-center gap-6 mb-1">
-                                        <button
-                                            onClick={() => setActiveTab('month')}
-                                            className={`text-sm tracking-widest transition-colors duration-300 relative pb-1 ${activeTab === 'month'
-                                                ? 'text-[#C9A063]'
-                                                : 'text-[#C9A063]/40 hover:text-[#C9A063]/70'
-                                                }`}
-                                        >
-                                            月份牌
-                                            {activeTab === 'month' && (
-                                                <motion.div
-                                                    layoutId="activeTabIndicator"
-                                                    className="absolute bottom-0 left-0 right-0 h-[1px] bg-[#C9A063]"
-                                                />
-                                            )}
-                                        </button>
-                                        <button
-                                            onClick={() => setActiveTab('sleeping_beauty')}
-                                            className={`text-sm tracking-widest transition-colors duration-300 relative pb-1 ${activeTab === 'sleeping_beauty'
-                                                ? 'text-[#C9A063]'
-                                                : 'text-[#C9A063]/40 hover:text-[#C9A063]/70'
-                                                }`}
-                                        >
-                                            睡美人
-                                            {activeTab === 'sleeping_beauty' && (
-                                                <motion.div
-                                                    layoutId="activeTabIndicator"
-                                                    className="absolute bottom-0 left-0 right-0 h-[1px] bg-[#C9A063]"
-                                                />
-                                            )}
-                                        </button>
-                                        <button
-                                            onClick={() => setActiveTab('subject')}
-                                            className={`text-sm tracking-widest transition-colors duration-300 relative pb-1 ${activeTab === 'subject'
-                                                ? 'text-[#C9A063]'
-                                                : 'text-[#C9A063]/40 hover:text-[#C9A063]/70'
-                                                }`}
-                                        >
-                                            主题卡
-                                            {activeTab === 'subject' && (
-                                                <motion.div
-                                                    layoutId="activeTabIndicator"
-                                                    className="absolute bottom-0 left-0 right-0 h-[1px] bg-[#C9A063]"
-                                                />
-                                            )}
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
-
                             {isEmpty ? (
                                 <div className="flex flex-col items-center justify-center h-[400px] text-[#C9A063]/40 font-display text-xl tracking-widest border border-[#C9A063]/10 bg-[#1a1a1a]/30">
                                     COMING SOON
