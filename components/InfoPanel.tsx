@@ -279,8 +279,26 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
                             <span className="text-white/50 font-light">出版</span>
                             <span className="font-body text-[#E8E6DC] tracking-wide">{book.publisher} · {book.pubYear}</span>
 
-                            <span className="text-white/50 font-light">页数</span>
-                            <span className="font-body text-[#E8E6DC] tracking-wide">{book.pages}</span>
+                            {book.pages && (
+                                <>
+                                    <span className="text-white/50 font-light">页数</span>
+                                    <span className="font-body text-[#E8E6DC] tracking-wide">{book.pages}</span>
+                                </>
+                            )}
+
+                            {book.isbn && (
+                                <>
+                                    <span className="text-white/50 font-light">ISBN</span>
+                                    <span className="font-body text-[#E8E6DC] tracking-wide">{book.isbn}</span>
+                                </>
+                            )}
+
+                            {book.series && (
+                                <>
+                                    <span className="text-white/50 font-light">丛书</span>
+                                    <span className="font-body text-[#E8E6DC] tracking-wide">{book.series}</span>
+                                </>
+                            )}
                         </div>
 
                         {/* 索书号与豆瓣链接 */}

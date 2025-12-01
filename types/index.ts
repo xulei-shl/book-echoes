@@ -13,6 +13,7 @@ export interface Book {
     callNumberLink: string;
     doubanLink?: string;
     isbn: string;
+    series?: string;
     recommendation: string;
     reason?: string;
     summary: string;
