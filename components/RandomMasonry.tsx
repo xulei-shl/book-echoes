@@ -20,28 +20,26 @@ interface LineParticle {
     delay: number;
 }
 
+// 固定的线条配置 - 使用质数分布模拟随机感，避免每次重新计算
+const FIXED_LINES: LineParticle[] = [...Array(80)].map((_, i) => ({
+    id: i,
+    orientation: (i % 2 === 0 ? 'h' : 'v') as 'h' | 'v',
+    x: (i * 13.7) % 100,  // 使用质数13.7实现伪随机分布
+    y: (i * 17.3) % 100,  // 使用质数17.3实现伪随机分布
+    length: ((i * 23) % 200 + 100) + 'px',  // 长度范围: 100-300px
+    duration: (i % 10) + 15,  // 动画时长: 15-24秒
+    delay: (i % 20) * 0.5  // 延迟: 0-9.5秒
+}));
+
 export default function RandomMasonry({ initialBooks }: RandomMasonryProps) {
     const [books, setBooks] = useState(initialBooks);
-    // Generate drifting lines on client side
-    const [lines, setLines] = useState<LineParticle[]>([]);
     const router = useRouter();
     const baseCardHeight = 360;
     const heightVariants = [1.05, 1.3, 1.55, 1.2];
 
     useEffect(() => {
+        // 只需要随机排序书籍，线条使用固定配置
         setBooks([...initialBooks].sort(() => Math.random() - 0.5));
-
-        // Generate orthogonal lines - 增加数量和长度以提高可见度
-        const newLines = [...Array(80)].map((_, i) => ({
-            id: i,
-            orientation: Math.random() > 0.5 ? 'h' : 'v',
-            x: Math.random() * 100,
-            y: Math.random() * 100,
-            length: Math.random() * 300 + 100 + 'px', // 增加线条长度
-            duration: Math.random() * 20 + 20,
-            delay: Math.random() * 10
-        }));
-        setLines(newLines as any);
     }, [initialBooks]);
 
     const shuffle = () => {
@@ -80,7 +78,7 @@ export default function RandomMasonry({ initialBooks }: RandomMasonryProps) {
 
                 {/* 漂浮线条 - 模拟解构的网格 */}
                 <div className="absolute inset-0">
-                    {lines.map((line) => (
+                    {FIXED_LINES.map((line) => (
                         <motion.div
                             key={line.id}
                             className="absolute bg-[#C9A063]/50"
