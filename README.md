@@ -36,12 +36,25 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
 
----
 
-1. 通过命令行参数指定月份:
-node s脚本会自动处理 sources_data/2025-09 并输出到 public/content/2025-09
-
-node scripts/build-content.mjs 2025-09
+1. 构建内容数据:
+   - `sources_data` 目录与 `public/content` 结构保持一致，例如:
+     ```
+     sources_data/
+       2025/
+         2025-09/
+         new/          # 睡美人
+           新书推荐/
+         subject/      # 主题卡
+           科幻/
+     ```
+   - 常用脚本命令:
+     ```
+     node scripts/build-content.mjs 2025-09
+     node scripts/build-content.mjs month 2025-09
+     node scripts/build-content.mjs sleeping 2025 "2025-08"
+     node scripts/build-content.mjs subject 2025 科幻
+     ```
 
 2. # 运行字体初始化脚本
 npm run init-fonts
@@ -53,4 +66,3 @@ npm run init-fonts
 类似网站
 
 https://goodbooks.io/
-

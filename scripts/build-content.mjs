@@ -9,8 +9,11 @@
  * 3. 仅在 R2 上传失败时才复制到本地作为兜底
  * 4. 减小 Git 仓库大小
  * 
- * Usage: node scripts/build-content.mjs [YYYY-MM]
- * Example: node scripts/build-content.mjs 2025-09
+ * Usage:
+ *   node scripts/build-content.mjs 2025-09               # 兼容旧写法，仅处理月份牌
+ *   node scripts/build-content.mjs month 2025-09         # 指定类型为月份牌
+ *   node scripts/build-content.mjs sleeping 2025 新书推荐 # 睡美人（名称需加引号以保留空格）
+ *   node scripts/build-content.mjs subject 2025 科幻     # 主题卡
  */
 
 import fs from 'fs/promises';
@@ -47,39 +50,103 @@ const CALL_NUMBER_URL_ENCODING = {
  * Main execution function
  */
 async function main() {
-    const month = process.argv[2];
-
-    if (!month || !/^\d{4}-\d{2}$/.test(month)) {
-        console.error('❌ Error: Please provide a valid month parameter (YYYY-MM)');
-        console.error('   Example: node scripts/build-content.mjs 2025-09');
+    let context;
+    try {
+        context = parseBuildContext(process.argv.slice(2));
+    } catch (error) {
+        console.error(`❌ ${error.message}`);
+        printUsage();
         process.exit(1);
     }
 
-    console.log(`\n📚 Building content for ${month}...\n`);
+    console.log(`\n📚 Building content for ${context.logLabel}...\n`);
 
     try {
         await loadEnvFiles();
         const r2Config = createR2Config();
 
         // Step 1: Clean target directory (only JSON files, images will be in R2)
-        await cleanTargetDirectory(month);
+        await cleanTargetDirectory(context.relativePath);
 
         // Step 2: Read and filter Excel data
-        const books = await readAndFilterExcel(month);
+        const books = await readAndFilterExcel(context.relativePath);
         console.log(`✅ Found ${books.length} books marked as "${PASS_VALUE}"\n`);
 
         // Step 3: Process resources (upload to R2, fallback to local)
-        const assetsMap = await migrateResources(month, books, r2Config);
+        const assetsMap = await migrateResources(context.relativePath, books, r2Config);
 
         // Step 4: Generate metadata JSON file
-        await copyMetadata(month, books, assetsMap);
+        await copyMetadata(context.relativePath, books, assetsMap);
 
-        console.log(`\n✨ Build completed successfully for ${month}!\n`);
+        console.log(`\n✨ Build completed successfully for ${context.logLabel}!\n`);
     } catch (error) {
         console.error(`\n❌ Build failed:`, error.message);
         console.error(error.stack);
         process.exit(1);
     }
+}
+
+function parseBuildContext(args) {
+    if (!args.length) {
+        throw new Error('请输入构建类型与参数');
+    }
+
+    if (args.length === 1 && /^\d{4}-\d{2}$/.test(args[0])) {
+        const year = args[0].slice(0, 4);
+        return {
+            type: 'month',
+            relativePath: `${year}/${args[0]}`,
+            logLabel: `月份牌 ${args[0]}`
+        };
+    }
+
+    const [type, ...rest] = args;
+    if (!type) {
+        throw new Error('缺少构建类型（month | sleeping | subject）');
+    }
+
+    if (type === 'month') {
+        const monthId = rest[0];
+        if (!monthId || !/^\d{4}-\d{2}$/.test(monthId)) {
+            throw new Error('月份牌参数需为 YYYY-MM');
+        }
+        const year = monthId.slice(0, 4);
+        return {
+            type: 'month',
+            relativePath: `${year}/${monthId}`,
+            logLabel: `月份牌 ${monthId}`
+        };
+    }
+
+    if (type === 'sleeping' || type === 'subject') {
+        const year = rest[0];
+        const nameParts = rest.slice(1);
+        if (!year || !/^\d{4}$/.test(year)) {
+            throw new Error('年份需为 YYYY');
+        }
+        if (!nameParts.length) {
+            throw new Error(`${type === 'sleeping' ? '睡美人' : '主题卡'} 需提供名称`);
+        }
+        const name = nameParts.join(' ');
+        const subfolder = type === 'sleeping' ? 'new' : 'subject';
+        const relativePath = `${year}/${subfolder}/${name}`;
+        const labelPrefix = type === 'sleeping' ? '睡美人' : '主题卡';
+        return {
+            type,
+            relativePath,
+            logLabel: `${labelPrefix} ${year}-${name}`
+        };
+    }
+
+    throw new Error(`未知类型：${type}`);
+}
+
+function printUsage() {
+    console.log('\n用法示例:');
+    console.log('  node scripts/build-content.mjs 2025-09');
+    console.log('  node scripts/build-content.mjs month 2025-09');
+    console.log('  node scripts/build-content.mjs sleeping 2025 \"新书推荐\"');
+    console.log('  node scripts/build-content.mjs subject 2025 科幻\n');
 }
 
 /**
