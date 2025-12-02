@@ -240,10 +240,6 @@ async function migrateResources(month, books, r2Config) {
                 continue;
             }
 
-            // Create target directories (only if needed for fallback)
-            await fs.mkdir(bookTargetDir, { recursive: true });
-            await fs.mkdir(picTargetDir, { recursive: true });
-
             // Define all image assets
             const imageAssets = [
                 {
@@ -343,6 +339,7 @@ async function processImageAsset(asset, month, barcode, r2Config, assetRecord) {
         // R2 upload failed, copy to local as fallback
         console.warn(`⚠️  R2 upload failed for ${asset.name}, falling back to local copy`);
         try {
+            await ensureDirectoryFor(asset.targetPath);
             await fs.copyFile(asset.sourcePath, asset.targetPath);
             if (asset.urlField) {
                 const relativePath = buildLocalContentPath(month, barcode, path.basename(asset.targetPath));
@@ -375,6 +372,7 @@ async function processImageAsset(asset, month, barcode, r2Config, assetRecord) {
                 // R2 upload failed, save to local
                 console.warn(`⚠️  R2 upload failed for ${asset.name} thumbnail, falling back to local copy`);
                 try {
+                    await ensureDirectoryFor(asset.thumbnailTargetPath);
                     await fs.writeFile(asset.thumbnailTargetPath, thumbnailBuffer);
                     const relativePath = buildLocalContentPath(month, barcode, path.basename(asset.thumbnailTargetPath));
                     assetRecord[asset.thumbnailUrlField] = buildLocalPublicUrl(relativePath);
@@ -585,6 +583,11 @@ function buildLocalPublicUrl(relativePath) {
         return '';
     }
     return `/${relativePath.replace(/^\/+/, '')}`;
+}
+
+async function ensureDirectoryFor(filePath) {
+    const dir = path.dirname(filePath);
+    await fs.mkdir(dir, { recursive: true });
 }
 
 function buildR2Key(r2Config, ...segments) {
