@@ -52,8 +52,21 @@ export default function Canvas({ books, month }: CanvasProps) {
         }
     }, [books, focusId, setFocusedBookId]);
 
-    const [yearStr, monthStr] = month.split('-');
-    const yearInt = parseInt(yearStr);
+    // 处理不同格式的月份参数：
+    // - 普通月份: "2025-08"
+    // - 睡美人: "2025-sleeping-2025-08"
+    // - 主题: "2025-subject-xxx"
+    let yearStr: string;
+    let monthStr: string;
+
+    const sleepingMatch = month.match(/^(\d{4})-sleeping-(\d{4})-(\d{2})$/);
+    if (sleepingMatch) {
+        yearStr = sleepingMatch[2];
+        monthStr = sleepingMatch[3];
+    } else {
+        [yearStr, monthStr] = month.split('-');
+    }
+
     const monthInt = parseInt(monthStr);
 
     const yearCN = yearStr.split('').map(d => '零一二三四五六七八九'[parseInt(d)]).join('');
