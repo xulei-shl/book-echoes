@@ -16,7 +16,7 @@ function getMonthCharacter(monthId: string): string {
     if (parts.length !== 2) return '月';
 
     const monthNum = parseInt(parts[1]);
-    const monthChars = ['', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖', '拾', '冬', '腊'];
+    const monthChars = ['', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖', '拾', '冬', '臘'];
 
     if (monthNum >= 1 && monthNum <= 12) {
         return monthChars[monthNum];

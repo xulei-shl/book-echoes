@@ -162,11 +162,11 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
 
                                 if (month.includes('-subject-')) {
                                     // 主题卡: 2025-subject-科幻 -> /content/2025/subject/科幻/metadata.json
-                                    const [year, , subjectName] = month.split('-subject-');
+                                    const [year, subjectName] = month.split('-subject-');
                                     metadataPath = `/content/${year}/subject/${subjectName}/metadata.json`;
                                 } else if (month.includes('-sleeping-')) {
                                     // 睡美人: 2025-sleeping-xxx -> /content/2025/new/xxx/metadata.json
-                                    const [year, , newName] = month.split('-sleeping-');
+                                    const [year, newName] = month.split('-sleeping-');
                                     metadataPath = `/content/${year}/new/${newName}/metadata.json`;
                                 } else {
                                     // 月份牌: 2025-08 -> /content/2025/2025-08/metadata.json
