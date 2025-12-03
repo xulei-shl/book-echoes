@@ -12,6 +12,68 @@ interface HomeHeroProps {
     subtitle: string;
 }
 
+// 预计算书脊线条配置（固定精度避免水合问题）
+// 垂直线条配置 - 简洁的高级感线条
+const VERTICAL_LINES = [...Array(13)].map((_, i) => ({
+    id: i,
+    left: (i * 8) + 2, // 均匀分布
+    width: i % 4 === 0 ? 2 : 1, // 每4根有一根稍粗
+    opacity: 0.15 + (i % 3 === 0 ? 0.15 : 0), // 透明度变化
+    delay: i * 0.15
+}));
+
+// 背景线条装饰组件
+function HeroLineDecoration() {
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    if (!mounted) return null;
+
+    return (
+        <div className="absolute inset-0 z-[5] overflow-hidden pointer-events-none">
+            {/* 基础暗色渐变背景 - 增强文字可读性 */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
+
+            {/* 垂直线条 */}
+            {VERTICAL_LINES.map((line) => (
+                <motion.div
+                    key={line.id}
+                    className="absolute top-0 bottom-0 bg-gradient-to-b from-transparent via-[#C9A063] to-transparent"
+                    style={{
+                        left: `${line.left}%`,
+                        width: `${line.width}px`,
+                        opacity: line.opacity * 0.5, // 降低整体不透明度，保持低调
+                    }}
+                    initial={{ scaleY: 0, opacity: 0 }}
+                    animate={{ scaleY: 1, opacity: line.opacity * 0.5 }}
+                    transition={{
+                        duration: 1.5,
+                        delay: line.delay,
+                        ease: "circOut"
+                    }}
+                />
+            ))}
+
+            {/* 额外的水平微光线条 - 增加层次感 */}
+            <motion.div
+                className="absolute top-[30%] left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#C9A063]/20 to-transparent"
+                initial={{ scaleX: 0, opacity: 0 }}
+                animate={{ scaleX: 1, opacity: 1 }}
+                transition={{ duration: 2, delay: 0.5 }}
+            />
+            <motion.div
+                className="absolute bottom-[30%] left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#C9A063]/20 to-transparent"
+                initial={{ scaleX: 0, opacity: 0 }}
+                animate={{ scaleX: 1, opacity: 1 }}
+                transition={{ duration: 2, delay: 0.8 }}
+            />
+        </div>
+    );
+}
+
 export default function HomeHero({ images, targetLink, title, subtitle }: HomeHeroProps) {
     const router = useRouter();
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -21,22 +83,23 @@ export default function HomeHero({ images, targetLink, title, subtitle }: HomeHe
 
         const timer = setInterval(() => {
             setCurrentIndex((prev) => (prev + 1) % images.length);
-        }, 6000); // 每6秒切换一次,给图片更多加载和展示时间
+        }, 6000);
 
         return () => clearInterval(timer);
     }, [images.length]);
 
     const handleImageError = () => {
-        // If an image fails to load, we could remove it from the list or just ignore it.
-        // For now, we'll just let the next one show up.
         console.warn(`Failed to load image at index ${currentIndex}`);
     };
 
     return (
         <div className="relative w-full h-screen overflow-hidden flex flex-col items-center justify-center bg-[#1a1a1a]">
 
+            {/* 抽象线条装饰层 - 最底层 */}
+            <HeroLineDecoration />
+
             {/* Background Image Carousel */}
-            <div className="absolute inset-0 z-0">
+            <div className="absolute inset-0 z-[1]">
                 <AnimatePresence mode="wait">
                     {images.length > 0 && (
                         <motion.div
@@ -76,7 +139,7 @@ export default function HomeHero({ images, targetLink, title, subtitle }: HomeHe
 
             {/* Text Content - Dynamic Calligraphy Style */}
             <div
-                className="relative z-10 flex flex-col items-center justify-center"
+                className="relative z-[10] flex flex-col items-center justify-center"
             >
                 <motion.div
                     className="relative flex items-center gap-0 md:gap-2 cursor-pointer group"
