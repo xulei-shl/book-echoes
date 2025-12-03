@@ -11,15 +11,17 @@ interface ArchiveContentProps {
 }
 
 // 辅助函数：将月份转换为繁体汉字
+// 支持格式: "2025-08" 或 "2025-sleeping-2025-08"
 function getMonthCharacter(monthId: string): string {
-    const parts = monthId.split('-');
-    if (parts.length !== 2) return '月';
-
-    const monthNum = parseInt(parts[1]);
     const monthChars = ['', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖', '拾', '冬', '臘'];
 
-    if (monthNum >= 1 && monthNum <= 12) {
-        return monthChars[monthNum];
+    // 尝试从末尾提取月份数字（处理 2025-sleeping-2025-08 这种格式）
+    const match = monthId.match(/-(\d{2})$/);
+    if (match) {
+        const monthNum = parseInt(match[1]);
+        if (monthNum >= 1 && monthNum <= 12) {
+            return monthChars[monthNum];
+        }
     }
 
     return '月';
@@ -168,10 +170,10 @@ export default function ArchiveContent({ years, archiveData }: ArchiveContentPro
                             ) : (
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
                                     {itemsToShow.map((item, index) => {
-                                        // For subjects, we might not have monthChar, or we can use first char of label
-                                        const monthChar = activeTab === 'month'
-                                            ? getMonthCharacter(item.id)
-                                            : item.label.charAt(0); // Use first char for subject as background
+                                        // 月份牌和睡美人都按月份排列，使用繁体汉字；主题卡使用label首字符
+                                        const monthChar = activeTab === 'subject'
+                                            ? item.label.charAt(0)
+                                            : getMonthCharacter(item.id);
 
                                         return (
                                             <div
