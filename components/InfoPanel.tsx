@@ -299,6 +299,13 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
                                     <span className="font-body text-[#E8E6DC] tracking-wide">{book.series}</span>
                                 </>
                             )}
+
+                            {book.producer && (
+                                <>
+                                    <span className="text-white/50 font-light">出品方</span>
+                                    <span className="font-body text-[#E8E6DC] tracking-wide">{book.producer}</span>
+                                </>
+                            )}
                         </div>
 
                         {/* 索书号与豆瓣链接 */}

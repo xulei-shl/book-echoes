@@ -14,6 +14,7 @@ export interface Book {
     doubanLink?: string;
     isbn: string;
     series?: string;
+    producer?: string; // 豆瓣出品方
     recommendation: string;
     reason?: string;
     summary: string;
