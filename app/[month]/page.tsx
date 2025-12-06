@@ -31,6 +31,10 @@ async function getMonthData(month: string): Promise<Book[]> {
         if (monthMatch) {
             const year = monthMatch[1];
             filePath = path.join(process.cwd(), 'public', 'content', year, month, 'metadata.json');
+        } else if (month === 'new') {
+            // Special handling for 'new' directory - it doesn't have metadata.json directly
+            // Return empty array as 'new' itself is not a valid content directory
+            return [];
         } else {
             // Fallback
             filePath = path.join(process.cwd(), 'public', 'content', month, 'metadata.json');
@@ -81,7 +85,7 @@ export async function generateStaticParams() {
 
             // Months
             entries
-                .filter(e => e.isDirectory() && e.name !== 'subject' && !e.name.startsWith('.'))
+                .filter(e => e.isDirectory() && e.name !== 'subject' && e.name !== 'new' && !e.name.startsWith('.'))
                 .forEach(e => params.push({ month: e.name }));
 
             // Subjects
