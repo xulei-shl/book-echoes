@@ -147,17 +147,20 @@ export async function getArchiveData(): Promise<YearArchiveData[]> {
         const sleepingPath = path.join(yearPath, 'new');
         const sleepingEntries = await fs.readdir(sleepingPath, { withFileTypes: true });
 
-        for (const subEntry of sleepingEntries) {
-          if (subEntry.isDirectory()) {
-            // Use a unique ID: {year}-sleeping-{name}
-            const sleepingId = `${year}-sleeping-${subEntry.name}`;
-            sleepingPromises.push(processArchiveItem(
-              path.join(sleepingPath, subEntry.name),
-              sleepingId,
-              'sleeping_beauty',
-              year
-            ));
-          }
+        // Sort sleeping beauties by month (descending order: 12, 11, ..., 01) to match months
+        const sortedSleepingEntries = sleepingEntries
+          .filter(e => e.isDirectory())
+          .sort((a, b) => b.name.localeCompare(a.name));
+
+        for (const subEntry of sortedSleepingEntries) {
+          // Use a unique ID: {year}-sleeping-{name}
+          const sleepingId = `${year}-sleeping-${subEntry.name}`;
+          sleepingPromises.push(processArchiveItem(
+            path.join(sleepingPath, subEntry.name),
+            sleepingId,
+            'sleeping_beauty',
+            year
+          ));
         }
       }
 
