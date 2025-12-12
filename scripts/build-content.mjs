@@ -66,20 +66,16 @@ async function main() {
         const r2Config = createR2Config();
 
         // Step 1: Clean target directory (only JSON files, images will be in R2)
-        console.log(`🔍 Debug: Step 1 - Cleaning directory`);
         await cleanTargetDirectory(context.relativePath);
 
         // Step 2: Read and filter Excel data
-        console.log(`🔍 Debug: Step 2 - Reading Excel data`);
         const books = await readAndFilterExcel(context.relativePath);
         console.log(`✅ Found ${books.length} books marked as "${PASS_VALUE}"\n`);
 
         // Step 3: Process resources (upload to R2, fallback to local)
-        console.log(`🔍 Debug: Step 3 - Processing resources`);
         const assetsMap = await migrateResources(context.relativePath, books, r2Config);
 
         // Step 4: Generate metadata JSON file
-        console.log(`🔍 Debug: Step 4 - Generating metadata JSON`);
         await copyMetadata(context.relativePath, books, assetsMap);
 
         console.log(`\n✨ Build completed successfully for ${context.logLabel}!\n`);
@@ -158,8 +154,6 @@ function printUsage() {
  */
 async function cleanTargetDirectory(month) {
     const targetDir = path.join(CONTENT_DIR, month);
-    
-    console.log(`🔍 Debug: Cleaning directory: ${targetDir}`);
 
     try {
         await fs.rm(targetDir, { recursive: true, force: true });
@@ -498,9 +492,6 @@ function buildCallNumberLink(callNumberRaw) {
 async function copyMetadata(month, books, assetsMap = new Map()) {
     const targetDir = path.join(CONTENT_DIR, month);
     const targetJson = path.join(targetDir, 'metadata.json');
-    
-    console.log(`🔍 Debug: copyMetadata called with month=${month}, books.length=${books.length}, assetsMap.size=${assetsMap.size}`);
-    console.log(`🔍 Debug: Target JSON path: ${targetJson}`);
 
     // Define fields needed by frontend
     const frontendFields = [
@@ -573,9 +564,7 @@ async function copyMetadata(month, books, assetsMap = new Map()) {
     });
 
     // Write the filtered data to JSON file
-    console.log(`🔍 Debug: Writing ${optimizedBooks.length} books to ${targetJson}`);
     await fs.writeFile(targetJson, JSON.stringify(optimizedBooks, null, 2), 'utf-8');
-    console.log(`🔍 Debug: Successfully wrote JSON file`);
 
     const originalSize = JSON.stringify(books).length;
     const optimizedSize = JSON.stringify(optimizedBooks).length;
