@@ -13,7 +13,7 @@
  *   node scripts/build-content.mjs 2025-09               # 兼容旧写法，仅处理月份牌
  *   node scripts/build-content.mjs month 2025-09         # 指定类型为月份牌
  *   node scripts/build-content.mjs sleeping 2025 新书推荐 # 睡美人（名称需加引号以保留空格）
- *   node scripts/build-content.mjs subject 2025 科幻     # 主题卡
+ *   node scripts/build-content.mjs subject 2025 数字遗产的幽灵之舞     # 主题卡
  */
 
 import fs from 'fs/promises';
