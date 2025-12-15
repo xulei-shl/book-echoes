@@ -26,6 +26,26 @@ async function getMonthData(month: string): Promise<Book[]> {
         filePath = path.join(process.cwd(), 'public', 'content', year, 'subject', name, 'metadata.json');
         console.log('[DEBUG getMonthData] subject name:', name);
         console.log('[DEBUG getMonthData] subject filePath:', filePath);
+
+        // Debug: check if file exists
+        try {
+            await fs.access(filePath);
+            console.log('[DEBUG getMonthData] file exists:', filePath);
+        } catch (accessError) {
+            console.error('[DEBUG getMonthData] file does not exist:', filePath);
+            // Try alternative approach: maybe we need to handle encoding differently
+            console.log('[DEBUG getMonthData] trying encoded path...');
+            const encodedName = encodeURIComponent(name);
+            const encodedPath = path.join(process.cwd(), 'public', 'content', year, 'subject', encodedName, 'metadata.json');
+            console.log('[DEBUG getMonthData] encoded path:', encodedPath);
+            try {
+                await fs.access(encodedPath);
+                filePath = encodedPath;
+                console.log('[DEBUG getMonthData] using encoded path:', filePath);
+            } catch (encodedError) {
+                console.error('[DEBUG getMonthData] neither path works');
+            }
+        }
     } else if (sleepingMatch) {
         const [_, year, name] = sleepingMatch;
         // name is already decoded from the URL parameter, no need to decode again
@@ -64,8 +84,20 @@ export default async function MonthPage({ params }: PageProps) {
     const { month } = await params;
     // Decode month param just in case
     const decodedMonth = decodeURIComponent(month);
-    console.log('[DEBUG MonthPage] month param:', month);
+    console.log('[DEBUG MonthPage] original month param:', month);
     console.log('[DEBUG MonthPage] decodedMonth:', decodedMonth);
+    console.log('[DEBUG MonthPage] raw param type:', typeof month);
+
+    // Additional debug info for subject params
+    if (decodedMonth.includes('-subject-')) {
+        const subjectMatch = decodedMonth.match(/^(\d{4})-subject-(.+)$/);
+        if (subjectMatch) {
+            console.log('[DEBUG MonthPage] subject year:', subjectMatch[1]);
+            console.log('[DEBUG MonthPage] subject name:', subjectMatch[2]);
+            console.log('[DEBUG MonthPage] subject name length:', subjectMatch[2].length);
+        }
+    }
+
     const books = await getMonthData(decodedMonth);
     console.log('[DEBUG MonthPage] books count:', books.length);
     if (books.length > 0) {
