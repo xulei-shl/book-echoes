@@ -137,15 +137,7 @@ export default function Canvas({ books, month }: CanvasProps) {
             {/* Header with Logo and Home Button */}
             <Header showHomeButton={true} theme="dark" currentBook={currentBookForHeader} month={month} />
             
-            {/* Debug info */}
-            {focusedBook && (
-                <div className="fixed top-24 left-4 bg-black/80 text-white p-4 rounded z-50 text-sm">
-                    <div>当前书籍: {focusedBook.title}</div>
-                    <div>月份: {focusedBook.month}</div>
-                    <div>是否为主题卡: {focusedBook.month?.includes('-subject-') ? '是' : '否'}</div>
-                </div>
-            )}
-
+  
             {/* Books Layer */}
             <div className="absolute inset-0 z-10">
                 {books.map((book, index) => (
