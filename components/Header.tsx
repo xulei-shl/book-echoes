@@ -5,19 +5,119 @@ import { useRouter, usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import AboutOverlay from './AboutOverlay';
+import SubjectMdOverlay from './SubjectMdOverlay';
 
 interface HeaderProps {
     showHomeButton?: boolean;
     aboutContent?: string;
     theme?: 'light' | 'dark';
+    currentBook?: any; // 添加当前书籍信息
+    month?: string; // 添加月份信息，用于判断是否为主题页面
 }
 
-export default function Header({ showHomeButton = false, aboutContent, theme = 'light' }: HeaderProps) {
+export default function Header({ showHomeButton = false, aboutContent, theme = 'light', currentBook, month }: HeaderProps) {
     const router = useRouter();
     const pathname = usePathname();
     const [isAboutOpen, setIsAboutOpen] = useState(false);
     const [isVisible, setIsVisible] = useState(true);
     const [lastScrollY, setLastScrollY] = useState(0);
+    
+    // 主题卡MD内容相关状态
+    const [isMdOverlayOpen, setIsMdOverlayOpen] = useState(false);
+    const [mdContent, setMdContent] = useState('');
+    const [subjectName, setSubjectName] = useState('');
+    const [showMdButton, setShowMdButton] = useState(false);
+
+    // 获取主题MD内容的辅助函数
+    const getSubjectMdContent = async (subjectPath: string): Promise<string> => {
+        try {
+            const response = await fetch(subjectPath);
+            if (!response.ok) {
+                return '';
+            }
+            return await response.text();
+        } catch (error) {
+            console.error('Failed to load subject MD content:', error);
+            return '';
+        }
+    };
+
+    // 查找主题目录中的MD文件
+    const findSubjectMdFile = async (year: string, subject: string): Promise<string> => {
+        try {
+            // 首先尝试查找目录中的MD文件
+            const listPath = `/api/list-md-files?year=${year}&subject=${encodeURIComponent(subject)}`;
+            const listResponse = await fetch(listPath);
+            
+            if (listResponse.ok) {
+                const files = await listResponse.json();
+                const mdFile = files.find((file: string) => file.endsWith('.md'));
+                
+                if (mdFile) {
+                    // 对文件名进行URL编码，确保中文等特殊字符能正确访问
+                    const encodedMdFile = encodeURIComponent(mdFile);
+                    const mdPath = `/content/${year}/subject/${encodeURIComponent(subject)}/${encodedMdFile}`;
+                    console.log('[DEBUG Header] Trying to fetch MD file from:', mdPath);
+                    
+                    const mdResponse = await fetch(mdPath);
+                    
+                    if (mdResponse.ok) {
+                        console.log('[DEBUG Header] Successfully fetched MD file');
+                        return await mdResponse.text();
+                    } else {
+                        console.log('[DEBUG Header] Failed to fetch MD file, status:', mdResponse.status);
+                    }
+                }
+            }
+            
+            return '';
+        } catch (error) {
+            console.error('Error finding subject MD file:', error);
+            return '';
+        }
+    };
+
+    // 判断是否为主题页面并检查MD文件是否存在
+    useEffect(() => {
+        const checkSubjectMd = async () => {
+            // 优先使用month参数，如果没有则使用currentBook.month
+            const monthToCheck = month || currentBook?.month;
+            console.log('[DEBUG Header] monthToCheck:', monthToCheck);
+            
+            if (monthToCheck && monthToCheck.includes('-subject-')) {
+                const [year, subject] = monthToCheck.split('-subject-');
+                console.log('[DEBUG Header] Detected subject page, month:', monthToCheck);
+                console.log('[DEBUG Header] Parsed year:', year, 'subject:', subject);
+                
+                try {
+                    const content = await findSubjectMdFile(year, subject);
+                    console.log('[DEBUG Header] MD content length:', content.length);
+                    if (content) {
+                        setSubjectName(subject);
+                        setMdContent(content);
+                        setShowMdButton(true);
+                        console.log('[DEBUG Header] setShowMdButton(true)');
+                    } else {
+                        setShowMdButton(false);
+                        console.log('[DEBUG Header] setShowMdButton(false) - no content');
+                    }
+                } catch (error) {
+                    console.error('Error checking subject MD:', error);
+                    setShowMdButton(false);
+                }
+            } else {
+                setShowMdButton(false);
+                console.log('[DEBUG Header] Not a subject page or no month, setShowMdButton(false)');
+            }
+        };
+        
+        checkSubjectMd();
+    }, [month, currentBook]);
+
+    // 处理主题MD按钮点击
+    const handleSubjectMdClick = () => {
+        setIsMdOverlayOpen(true);
+    };
 
     useEffect(() => {
         const handleScroll = () => {
@@ -141,6 +241,20 @@ export default function Header({ showHomeButton = false, aboutContent, theme = '
                         </button>
                     )}
 
+                    {/* Subject MD Button - Only show for subject pages */}
+                    {showMdButton && (
+                        <button
+                            onClick={handleSubjectMdClick}
+                            className={buttonStyles}
+                            aria-label="主题导读"
+                        >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            <span>主题导读</span>
+                        </button>
+                    )}
+
                     {/* About Button */}
                     {aboutContent && (
                         <button
@@ -166,18 +280,26 @@ export default function Header({ showHomeButton = false, aboutContent, theme = '
                     )}
                 </motion.div>
 
-                {/* About Overlay - Moved outside of motion.div to prevent transform context issues */}
-                {aboutContent && (
-                    <AboutOverlay
-                        content={aboutContent}
-                        isOpen={isAboutOpen}
-                        onClose={() => setIsAboutOpen(false)}
-                    />
-                )}
-
                 {/* Right spacer to balance layout */}
                 <div className="flex-1" />
             </div>
+
+            {/* About Overlay - Moved outside of header container to prevent transform context issues */}
+            {aboutContent && (
+                <AboutOverlay
+                    content={aboutContent}
+                    isOpen={isAboutOpen}
+                    onClose={() => setIsAboutOpen(false)}
+                />
+            )}
+
+            {/* Subject MD Overlay */}
+            <SubjectMdOverlay
+                content={mdContent}
+                subjectName={subjectName}
+                isOpen={isMdOverlayOpen}
+                onClose={() => setIsMdOverlayOpen(false)}
+            />
         </header>
     );
 }

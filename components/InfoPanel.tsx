@@ -45,6 +45,7 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
                 &rarr;
             </button>
 
+
             {/* Three-dot Menu Button - Outside panel */}
             <div
                 className="fixed top-8 right-8 z-[121] group"
@@ -341,7 +342,7 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
                                     className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-50 text-green-700 text-xs hover:bg-green-100 transition-colors"
                                 >
                                     <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z" />
+                                        <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-8z" />
                                     </svg>
                                     豆瓣页面
                                 </a>

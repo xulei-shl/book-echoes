@@ -22,10 +22,16 @@ async function getMonthData(month: string): Promise<Book[]> {
 
     if (subjectMatch) {
         const [_, year, name] = subjectMatch;
-        filePath = path.join(process.cwd(), 'public', 'content', year, 'subject', decodeURIComponent(name), 'metadata.json');
+        // name is already decoded from the URL parameter, no need to decode again
+        filePath = path.join(process.cwd(), 'public', 'content', year, 'subject', name, 'metadata.json');
+        console.log('[DEBUG getMonthData] subject name:', name);
+        console.log('[DEBUG getMonthData] subject filePath:', filePath);
     } else if (sleepingMatch) {
         const [_, year, name] = sleepingMatch;
-        filePath = path.join(process.cwd(), 'public', 'content', year, 'new', decodeURIComponent(name), 'metadata.json');
+        // name is already decoded from the URL parameter, no need to decode again
+        filePath = path.join(process.cwd(), 'public', 'content', year, 'new', name, 'metadata.json');
+        console.log('[DEBUG getMonthData] sleeping name:', name);
+        console.log('[DEBUG getMonthData] sleeping filePath:', filePath);
     } else {
         const monthMatch = month.match(/^(\d{4})-\d{2}$/);
         if (monthMatch) {
@@ -45,7 +51,9 @@ async function getMonthData(month: string): Promise<Book[]> {
         const fileContents = await fs.readFile(filePath, 'utf8');
         const data = JSON.parse(fileContents);
 
-        return data.map((item: any) => transformMetadataToBook(item, month));
+        const books = data.map((item: any) => transformMetadataToBook(item, month));
+        console.log('[DEBUG getMonthData] transformed books:', books);
+        return books;
     } catch (error) {
         console.error(`Error loading data for month ${month}:`, error);
         return [];
@@ -56,7 +64,13 @@ export default async function MonthPage({ params }: PageProps) {
     const { month } = await params;
     // Decode month param just in case
     const decodedMonth = decodeURIComponent(month);
+    console.log('[DEBUG MonthPage] month param:', month);
+    console.log('[DEBUG MonthPage] decodedMonth:', decodedMonth);
     const books = await getMonthData(decodedMonth);
+    console.log('[DEBUG MonthPage] books count:', books.length);
+    if (books.length > 0) {
+        console.log('[DEBUG MonthPage] first book month:', books[0].month);
+    }
 
     if (!books || books.length === 0) {
         return (
@@ -95,7 +109,11 @@ export async function generateStaticParams() {
                 const subjectEntries = await fs.readdir(subjectPath, { withFileTypes: true });
                 subjectEntries
                     .filter(e => e.isDirectory())
-                    .forEach(e => params.push({ month: `${year}-subject-${e.name}` }));
+                    .forEach(e => {
+                        const route = `${year}-subject-${encodeURIComponent(e.name)}`;
+                        console.log('[DEBUG Static Params] Adding subject route:', route);
+                        params.push({ month: route });
+                    });
             }
 
             // Sleeping Beauties (new)

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Book } from '@/types';
 import BookCard from './BookCard';
 import InfoPanel from './InfoPanel';
@@ -23,6 +23,9 @@ export default function Canvas({ books, month }: CanvasProps) {
         clearScatterPositions,
         setFocusedBookId
     } = useStore();
+    
+    // 添加一个状态来跟踪最后选中的主题卡
+    const [lastSubjectBook, setLastSubjectBook] = useState<Book | null>(null);
     const searchParams = useSearchParams();
     const focusId = searchParams?.get('focus');
     const appliedFocusRef = useRef<string | null>(null);
@@ -92,6 +95,20 @@ export default function Canvas({ books, month }: CanvasProps) {
     }
 
     const focusedBook = books.find(b => b.id === focusedBookId);
+    console.log('[DEBUG Canvas] focusedBookId:', focusedBookId);
+    console.log('[DEBUG Canvas] books length:', books.length);
+    console.log('[DEBUG Canvas] books IDs:', books.map(b => b.id));
+    console.log('[DEBUG Canvas] focusedBook:', focusedBook);
+
+    // 当有书籍被选中时，检查是否是主题卡
+    useEffect(() => {
+        if (focusedBook && focusedBook.month?.includes('-subject-')) {
+            setLastSubjectBook(focusedBook);
+        }
+    }, [focusedBook]);
+
+    // 传递最后选中的主题卡给Header
+    const currentBookForHeader = focusedBook || lastSubjectBook;
 
     return (
         <div className="relative w-screen h-screen overflow-hidden bg-[#1a1a1a]">
@@ -118,7 +135,16 @@ export default function Canvas({ books, month }: CanvasProps) {
             <div className="noise-overlay" />
 
             {/* Header with Logo and Home Button */}
-            <Header showHomeButton={true} theme="dark" />
+            <Header showHomeButton={true} theme="dark" currentBook={currentBookForHeader} month={month} />
+            
+            {/* Debug info */}
+            {focusedBook && (
+                <div className="fixed top-24 left-4 bg-black/80 text-white p-4 rounded z-50 text-sm">
+                    <div>当前书籍: {focusedBook.title}</div>
+                    <div>月份: {focusedBook.month}</div>
+                    <div>是否为主题卡: {focusedBook.month?.includes('-subject-') ? '是' : '否'}</div>
+                </div>
+            )}
 
             {/* Books Layer */}
             <div className="absolute inset-0 z-10">
