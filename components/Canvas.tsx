@@ -56,21 +56,40 @@ export default function Canvas({ books, month }: CanvasProps) {
     // - 普通月份: "2025-08"
     // - 睡美人: "2025-sleeping-2025-08"
     // - 主题: "2025-subject-xxx"
-    let yearStr: string;
-    let monthStr: string;
+    let yearStr: string = '';
+    let monthStr: string = '';
+    let displayText: string = ''; // 用于主题卡显示的装饰文字
 
     const sleepingMatch = month.match(/^(\d{4})-sleeping-(\d{4})-(\d{2})$/);
     if (sleepingMatch) {
         yearStr = sleepingMatch[2];
         monthStr = sleepingMatch[3];
     } else {
-        [yearStr, monthStr] = month.split('-');
+        const subjectMatch = month.match(/^(\d{4})-subject-(.+)$/);
+        if (subjectMatch) {
+            // 主题卡处理
+            yearStr = subjectMatch[1];
+            // 从主题名称中提取前两个汉字作为装饰文字
+            const subjectName = decodeURIComponent(subjectMatch[2]);
+            displayText = subjectName.substring(0, 2);
+        } else {
+            // 普通月份处理
+            [yearStr, monthStr] = month.split('-');
+        }
     }
 
-    const monthInt = parseInt(monthStr);
-
     const yearCN = yearStr.split('').map(d => '零一二三四五六七八九'[parseInt(d)]).join('');
-    const monthCN = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二'][monthInt - 1];
+    
+    // 根据不同类型设置显示文字
+    let monthCN: string;
+    if (displayText) {
+        // 主题卡使用提取的前两个汉字
+        monthCN = displayText;
+    } else {
+        // 月份牌和睡美人使用月份
+        const monthInt = parseInt(monthStr);
+        monthCN = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二'][monthInt - 1];
+    }
 
     const focusedBook = books.find(b => b.id === focusedBookId);
 
@@ -91,7 +110,7 @@ export default function Canvas({ books, month }: CanvasProps) {
                         {yearCN}
                     </div>
                     <div className="font-display text-[25vw] leading-none text-[#E8E6DC] font-bold tracking-widest mt-[-2vw]">
-                        {monthCN}月
+                        {monthCN}{displayText ? '' : '月'}
                     </div>
                 </div>
             </div>
