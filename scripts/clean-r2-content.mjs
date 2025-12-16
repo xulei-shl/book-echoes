@@ -8,7 +8,7 @@
  * Usage:
  *   node scripts/clean-r2-content.mjs 2025/2025-09           # 删除月份牌内容
  *   node scripts/clean-r2-content.mjs 2025/new/2025-07       # 删除睡美人内容
- *   node scripts/clean-r2-content.mjs 2025/subject/科幻      # 删除主题卡内容
+ *   node scripts/clean-r2-content.mjs 2025/subject/数字遗产的幽灵之舞      # 删除主题卡内容
  *   node scripts/clean-r2-content.mjs --dry-run 2025/2025-09 # 预览模式，不实际删除
  */
 
