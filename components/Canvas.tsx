@@ -95,10 +95,6 @@ export default function Canvas({ books, month }: CanvasProps) {
     }
 
     const focusedBook = books.find(b => b.id === focusedBookId);
-    console.log('[DEBUG Canvas] focusedBookId:', focusedBookId);
-    console.log('[DEBUG Canvas] books length:', books.length);
-    console.log('[DEBUG Canvas] books IDs:', books.map(b => b.id));
-    console.log('[DEBUG Canvas] focusedBook:', focusedBook);
 
     // 当有书籍被选中时，检查是否是主题卡
     useEffect(() => {

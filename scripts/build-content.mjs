@@ -75,6 +75,9 @@ async function main() {
         // Step 3: Process resources (upload to R2, fallback to local)
         const assetsMap = await migrateResources(context.relativePath, books, r2Config);
 
+        // Step 3.5: Copy MD files if they exist
+        await copyMdFiles(context.relativePath);
+
         // Step 4: Generate metadata JSON file
         await copyMetadata(context.relativePath, books, assetsMap);
 
@@ -572,6 +575,47 @@ async function copyMetadata(month, books, assetsMap = new Map()) {
 
     console.log(`\n📋 Generated metadata.json with ${books.length} approved books`);
     console.log(`   📦 Size reduction: ${reduction}% (${(originalSize / 1024).toFixed(1)}KB → ${(optimizedSize / 1024).toFixed(1)}KB)`);
+}
+
+/**
+ * Step 3.5: Copy MD files from source to target if they exist
+ */
+async function copyMdFiles(relativePath) {
+    const sourceDir = path.join(SOURCES_DIR, relativePath);
+    const targetDir = path.join(CONTENT_DIR, relativePath);
+
+    try {
+        // Check if source directory exists
+        await fs.access(sourceDir);
+        
+        // Read all files in source directory
+        const files = await fs.readdir(sourceDir);
+        
+        // Find MD files
+        const mdFiles = files.filter(file => file.endsWith('.md'));
+        
+        if (mdFiles.length === 0) {
+            console.log(`📝 No MD files found in sources_data/${relativePath}`);
+            return;
+        }
+        
+        // Copy each MD file
+        for (const mdFile of mdFiles) {
+            const sourcePath = path.join(sourceDir, mdFile);
+            const targetPath = path.join(targetDir, mdFile);
+            
+            try {
+                await fs.copyFile(sourcePath, targetPath);
+                console.log(`📝 Copied MD file: ${mdFile}`);
+            } catch (error) {
+                console.error(`❌ Failed to copy MD file ${mdFile}:`, error.message);
+            }
+        }
+        
+        console.log(`✅ Copied ${mdFiles.length} MD file(s) to content/${relativePath}`);
+    } catch (error) {
+        console.log(`📝 Source directory not found or inaccessible: sources_data/${relativePath}`);
+    }
 }
 
 function buildLocalContentPath(month, barcode, ...segments) {

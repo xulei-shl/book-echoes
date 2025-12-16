@@ -24,34 +24,23 @@ async function getMonthData(month: string): Promise<Book[]> {
         const [_, year, name] = subjectMatch;
         // name is already decoded from the URL parameter, no need to decode again
         filePath = path.join(process.cwd(), 'public', 'content', year, 'subject', name, 'metadata.json');
-        console.log('[DEBUG getMonthData] subject name:', name);
-        console.log('[DEBUG getMonthData] subject filePath:', filePath);
 
-        // Debug: check if file exists
         try {
             await fs.access(filePath);
-            console.log('[DEBUG getMonthData] file exists:', filePath);
-        } catch (accessError) {
-            console.error('[DEBUG getMonthData] file does not exist:', filePath);
-            // Try alternative approach: maybe we need to handle encoding differently
-            console.log('[DEBUG getMonthData] trying encoded path...');
+        } catch (_accessError) {
             const encodedName = encodeURIComponent(name);
             const encodedPath = path.join(process.cwd(), 'public', 'content', year, 'subject', encodedName, 'metadata.json');
-            console.log('[DEBUG getMonthData] encoded path:', encodedPath);
             try {
                 await fs.access(encodedPath);
                 filePath = encodedPath;
-                console.log('[DEBUG getMonthData] using encoded path:', filePath);
             } catch (encodedError) {
-                console.error('[DEBUG getMonthData] neither path works');
+                console.error('[SubjectData] metadata.json路径解析失败', encodedError);
             }
         }
     } else if (sleepingMatch) {
         const [_, year, name] = sleepingMatch;
         // name is already decoded from the URL parameter, no need to decode again
         filePath = path.join(process.cwd(), 'public', 'content', year, 'new', name, 'metadata.json');
-        console.log('[DEBUG getMonthData] sleeping name:', name);
-        console.log('[DEBUG getMonthData] sleeping filePath:', filePath);
     } else {
         const monthMatch = month.match(/^(\d{4})-\d{2}$/);
         if (monthMatch) {
@@ -71,9 +60,7 @@ async function getMonthData(month: string): Promise<Book[]> {
         const fileContents = await fs.readFile(filePath, 'utf8');
         const data = JSON.parse(fileContents);
 
-        const books = data.map((item: any) => transformMetadataToBook(item, month));
-        console.log('[DEBUG getMonthData] transformed books:', books);
-        return books;
+        return data.map((item: any) => transformMetadataToBook(item, month));
     } catch (error) {
         console.error(`Error loading data for month ${month}:`, error);
         return [];
@@ -84,25 +71,8 @@ export default async function MonthPage({ params }: PageProps) {
     const { month } = await params;
     // Decode month param just in case
     const decodedMonth = decodeURIComponent(month);
-    console.log('[DEBUG MonthPage] original month param:', month);
-    console.log('[DEBUG MonthPage] decodedMonth:', decodedMonth);
-    console.log('[DEBUG MonthPage] raw param type:', typeof month);
-
-    // Additional debug info for subject params
-    if (decodedMonth.includes('-subject-')) {
-        const subjectMatch = decodedMonth.match(/^(\d{4})-subject-(.+)$/);
-        if (subjectMatch) {
-            console.log('[DEBUG MonthPage] subject year:', subjectMatch[1]);
-            console.log('[DEBUG MonthPage] subject name:', subjectMatch[2]);
-            console.log('[DEBUG MonthPage] subject name length:', subjectMatch[2].length);
-        }
-    }
 
     const books = await getMonthData(decodedMonth);
-    console.log('[DEBUG MonthPage] books count:', books.length);
-    if (books.length > 0) {
-        console.log('[DEBUG MonthPage] first book month:', books[0].month);
-    }
 
     if (!books || books.length === 0) {
         return (
@@ -143,7 +113,6 @@ export async function generateStaticParams() {
                     .filter(e => e.isDirectory())
                     .forEach(e => {
                         const route = `${year}-subject-${encodeURIComponent(e.name)}`;
-                        console.log('[DEBUG Static Params] Adding subject route:', route);
                         params.push({ month: route });
                     });
             }

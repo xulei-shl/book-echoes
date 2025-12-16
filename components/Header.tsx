@@ -37,7 +37,7 @@ export default function Header({ showHomeButton = false, aboutContent, theme = '
             }
             return await response.text();
         } catch (error) {
-            console.error('Failed to load subject MD content:', error);
+            console.error('加载主题导读内容失败', error);
             return '';
         }
     };
@@ -57,22 +57,17 @@ export default function Header({ showHomeButton = false, aboutContent, theme = '
                     // 对文件名进行URL编码，确保中文等特殊字符能正确访问
                     const encodedMdFile = encodeURIComponent(mdFile);
                     const mdPath = `/content/${year}/subject/${encodeURIComponent(subject)}/${encodedMdFile}`;
-                    console.log('[DEBUG Header] Trying to fetch MD file from:', mdPath);
-                    
                     const mdResponse = await fetch(mdPath);
                     
                     if (mdResponse.ok) {
-                        console.log('[DEBUG Header] Successfully fetched MD file');
                         return await mdResponse.text();
-                    } else {
-                        console.log('[DEBUG Header] Failed to fetch MD file, status:', mdResponse.status);
                     }
                 }
             }
             
             return '';
         } catch (error) {
-            console.error('Error finding subject MD file:', error);
+            console.error('获取主题MD文件失败', error);
             return '';
         }
     };
@@ -82,32 +77,25 @@ export default function Header({ showHomeButton = false, aboutContent, theme = '
         const checkSubjectMd = async () => {
             // 优先使用month参数，如果没有则使用currentBook.month
             const monthToCheck = month || currentBook?.month;
-            console.log('[DEBUG Header] monthToCheck:', monthToCheck);
             
             if (monthToCheck && monthToCheck.includes('-subject-')) {
                 const [year, subject] = monthToCheck.split('-subject-');
-                console.log('[DEBUG Header] Detected subject page, month:', monthToCheck);
-                console.log('[DEBUG Header] Parsed year:', year, 'subject:', subject);
                 
                 try {
                     const content = await findSubjectMdFile(year, subject);
-                    console.log('[DEBUG Header] MD content length:', content.length);
                     if (content) {
                         setSubjectName(subject);
                         setMdContent(content);
                         setShowMdButton(true);
-                        console.log('[DEBUG Header] setShowMdButton(true)');
                     } else {
                         setShowMdButton(false);
-                        console.log('[DEBUG Header] setShowMdButton(false) - no content');
                     }
                 } catch (error) {
-                    console.error('Error checking subject MD:', error);
+                    console.error('检测主题MD状态失败', error);
                     setShowMdButton(false);
                 }
             } else {
                 setShowMdButton(false);
-                console.log('[DEBUG Header] Not a subject page or no month, setShowMdButton(false)');
             }
         };
         

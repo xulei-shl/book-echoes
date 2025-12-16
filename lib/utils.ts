@@ -35,7 +35,6 @@ type MetadataEntry = Record<string, string | number | undefined>;
 
 export function transformMetadataToBook(item: MetadataEntry, month: string): Book {
     const id = String(item[FIELDS.barcode]);
-    console.log('[DEBUG transformMetadataToBook] month:', month);
 
     return {
         id,
