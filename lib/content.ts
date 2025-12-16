@@ -45,6 +45,25 @@ function formatMonthLabel(year: string, month: string): string {
   return `${yearCN}年 ${monthCN}月`;
 }
 
+// 辅助函数：从目录中提取md文件的中文标题
+async function extractSubjectLabelFromMd(dirPath: string): Promise<string | null> {
+  try {
+    const entries = await fs.readdir(dirPath, { withFileTypes: true });
+    // 查找.md文件（排除README等）
+    const mdFile = entries.find(e => e.isFile() && e.name.endsWith('.md') && !e.name.toLowerCase().startsWith('readme'));
+    if (mdFile) {
+      // 从文件名提取标题，去掉.md后缀
+      const fileName = mdFile.name.replace(/\.md$/, '');
+      // 提取冒号/分号前的主标题（如果有的话）
+      const mainTitle = fileName.split(/[：:]/)[0].trim();
+      return mainTitle || fileName;
+    }
+  } catch (e) {
+    // 忽略错误，返回null使用默认label
+  }
+  return null;
+}
+
 // Helper to process a directory and return an ArchiveItem
 async function processArchiveItem(
   dirPath: string,
@@ -77,9 +96,15 @@ async function processArchiveItem(
         label = formatMonthLabel(parts[0], parts[1]);
       }
     } else if (type === 'subject') {
-      // Extract subject name from ID: {year}-subject-{name}
-      const parts = id.split('-subject-');
-      label = parts.length > 1 ? parts[1] : id;
+      // 主题卡：优先从md文件名提取中文标题
+      const mdLabel = await extractSubjectLabelFromMd(dirPath);
+      if (mdLabel) {
+        label = mdLabel;
+      } else {
+        // 降级：从ID中提取
+        const parts = id.split('-subject-');
+        label = parts.length > 1 ? parts[1] : id;
+      }
     } else if (type === 'sleeping_beauty') {
       // Extract name from ID: {year}-sleeping-{name}
       const parts = id.split('-sleeping-');

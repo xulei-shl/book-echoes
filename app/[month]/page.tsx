@@ -13,9 +13,32 @@ interface PageProps {
     }>;
 }
 
+// 辅助函数：从目录中提取md文件的中文标题
+async function extractSubjectLabel(dirPath: string): Promise<string | null> {
+    try {
+        const entries = await fs.readdir(dirPath, { withFileTypes: true });
+        const mdFile = entries.find(e => e.isFile() && e.name.endsWith('.md') && !e.name.toLowerCase().startsWith('readme'));
+        if (mdFile) {
+            const fileName = mdFile.name.replace(/\.md$/, '');
+            // 提取冒号前的主标题
+            const mainTitle = fileName.split(/[：:]/)[0].trim();
+            return mainTitle || fileName;
+        }
+    } catch {
+        // 忽略错误
+    }
+    return null;
+}
+
+interface MonthDataResult {
+    books: Book[];
+    subjectLabel?: string;  // 主题卡的中文标题
+}
+
 // Function to get data for a specific month
-async function getMonthData(month: string): Promise<Book[]> {
+async function getMonthData(month: string): Promise<MonthDataResult> {
     let filePath = '';
+    let subjectDirPath = '';  // 用于主题卡读取md文件
 
     const subjectMatch = month.match(/^(\d{4})-subject-(.+)$/);
     const sleepingMatch = month.match(/^(\d{4})-sleeping-(.+)$/);
@@ -23,16 +46,19 @@ async function getMonthData(month: string): Promise<Book[]> {
     if (subjectMatch) {
         const [_, year, name] = subjectMatch;
         // name is already decoded from the URL parameter, no need to decode again
-        filePath = path.join(process.cwd(), 'public', 'content', year, 'subject', name, 'metadata.json');
+        subjectDirPath = path.join(process.cwd(), 'public', 'content', year, 'subject', name);
+        filePath = path.join(subjectDirPath, 'metadata.json');
 
         try {
             await fs.access(filePath);
         } catch (_accessError) {
             const encodedName = encodeURIComponent(name);
-            const encodedPath = path.join(process.cwd(), 'public', 'content', year, 'subject', encodedName, 'metadata.json');
+            const encodedDirPath = path.join(process.cwd(), 'public', 'content', year, 'subject', encodedName);
+            const encodedPath = path.join(encodedDirPath, 'metadata.json');
             try {
                 await fs.access(encodedPath);
                 filePath = encodedPath;
+                subjectDirPath = encodedDirPath;
             } catch (encodedError) {
                 console.error('[SubjectData] metadata.json路径解析失败', encodedError);
             }
@@ -48,8 +74,8 @@ async function getMonthData(month: string): Promise<Book[]> {
             filePath = path.join(process.cwd(), 'public', 'content', year, month, 'metadata.json');
         } else if (month === 'new') {
             // Special handling for 'new' directory - it doesn't have metadata.json directly
-            // Return empty array as 'new' itself is not a valid content directory
-            return [];
+            // Return empty result as 'new' itself is not a valid content directory
+            return { books: [] };
         } else {
             // Fallback
             filePath = path.join(process.cwd(), 'public', 'content', month, 'metadata.json');
@@ -59,11 +85,18 @@ async function getMonthData(month: string): Promise<Book[]> {
     try {
         const fileContents = await fs.readFile(filePath, 'utf8');
         const data = JSON.parse(fileContents);
+        const books = data.map((item: any) => transformMetadataToBook(item, month));
 
-        return data.map((item: any) => transformMetadataToBook(item, month));
+        // 如果是主题卡，提取md文件中的中文标题
+        let subjectLabel: string | undefined;
+        if (subjectDirPath) {
+            subjectLabel = await extractSubjectLabel(subjectDirPath) || undefined;
+        }
+
+        return { books, subjectLabel };
     } catch (error) {
         console.error(`Error loading data for month ${month}:`, error);
-        return [];
+        return { books: [] };
     }
 }
 
@@ -72,7 +105,7 @@ export default async function MonthPage({ params }: PageProps) {
     // Decode month param just in case
     const decodedMonth = decodeURIComponent(month);
 
-    const books = await getMonthData(decodedMonth);
+    const { books, subjectLabel } = await getMonthData(decodedMonth);
 
     if (!books || books.length === 0) {
         return (
@@ -82,7 +115,7 @@ export default async function MonthPage({ params }: PageProps) {
         );
     }
 
-    return <Canvas books={books} month={decodedMonth} />;
+    return <Canvas books={books} month={decodedMonth} subjectLabel={subjectLabel} />;
 }
 
 export async function generateStaticParams() {

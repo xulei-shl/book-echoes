@@ -42,33 +42,37 @@ export default function Header({ showHomeButton = false, aboutContent, theme = '
         }
     };
 
-    // 查找主题目录中的MD文件
-    const findSubjectMdFile = async (year: string, subject: string): Promise<string> => {
+    // 查找主题目录中的MD文件，返回内容和中文标题
+    const findSubjectMdFile = async (year: string, subject: string): Promise<{ content: string; label: string } | null> => {
         try {
             // 首先尝试查找目录中的MD文件
             const listPath = `/api/list-md-files?year=${year}&subject=${encodeURIComponent(subject)}`;
             const listResponse = await fetch(listPath);
-            
+
             if (listResponse.ok) {
                 const files = await listResponse.json();
                 const mdFile = files.find((file: string) => file.endsWith('.md'));
-                
+
                 if (mdFile) {
                     // 对文件名进行URL编码，确保中文等特殊字符能正确访问
                     const encodedMdFile = encodeURIComponent(mdFile);
                     const mdPath = `/content/${year}/subject/${encodeURIComponent(subject)}/${encodedMdFile}`;
                     const mdResponse = await fetch(mdPath);
-                    
+
                     if (mdResponse.ok) {
-                        return await mdResponse.text();
+                        const content = await mdResponse.text();
+                        // 从文件名提取中文标题（去掉.md后缀，取冒号前的主标题）
+                        const fileName = mdFile.replace(/\.md$/, '');
+                        const label = fileName.split(/[：:]/)[0].trim() || fileName;
+                        return { content, label };
                     }
                 }
             }
-            
-            return '';
+
+            return null;
         } catch (error) {
             console.error('获取主题MD文件失败', error);
-            return '';
+            return null;
         }
     };
 
@@ -77,15 +81,15 @@ export default function Header({ showHomeButton = false, aboutContent, theme = '
         const checkSubjectMd = async () => {
             // 优先使用month参数，如果没有则使用currentBook.month
             const monthToCheck = month || currentBook?.month;
-            
+
             if (monthToCheck && monthToCheck.includes('-subject-')) {
                 const [year, subject] = monthToCheck.split('-subject-');
-                
+
                 try {
-                    const content = await findSubjectMdFile(year, subject);
-                    if (content) {
-                        setSubjectName(subject);
-                        setMdContent(content);
+                    const result = await findSubjectMdFile(year, subject);
+                    if (result) {
+                        setSubjectName(result.label);  // 使用从md文件名提取的中文标题
+                        setMdContent(result.content);
                         setShowMdButton(true);
                     } else {
                         setShowMdButton(false);
@@ -98,7 +102,7 @@ export default function Header({ showHomeButton = false, aboutContent, theme = '
                 setShowMdButton(false);
             }
         };
-        
+
         checkSubjectMd();
     }, [month, currentBook]);
 

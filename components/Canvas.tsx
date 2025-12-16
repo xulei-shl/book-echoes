@@ -13,9 +13,10 @@ import { useSearchParams } from 'next/navigation';
 interface CanvasProps {
     books: Book[];
     month: string;
+    subjectLabel?: string;  // 主题卡的中文标题（从md文件名提取）
 }
 
-export default function Canvas({ books, month }: CanvasProps) {
+export default function Canvas({ books, month, subjectLabel }: CanvasProps) {
     const {
         focusedBookId,
         setViewMode,
@@ -23,7 +24,7 @@ export default function Canvas({ books, month }: CanvasProps) {
         clearScatterPositions,
         setFocusedBookId
     } = useStore();
-    
+
     // 添加一个状态来跟踪最后选中的主题卡
     const [lastSubjectBook, setLastSubjectBook] = useState<Book | null>(null);
     const searchParams = useSearchParams();
@@ -70,11 +71,15 @@ export default function Canvas({ books, month }: CanvasProps) {
     } else {
         const subjectMatch = month.match(/^(\d{4})-subject-(.+)$/);
         if (subjectMatch) {
-            // 主题卡处理
+            // 主题卡处理：优先使用传入的中文标题，否则从路径提取
             yearStr = subjectMatch[1];
-            // 从主题名称中提取前两个汉字作为装饰文字
-            const subjectName = decodeURIComponent(subjectMatch[2]);
-            displayText = subjectName.substring(0, 2);
+            if (subjectLabel) {
+                displayText = subjectLabel.substring(0, 2);
+            } else {
+                // 降级：从路径名提取（英文）
+                const subjectName = decodeURIComponent(subjectMatch[2]);
+                displayText = subjectName.substring(0, 2);
+            }
         } else {
             // 普通月份处理
             [yearStr, monthStr] = month.split('-');
