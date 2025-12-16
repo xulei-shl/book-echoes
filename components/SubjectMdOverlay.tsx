@@ -184,7 +184,7 @@ export default function SubjectMdOverlay({ content, subjectName, isOpen, onClose
 
                         {/* Content Area */}
                         <div className="relative flex-1 overflow-hidden z-10">
-                            <div className="subject-md-overlay-scroll absolute inset-0 overflow-y-auto px-6 md:px-10 py-8">
+                            <div className="about-overlay-scroll absolute inset-0 overflow-y-auto px-6 md:px-10 py-8">
                                 <div className="max-w-4xl mx-auto">
                                     {content ? (
                                         <ReactMarkdown
