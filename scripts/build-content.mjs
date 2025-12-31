@@ -14,6 +14,7 @@
  *   node scripts/build-content.mjs month 2025-09         # 指定类型为月份牌
  *   node scripts/build-content.mjs sleeping 2025 新书推荐 # 睡美人（名称需加引号以保留空格）
  *   node scripts/build-content.mjs subject 2025 digital-heritage-dance     # 主题卡
+ *   node scripts/build-content.mjs literature 2025 Survival-Literature-for-Metro  # 文学FM
  */
 
 import fs from 'fs/promises';
@@ -105,7 +106,7 @@ function parseBuildContext(args) {
 
     const [type, ...rest] = args;
     if (!type) {
-        throw new Error('缺少构建类型（month | sleeping | subject）');
+        throw new Error('缺少构建类型（month | sleeping | subject | literature）');
     }
 
     if (type === 'month') {
@@ -121,19 +122,22 @@ function parseBuildContext(args) {
         };
     }
 
-    if (type === 'sleeping' || type === 'subject') {
+    if (type === 'sleeping' || type === 'subject' || type === 'literature') {
         const year = rest[0];
         const nameParts = rest.slice(1);
         if (!year || !/^\d{4}$/.test(year)) {
             throw new Error('年份需为 YYYY');
         }
         if (!nameParts.length) {
-            throw new Error(`${type === 'sleeping' ? '睡美人' : '主题卡'} 需提供名称`);
+            const labelMap = { sleeping: '睡美人', subject: '主题卡', literature: '文学FM' };
+            throw new Error(`${labelMap[type]} 需提供名称`);
         }
         const name = nameParts.join(' ');
-        const subfolder = type === 'sleeping' ? 'new' : 'subject';
+        const subfolderMap = { sleeping: 'new', subject: 'subject', literature: 'literature' };
+        const labelPrefixMap = { sleeping: '睡美人', subject: '主题卡', literature: '文学FM' };
+        const subfolder = subfolderMap[type];
         const relativePath = `${year}/${subfolder}/${name}`;
-        const labelPrefix = type === 'sleeping' ? '睡美人' : '主题卡';
+        const labelPrefix = labelPrefixMap[type];
         return {
             type,
             relativePath,
@@ -149,7 +153,8 @@ function printUsage() {
     console.log('  node scripts/build-content.mjs 2025-09');
     console.log('  node scripts/build-content.mjs month 2025-09');
     console.log('  node scripts/build-content.mjs sleeping 2025 \"新书推荐\"');
-    console.log('  node scripts/build-content.mjs subject 2025 科幻\n');
+    console.log('  node scripts/build-content.mjs subject 2025 科幻');
+    console.log('  node scripts/build-content.mjs literature 2025 Survival-Literature-for-Metro\n');
 }
 
 /**
@@ -189,14 +194,27 @@ async function readAndFilterExcel(month) {
 
     // Read the Excel file
     const workbook = xlsx.readFile(excelPath);
-    const sheetName = workbook.SheetNames[0];
+
+    // 排除 "主题汇总" 和 "元信息" sheet，取剩下的第一个
+    const excludedSheets = ['主题汇总', '元信息'];
+    const availableSheets = workbook.SheetNames.filter(name => !excludedSheets.includes(name));
+
+    if (availableSheets.length === 0) {
+        throw new Error(`No valid sheet found after excluding ${excludedSheets.join(', ')}`);
+    }
+
+    const sheetName = availableSheets[0];
     const worksheet = workbook.Sheets[sheetName];
+    console.log(`📖 Using sheet: ${sheetName}`);
 
     // Convert to JSON
     const data = xlsx.utils.sheet_to_json(worksheet);
 
-    // Filter for approved books
-    const approvedBooks = data.filter(row => row[PASS_COLUMN] === PASS_VALUE);
+    // Filter for approved books（支持带空格的情况）
+    const approvedBooks = data.filter(row => {
+        const val = row[PASS_COLUMN];
+        return val && String(val).trim() === PASS_VALUE;
+    });
 
     // Validate that all approved books have barcodes
     const invalidBooks = approvedBooks.filter(book => !book[BARCODE_COLUMN]);
