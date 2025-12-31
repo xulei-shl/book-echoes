@@ -42,6 +42,7 @@ async function getMonthData(month: string): Promise<MonthDataResult> {
 
     const subjectMatch = month.match(/^(\d{4})-subject-(.+)$/);
     const sleepingMatch = month.match(/^(\d{4})-sleeping-(.+)$/);
+    const literatureMatch = month.match(/^(\d{4})-literature-(.+)$/);
 
     if (subjectMatch) {
         const [_, year, name] = subjectMatch;
@@ -67,6 +68,26 @@ async function getMonthData(month: string): Promise<MonthDataResult> {
         const [_, year, name] = sleepingMatch;
         // name is already decoded from the URL parameter, no need to decode again
         filePath = path.join(process.cwd(), 'public', 'content', year, 'new', name, 'metadata.json');
+    } else if (literatureMatch) {
+        const [_, year, name] = literatureMatch;
+        // name is already decoded from the URL parameter, no need to decode again
+        subjectDirPath = path.join(process.cwd(), 'public', 'content', year, 'literature', name);
+        filePath = path.join(subjectDirPath, 'metadata.json');
+
+        try {
+            await fs.access(filePath);
+        } catch (_accessError) {
+            const encodedName = encodeURIComponent(name);
+            const encodedDirPath = path.join(process.cwd(), 'public', 'content', year, 'literature', encodedName);
+            const encodedPath = path.join(encodedDirPath, 'metadata.json');
+            try {
+                await fs.access(encodedPath);
+                filePath = encodedPath;
+                subjectDirPath = encodedDirPath;
+            } catch (encodedError) {
+                console.error('[LiteratureData] metadata.json路径解析失败', encodedError);
+            }
+        }
     } else {
         const monthMatch = month.match(/^(\d{4})-\d{2}$/);
         if (monthMatch) {
@@ -134,7 +155,7 @@ export async function generateStaticParams() {
 
             // Months
             entries
-                .filter(e => e.isDirectory() && e.name !== 'subject' && e.name !== 'new' && !e.name.startsWith('.'))
+                .filter(e => e.isDirectory() && e.name !== 'subject' && e.name !== 'new' && e.name !== 'literature' && !e.name.startsWith('.'))
                 .forEach(e => params.push({ month: e.name }));
 
             // Subjects
@@ -158,6 +179,19 @@ export async function generateStaticParams() {
                 sleepingEntries
                     .filter(e => e.isDirectory())
                     .forEach(e => params.push({ month: `${year}-sleeping-${e.name}` }));
+            }
+
+            // Literature
+            const literatureDirEntry = entries.find(e => e.isDirectory() && e.name === 'literature');
+            if (literatureDirEntry) {
+                const literaturePath = path.join(yearPath, 'literature');
+                const literatureEntries = await fs.readdir(literaturePath, { withFileTypes: true });
+                literatureEntries
+                    .filter(e => e.isDirectory())
+                    .forEach(e => {
+                        const route = `${year}-literature-${encodeURIComponent(e.name)}`;
+                        params.push({ month: route });
+                    });
             }
         }
     } catch (e) {

@@ -51,7 +51,7 @@ function getInitialYear(years: string[]): string {
 
 export default function ArchiveContent({ years, archiveData }: ArchiveContentProps) {
     const [activeYear, setActiveYear] = useState(getInitialYear(years));
-    const [activeTab, setActiveTab] = useState<'month' | 'subject' | 'sleeping_beauty'>('month');
+    const [activeTab, setActiveTab] = useState<'month' | 'subject' | 'sleeping_beauty' | 'literature'>('month');
 
     // Reset tab to month when year changes
     // Reset tab to month when year changes
@@ -63,10 +63,12 @@ export default function ArchiveContent({ years, archiveData }: ArchiveContentPro
     const months = currentYearData?.months || [];
     const subjects = currentYearData?.subjects || [];
     const sleepingBeauties = currentYearData?.sleepingBeauties || [];
+    const literatures = currentYearData?.literatures || [];
 
     const hasMonths = months.length > 0;
     const hasSubjects = subjects.length > 0;
     const hasSleepingBeauties = sleepingBeauties.length > 0;
+    const hasLiteratures = literatures.length > 0;
 
     // Determine what to show
     let itemsToShow: ArchiveItem[] = [];
@@ -76,6 +78,8 @@ export default function ArchiveContent({ years, archiveData }: ArchiveContentPro
         itemsToShow = subjects;
     } else if (activeTab === 'sleeping_beauty') {
         itemsToShow = sleepingBeauties;
+    } else if (activeTab === 'literature') {
+        itemsToShow = literatures;
     }
 
     const isEmpty = itemsToShow.length === 0;
@@ -96,7 +100,7 @@ export default function ArchiveContent({ years, archiveData }: ArchiveContentPro
                 <main className="md:col-span-10 min-h-[60vh]">
                     <div className="mb-8 border-b border-[#C9A063]/20 pb-4 flex flex-col md:flex-row md:items-end gap-4 justify-between">
                         {/* Tab Switcher - Left Side */}
-                        {(hasMonths || hasSubjects || hasSleepingBeauties) && (
+                        {(hasMonths || hasSubjects || hasSleepingBeauties || hasLiteratures) && (
                             <div className="flex items-center gap-6 mb-1 order-2 md:order-1">
                                 <button
                                     onClick={() => setActiveTab('month')}
@@ -143,6 +147,21 @@ export default function ArchiveContent({ years, archiveData }: ArchiveContentPro
                                         />
                                     )}
                                 </button>
+                                <button
+                                    onClick={() => setActiveTab('literature')}
+                                    className={`text-sm tracking-widest transition-colors duration-300 relative pb-1 ${activeTab === 'literature'
+                                        ? 'text-[#C9A063]'
+                                        : 'text-[#C9A063]/40 hover:text-[#C9A063]/70'
+                                        }`}
+                                >
+                                    文学FM
+                                    {activeTab === 'literature' && (
+                                        <motion.div
+                                            layoutId="activeTabIndicator"
+                                            className="absolute bottom-0 left-0 right-0 h-[1px] bg-[#C9A063]"
+                                        />
+                                    )}
+                                </button>
                             </div>
                         )}
 
@@ -170,8 +189,8 @@ export default function ArchiveContent({ years, archiveData }: ArchiveContentPro
                             ) : (
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
                                     {itemsToShow.map((item, index) => {
-                                        // 月份牌和睡美人都按月份排列，使用繁体汉字；主题卡使用label首字符
-                                        const monthChar = activeTab === 'subject'
+                                        // 月份牌和睡美人都按月份排列，使用繁体汉字；主题卡和文学FM使用label首字符
+                                        const monthChar = activeTab === 'subject' || activeTab === 'literature'
                                             ? item.label.charAt(0)
                                             : getMonthCharacter(item.id);
 

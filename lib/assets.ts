@@ -41,6 +41,13 @@ export function legacyCardThumbnailPath(month: string, barcode: string) {
         return `/content/${year}/subject/${name}/${barcode}/${barcode}_thumb.jpg`;
     }
 
+    // Check for literature ID format: YYYY-literature-NAME
+    const literatureMatch = month.match(/^(\d{4})-literature-(.+)$/);
+    if (literatureMatch) {
+        const [_, year, name] = literatureMatch;
+        return `/content/${year}/literature/${name}/${barcode}/${barcode}_thumb.jpg`;
+    }
+
     // Check for sleeping beauty ID format: YYYY-sleeping-NAME
     const sleepingMatch = month.match(/^(\d{4})-sleeping-(.+)$/);
     if (sleepingMatch) {

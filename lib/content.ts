@@ -21,7 +21,7 @@ export interface Book {
 export interface ArchiveItem {
   id: string;          // Folder name, e.g., "2025-08" or "ScienceFiction"
   label: string;       // Display name, e.g., "二零二五年 八月" or "科幻"
-  type: 'month' | 'subject' | 'sleeping_beauty';
+  type: 'month' | 'subject' | 'sleeping_beauty' | 'literature';
   previewCards: string[];
   bookCount: number;
   books: Book[];
@@ -33,6 +33,7 @@ export interface YearArchiveData {
   months: ArchiveItem[];
   subjects: ArchiveItem[];
   sleepingBeauties: ArchiveItem[];
+  literatures: ArchiveItem[];
 }
 
 // Keep MonthData for backward compatibility, alias to ArchiveItem (or subset)
@@ -68,7 +69,7 @@ async function extractSubjectLabelFromMd(dirPath: string): Promise<string | null
 async function processArchiveItem(
   dirPath: string,
   id: string,
-  type: 'month' | 'subject' | 'sleeping_beauty',
+  type: 'month' | 'subject' | 'sleeping_beauty' | 'literature',
   year: string
 ): Promise<ArchiveItem | null> {
   try {
@@ -103,6 +104,16 @@ async function processArchiveItem(
       } else {
         // 降级：从ID中提取
         const parts = id.split('-subject-');
+        label = parts.length > 1 ? parts[1] : id;
+      }
+    } else if (type === 'literature') {
+      // 文学FM：优先从md文件名提取中文标题
+      const mdLabel = await extractSubjectLabelFromMd(dirPath);
+      if (mdLabel) {
+        label = mdLabel;
+      } else {
+        // 降级：从ID中提取
+        const parts = id.split('-literature-');
         label = parts.length > 1 ? parts[1] : id;
       }
     } else if (type === 'sleeping_beauty') {
@@ -145,6 +156,7 @@ export async function getArchiveData(): Promise<YearArchiveData[]> {
       const monthPromises: Promise<ArchiveItem | null>[] = [];
       const subjectPromises: Promise<ArchiveItem | null>[] = [];
       const sleepingPromises: Promise<ArchiveItem | null>[] = [];
+      const literaturePromises: Promise<ArchiveItem | null>[] = [];
 
       // Check for 'subject' folder
       const subjectDirEntry = entries.find(e => e.isDirectory() && e.name === 'subject');
@@ -189,8 +201,28 @@ export async function getArchiveData(): Promise<YearArchiveData[]> {
         }
       }
 
+      // Check for 'literature' folder
+      const literatureDirEntry = entries.find(e => e.isDirectory() && e.name === 'literature');
+      if (literatureDirEntry) {
+        const literaturePath = path.join(yearPath, 'literature');
+        const literatureEntries = await fs.readdir(literaturePath, { withFileTypes: true });
+
+        for (const subEntry of literatureEntries) {
+          if (subEntry.isDirectory()) {
+            // Use a unique ID: {year}-literature-{name}
+            const literatureId = `${year}-literature-${subEntry.name}`;
+            literaturePromises.push(processArchiveItem(
+              path.join(literaturePath, subEntry.name),
+              literatureId,
+              'literature',
+              year
+            ));
+          }
+        }
+      }
+
       // Process month folders
-      const monthEntries = entries.filter(e => e.isDirectory() && e.name !== 'subject' && e.name !== 'new' && !e.name.startsWith('.'));
+      const monthEntries = entries.filter(e => e.isDirectory() && e.name !== 'subject' && e.name !== 'new' && e.name !== 'literature' && !e.name.startsWith('.'));
       // Sort months descending
       monthEntries.sort((a, b) => b.name.localeCompare(a.name));
 
@@ -206,12 +238,14 @@ export async function getArchiveData(): Promise<YearArchiveData[]> {
       const months = (await Promise.all(monthPromises)).filter((item): item is ArchiveItem => item !== null);
       const subjects = (await Promise.all(subjectPromises)).filter((item): item is ArchiveItem => item !== null);
       const sleepingBeauties = (await Promise.all(sleepingPromises)).filter((item): item is ArchiveItem => item !== null);
+      const literatures = (await Promise.all(literaturePromises)).filter((item): item is ArchiveItem => item !== null);
 
       years.push({
         year,
         months,
         subjects,
-        sleepingBeauties
+        sleepingBeauties,
+        literatures
       });
     }
   } catch (e) {
@@ -272,6 +306,7 @@ export async function getAllBooksRandomized(): Promise<Book[]> {
     processItems(yearData.months);
     processItems(yearData.subjects);
     processItems(yearData.sleepingBeauties);
+    processItems(yearData.literatures);
   });
 
   // Shuffle the books
