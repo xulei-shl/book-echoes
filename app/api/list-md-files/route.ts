@@ -4,14 +4,19 @@ import path from 'path';
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const year = searchParams.get('year');
+    const type = searchParams.get('type') || 'subject';
     const subject = searchParams.get('subject');
 
     if (!year || !subject) {
         return Response.json({ error: 'Missing year or subject parameter' }, { status: 400 });
     }
+
+    if (type !== 'subject' && type !== 'literature') {
+        return Response.json({ error: 'Invalid type parameter' }, { status: 400 });
+    }
     
     try {
-        const subjectDir = path.join(process.cwd(), 'public', 'content', year, 'subject', subject);
+        const subjectDir = path.join(process.cwd(), 'public', 'content', year, type, subject);
         
         // 检查目录是否存在
         try {

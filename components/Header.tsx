@@ -43,10 +43,10 @@ export default function Header({ showHomeButton = false, aboutContent, theme = '
     };
 
     // 查找主题目录中的MD文件，返回内容和中文标题
-    const findSubjectMdFile = async (year: string, subject: string): Promise<{ content: string; label: string } | null> => {
+    const findSubjectMdFile = async (year: string, subject: string, type: 'subject' | 'literature' = 'subject'): Promise<{ content: string; label: string } | null> => {
         try {
             // 首先尝试查找目录中的MD文件
-            const listPath = `/api/list-md-files?year=${year}&subject=${encodeURIComponent(subject)}`;
+            const listPath = `/api/list-md-files?year=${year}&type=${type}&subject=${encodeURIComponent(subject)}`;
             const listResponse = await fetch(listPath);
 
             if (listResponse.ok) {
@@ -56,7 +56,7 @@ export default function Header({ showHomeButton = false, aboutContent, theme = '
                 if (mdFile) {
                     // 对文件名进行URL编码，确保中文等特殊字符能正确访问
                     const encodedMdFile = encodeURIComponent(mdFile);
-                    const mdPath = `/content/${year}/subject/${encodeURIComponent(subject)}/${encodedMdFile}`;
+                    const mdPath = `/content/${year}/${type}/${encodeURIComponent(subject)}/${encodedMdFile}`;
                     const mdResponse = await fetch(mdPath);
 
                     if (mdResponse.ok) {
@@ -86,10 +86,10 @@ export default function Header({ showHomeButton = false, aboutContent, theme = '
                 // 解析年份和类型（subject或literature）
                 const isLiterature = monthToCheck.includes('-literature-');
                 const [year, subject] = monthToCheck.split(isLiterature ? '-literature-' : '-subject-');
-                const type = isLiterature ? 'literature' : 'subject';
+                const type: 'subject' | 'literature' = isLiterature ? 'literature' : 'subject';
 
                 try {
-                    const result = await findSubjectMdFile(year, type + '/' + subject);
+                    const result = await findSubjectMdFile(year, subject, type);
                     if (result) {
                         setSubjectName(result.label);  // 使用从md文件名提取的中文标题
                         setMdContent(result.content);
