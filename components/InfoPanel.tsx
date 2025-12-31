@@ -95,6 +95,12 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
                                     const year = parts[0];
                                     const subjectName = parts[1];
                                     metadataPath = `/content/${year}/subject/${subjectName}/metadata.json`;
+                                } else if (month.includes('-literature-')) {
+                                    // 文学FM: 2025-literature-xxx -> /content/2025/literature/xxx/metadata.json
+                                    const parts = month.split('-literature-');
+                                    const year = parts[0];
+                                    const literatureName = parts[1];
+                                    metadataPath = `/content/${year}/literature/${literatureName}/metadata.json`;
                                 } else if (month.includes('-sleeping-')) {
                                     // 睡美人: 2025-sleeping-xxx -> /content/2025/new/xxx/metadata.json
                                     const parts = month.split('-sleeping-');
@@ -165,6 +171,10 @@ export default function InfoPanel({ book, books }: InfoPanelProps) {
                                     // 主题卡: 2025-subject-科幻 -> /content/2025/subject/科幻/metadata.json
                                     const [year, subjectName] = month.split('-subject-');
                                     metadataPath = `/content/${year}/subject/${subjectName}/metadata.json`;
+                                } else if (month.includes('-literature-')) {
+                                    // 文学FM: 2025-literature-xxx -> /content/2025/literature/xxx/metadata.json
+                                    const [year, literatureName] = month.split('-literature-');
+                                    metadataPath = `/content/${year}/literature/${literatureName}/metadata.json`;
                                 } else if (month.includes('-sleeping-')) {
                                     // 睡美人: 2025-sleeping-xxx -> /content/2025/new/xxx/metadata.json
                                     const [year, newName] = month.split('-sleeping-');

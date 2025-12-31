@@ -13,7 +13,7 @@ import { useSearchParams } from 'next/navigation';
 interface CanvasProps {
     books: Book[];
     month: string;
-    subjectLabel?: string;  // 主题卡的中文标题（从md文件名提取）
+    subjectLabel?: string;  // 主题卡/文学FM的中文标题（从md文件名提取）
 }
 
 export default function Canvas({ books, month, subjectLabel }: CanvasProps) {
@@ -25,7 +25,7 @@ export default function Canvas({ books, month, subjectLabel }: CanvasProps) {
         setFocusedBookId
     } = useStore();
 
-    // 添加一个状态来跟踪最后选中的主题卡
+    // 添加一个状态来跟踪最后选中的主题卡/文学FM
     const [lastSubjectBook, setLastSubjectBook] = useState<Book | null>(null);
     const searchParams = useSearchParams();
     const focusId = searchParams?.get('focus');
@@ -60,9 +60,10 @@ export default function Canvas({ books, month, subjectLabel }: CanvasProps) {
     // - 普通月份: "2025-08"
     // - 睡美人: "2025-sleeping-2025-08"
     // - 主题: "2025-subject-xxx"
+    // - 文学FM: "2025-literature-xxx"
     let yearStr: string = '';
     let monthStr: string = '';
-    let displayText: string = ''; // 用于主题卡显示的装饰文字
+    let displayText: string = ''; // 用于主题卡/文学FM显示的装饰文字
 
     const sleepingMatch = month.match(/^(\d{4})-sleeping-(\d{4})-(\d{2})$/);
     if (sleepingMatch) {
@@ -70,6 +71,8 @@ export default function Canvas({ books, month, subjectLabel }: CanvasProps) {
         monthStr = sleepingMatch[3];
     } else {
         const subjectMatch = month.match(/^(\d{4})-subject-(.+)$/);
+        const literatureMatch = month.match(/^(\d{4})-literature-(.+)$/);
+
         if (subjectMatch) {
             // 主题卡处理：优先使用传入的中文标题，否则从路径提取
             yearStr = subjectMatch[1];
@@ -79,6 +82,16 @@ export default function Canvas({ books, month, subjectLabel }: CanvasProps) {
                 // 降级：从路径名提取（英文）
                 const subjectName = decodeURIComponent(subjectMatch[2]);
                 displayText = subjectName.substring(0, 2);
+            }
+        } else if (literatureMatch) {
+            // 文学FM处理：优先使用传入的中文标题，否则从路径提取
+            yearStr = literatureMatch[1];
+            if (subjectLabel) {
+                displayText = subjectLabel.substring(0, 2);
+            } else {
+                // 降级：从路径名提取（英文）
+                const literatureName = decodeURIComponent(literatureMatch[2]);
+                displayText = literatureName.substring(0, 2);
             }
         } else {
             // 普通月份处理
@@ -91,7 +104,7 @@ export default function Canvas({ books, month, subjectLabel }: CanvasProps) {
     // 根据不同类型设置显示文字
     let monthCN: string;
     if (displayText) {
-        // 主题卡使用提取的前两个汉字
+        // 主题卡和文学FM使用提取的前两个汉字
         monthCN = displayText;
     } else {
         // 月份牌和睡美人使用月份
@@ -101,14 +114,14 @@ export default function Canvas({ books, month, subjectLabel }: CanvasProps) {
 
     const focusedBook = books.find(b => b.id === focusedBookId);
 
-    // 当有书籍被选中时，检查是否是主题卡
+    // 当有书籍被选中时，检查是否是主题卡或文学FM
     useEffect(() => {
-        if (focusedBook && focusedBook.month?.includes('-subject-')) {
+        if (focusedBook && (focusedBook.month?.includes('-subject-') || focusedBook.month?.includes('-literature-'))) {
             setLastSubjectBook(focusedBook);
         }
     }, [focusedBook]);
 
-    // 传递最后选中的主题卡给Header
+    // 传递最后选中的主题卡/文学FM给Header
     const currentBookForHeader = focusedBook || lastSubjectBook;
 
     return (

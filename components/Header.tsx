@@ -76,17 +76,20 @@ export default function Header({ showHomeButton = false, aboutContent, theme = '
         }
     };
 
-    // 判断是否为主题页面并检查MD文件是否存在
+    // 判断是否为主题页面或文学FM页面并检查MD文件是否存在
     useEffect(() => {
         const checkSubjectMd = async () => {
             // 优先使用month参数，如果没有则使用currentBook.month
             const monthToCheck = month || currentBook?.month;
 
-            if (monthToCheck && monthToCheck.includes('-subject-')) {
-                const [year, subject] = monthToCheck.split('-subject-');
+            if (monthToCheck && (monthToCheck.includes('-subject-') || monthToCheck.includes('-literature-'))) {
+                // 解析年份和类型（subject或literature）
+                const isLiterature = monthToCheck.includes('-literature-');
+                const [year, subject] = monthToCheck.split(isLiterature ? '-literature-' : '-subject-');
+                const type = isLiterature ? 'literature' : 'subject';
 
                 try {
-                    const result = await findSubjectMdFile(year, subject);
+                    const result = await findSubjectMdFile(year, type + '/' + subject);
                     if (result) {
                         setSubjectName(result.label);  // 使用从md文件名提取的中文标题
                         setMdContent(result.content);
