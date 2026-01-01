@@ -164,17 +164,20 @@ export async function getArchiveData(): Promise<YearArchiveData[]> {
         const subjectPath = path.join(yearPath, 'subject');
         const subjectEntries = await fs.readdir(subjectPath, { withFileTypes: true });
 
-        for (const subEntry of subjectEntries) {
-          if (subEntry.isDirectory()) {
-            // Use a unique ID for subjects: {year}-subject-{name}
-            const subjectId = `${year}-subject-${subEntry.name}`;
-            subjectPromises.push(processArchiveItem(
-              path.join(subjectPath, subEntry.name),
-              subjectId,
-              'subject',
-              year
-            ));
-          }
+        // Sort subjects descending (newest first)
+        const sortedSubjectEntries = subjectEntries
+          .filter(e => e.isDirectory())
+          .sort((a, b) => b.name.localeCompare(a.name));
+
+        for (const subEntry of sortedSubjectEntries) {
+          // Use a unique ID for subjects: {year}-subject-{name}
+          const subjectId = `${year}-subject-${subEntry.name}`;
+          subjectPromises.push(processArchiveItem(
+            path.join(subjectPath, subEntry.name),
+            subjectId,
+            'subject',
+            year
+          ));
         }
       }
 
@@ -207,17 +210,20 @@ export async function getArchiveData(): Promise<YearArchiveData[]> {
         const literaturePath = path.join(yearPath, 'literature');
         const literatureEntries = await fs.readdir(literaturePath, { withFileTypes: true });
 
-        for (const subEntry of literatureEntries) {
-          if (subEntry.isDirectory()) {
-            // Use a unique ID: {year}-literature-{name}
-            const literatureId = `${year}-literature-${subEntry.name}`;
-            literaturePromises.push(processArchiveItem(
-              path.join(literaturePath, subEntry.name),
-              literatureId,
-              'literature',
-              year
-            ));
-          }
+        // Sort literature entries descending (newest first)
+        const sortedLiteratureEntries = literatureEntries
+          .filter(e => e.isDirectory())
+          .sort((a, b) => b.name.localeCompare(a.name));
+
+        for (const subEntry of sortedLiteratureEntries) {
+          // Use a unique ID: {year}-literature-{name}
+          const literatureId = `${year}-literature-${subEntry.name}`;
+          literaturePromises.push(processArchiveItem(
+            path.join(literaturePath, subEntry.name),
+            literatureId,
+            'literature',
+            year
+          ));
         }
       }
 
