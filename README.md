@@ -52,7 +52,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
      ```
      node scripts/build-content.mjs 2025-08
      node scripts/build-content.mjs month 2025-09
-     node scripts/build-content.mjs sleeping 2025 "2025-07"
+     node scripts/build-content.mjs sleeping 2025 "2025-06"
      node scripts/build-content.mjs subject 2025 middle-class-status
      node scripts/build-content.mjs literature 2025 Survival-Literature-for-Metro
      ```
