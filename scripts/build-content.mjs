@@ -12,7 +12,7 @@
  * Usage:
  *   node scripts/build-content.mjs 2026-01             # 兼容旧写法，仅处理月份牌
  *   node scripts/build-content.mjs month 2025-09         # 指定类型为月份牌
- *   node scripts/build-content.mjs sleeping 2025 新书推荐 # 睡美人（名称需加引号以保留空格）
+ *   node scripts/build-content.mjs sleeping 2025 2025-09 # 睡美人（名称需加引号以保留空格）
  *   node scripts/build-content.mjs subject 2025 digital-heritage-dance     # 主题卡
  *   node scripts/build-content.mjs literature 2025 Survival-Literature-for-Metro  # 文学FM
  */
