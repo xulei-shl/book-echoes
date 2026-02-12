@@ -23,6 +23,7 @@ import { fileURLToPath } from 'url';
 import xlsx from 'xlsx';
 import sharp from 'sharp';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { buildRandomIndex } from './build-random-index.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -81,6 +82,9 @@ async function main() {
 
         // Step 4: Generate metadata JSON file
         await copyMetadata(context.relativePath, books, assetsMap);
+
+        // Step 5: Generate random index after content build
+        await buildRandomIndex();
 
         console.log(`\n✨ Build completed successfully for ${context.logLabel}!\n`);
     } catch (error) {
