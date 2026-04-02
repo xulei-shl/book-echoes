@@ -130,8 +130,8 @@ export default function Header({ showHomeButton = false, aboutContent, theme = '
     }, [lastScrollY]);
 
     const buttonStyles = theme === 'dark'
-        ? "btn-random btn-random--dark px-4 py-2 md:px-5 md:py-2.5 text-sm md:text-base font-body tracking-widest hover:scale-105"
-        : "btn-random px-4 py-2 md:px-5 md:py-2.5 text-sm md:text-base font-body tracking-widest hover:scale-105";
+        ? "btn-random btn-random--dark px-4 py-2 md:px-5 md:py-2.5 text-sm md:text-base hover:scale-105"
+        : "btn-random px-4 py-2 md:px-5 md:py-2.5 text-sm md:text-base hover:scale-105";
 
     return (
         <header className="fixed top-0 left-0 right-0 z-50 pointer-events-none">

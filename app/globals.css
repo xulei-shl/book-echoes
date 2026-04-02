@@ -187,7 +187,8 @@ body {
 @layer components {
   /* 统一的随机漫步按钮样式，便于跨页面复用 */
   .btn-random {
-    @apply inline-flex items-center gap-2 rounded-full border border-[#D4CFC3]/60 bg-[#F2F0E9]/90 text-[var(--foreground)] font-display shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C9A063]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent;
+    @apply inline-flex items-center justify-center gap-2 border border-[#C9A063]/30 bg-[#1a1a1a]/88 text-[#C9A063] font-mono tracking-[0.28em] shadow-[0_10px_30px_rgba(0,0,0,0.25)] backdrop-blur-xl transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C9A063]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent;
+    border-radius: 0.2rem;
     transform-origin: center;
   }
 
@@ -195,20 +196,20 @@ body {
   .btn-random:focus-visible {
     color: #1a1a1a;
     background-color: #C9A063;
-    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.18);
+    border-color: #C9A063;
+    box-shadow: 0 18px 38px rgba(0, 0, 0, 0.28);
     transform: translateY(-1px);
   }
 
   .btn-random--dark {
-    @apply border-[#E8E6DC]/15 bg-[#1a1a1a]/90 text-[#E8E6DC] focus-visible:ring-offset-[#1a1a1a];
+    @apply border-[#C9A063]/35 bg-[#111111]/92 text-[#E8E6DC] focus-visible:ring-offset-[#1a1a1a];
   }
 
   .btn-random--circle {
     width: 3.25rem;
     height: 3.25rem;
     padding: 0;
-    border-radius: 999px;
-    justify-content: center;
+    border-radius: 0.2rem;
   }
 
   .btn-random--circle-lg {
