@@ -24,6 +24,8 @@ export default function MagazineCard({ month, isLatest = false, className = '' }
     }, []);
 
     const containerAspect = naturalRatio ?? (3 / 4);
+    const isLandscape = naturalRatio !== null && naturalRatio >= 1;
+    const containerSizing = isLandscape ? 'w-4/5 max-h-[70%]' : 'w-3/5 max-h-[85%]';
 
     return (
         <motion.div
@@ -39,7 +41,7 @@ export default function MagazineCard({ month, isLatest = false, className = '' }
                     <div className="absolute inset-0 flex items-center justify-center px-4 pt-8 pb-20">
                         {previewCards.length >= 4 && (
                             <div
-                                className="absolute w-1/3 aspect-square rounded-sm shadow-lg overflow-hidden"
+                                className="absolute w-1/3 aspect-[2/3] rounded-sm shadow-lg bg-[#E8E6DC] overflow-hidden"
                                 style={{ zIndex: 1, transform: 'translate(50%, -25%) rotate(18deg)', opacity: 0.5 }}
                             >
                                 <Image src={previewCards[3]} alt="Book 4" fill className="object-cover rounded-sm" sizes="150px" />
@@ -48,7 +50,7 @@ export default function MagazineCard({ month, isLatest = false, className = '' }
 
                         {previewCards.length >= 3 && (
                             <div
-                                className="absolute w-1/3 aspect-square rounded-sm shadow-lg overflow-hidden"
+                                className="absolute w-1/3 aspect-[2/3] rounded-sm shadow-lg bg-[#E8E6DC] overflow-hidden"
                                 style={{ zIndex: 2, transform: 'translate(-50%, -20%) rotate(-15deg)', opacity: 0.6 }}
                             >
                                 <Image src={previewCards[2]} alt="Book 3" fill className="object-cover rounded-sm" sizes="150px" />
@@ -57,7 +59,7 @@ export default function MagazineCard({ month, isLatest = false, className = '' }
 
                         {previewCards.length >= 2 && (
                             <div
-                                className="absolute w-2/5 aspect-square rounded-sm shadow-xl overflow-hidden"
+                                className="absolute w-2/5 aspect-[2/3] rounded-sm shadow-xl bg-[#E8E6DC] overflow-hidden"
                                 style={{ zIndex: 3, transform: 'translate(25%, -5%) rotate(8deg)', opacity: 0.75 }}
                             >
                                 <Image src={previewCards[1]} alt="Book 2" fill className="object-cover rounded-sm" sizes="150px" />
@@ -65,7 +67,7 @@ export default function MagazineCard({ month, isLatest = false, className = '' }
                         )}
 
                         <motion.div
-                            className="relative w-3/5 max-h-[85%] rounded-sm shadow-2xl overflow-hidden"
+                            className={`relative ${containerSizing} rounded-sm shadow-2xl overflow-hidden`}
                             animate={{ scale: isHovered ? 1.05 : 1, rotate: isHovered ? 0 : -2 }}
                             transition={{ duration: 0.4 }}
                             style={{ aspectRatio: containerAspect, zIndex: 10 }}
