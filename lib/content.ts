@@ -93,7 +93,7 @@ async function processArchiveItem(
 
     const previewCards = booksToShow.map((book: Book) => {
       const bookId = String(book['书目条码']);
-      const candidate = book.cardThumbnailUrl || book.cardImageUrl;
+      const candidate = book.originalThumbnailUrl || book.cardThumbnailUrl || book.cardImageUrl;
       return resolveImageUrl(candidate, legacyCardThumbnailPath(id, bookId));
     });
 
