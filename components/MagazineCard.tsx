@@ -1,6 +1,5 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState, useCallback } from 'react';
@@ -14,7 +13,6 @@ interface MagazineCardProps {
 
 export default function MagazineCard({ month, isLatest = false, className = '' }: MagazineCardProps) {
     const router = useRouter();
-    const [isHovered, setIsHovered] = useState(false);
     const [naturalRatio, setNaturalRatio] = useState<number | null>(null);
     const previewCards = month.previewCards;
 
@@ -23,66 +21,51 @@ export default function MagazineCard({ month, isLatest = false, className = '' }
         setNaturalRatio(img.naturalWidth / img.naturalHeight);
     }, []);
 
-    const containerAspect = naturalRatio ?? (3 / 4);
-    const isLandscape = naturalRatio !== null && naturalRatio >= 1;
-    const containerSizing = isLandscape ? 'w-4/5 max-h-[70%]' : 'w-3/5 max-h-[85%]';
+    // 默认回退到标准书籍比例 (2:3 = 0.667)
+    const containerAspect = naturalRatio ?? (2 / 3);
 
     return (
-        <motion.div
-            className={`relative w-full cursor-pointer ${className}`}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
+        <div
+            className={`relative w-full h-full flex flex-col justify-end cursor-pointer ${className}`}
             onClick={() => router.push(`/${month.id}`)}
-            whileHover={{ scale: 1.02 }}
-            transition={{ duration: 0.3 }}
         >
-            <div className="relative w-full h-full overflow-hidden">
+            <div className="absolute inset-0 z-0 flex items-center justify-center pb-8 pt-2 px-2 pointer-events-none">
                 {previewCards.length > 0 ? (
-                    <div className="absolute inset-0 flex items-center justify-center px-6 pt-8 pb-20">
-                        <motion.div
-                            className={`relative ${containerSizing} rounded-sm shadow-2xl overflow-hidden`}
-                            animate={{ scale: isHovered ? 1.05 : 1, rotate: isHovered ? 0 : -2 }}
-                            transition={{ duration: 0.4 }}
-                            style={{ aspectRatio: containerAspect, zIndex: 10 }}
-                        >
-                            <Image
-                                src={previewCards[0]}
-                                alt={month.label}
-                                fill
-                                className="object-cover"
-                                priority
-                                sizes="(max-width: 768px) 60vw, 300px"
-                                onLoad={onMainLoad}
-                            />
-                            <div className="absolute inset-0 rounded-sm border border-white/20 pointer-events-none" />
-                        </motion.div>
+                    <div className="relative w-[90%] h-[85%] flex items-center justify-center">
+                        <Image
+                            src={previewCards[0]}
+                            alt={month.label}
+                            fill
+                            className="object-contain drop-shadow-[0_15px_35px_rgba(0,0,0,0.5)] transition-all duration-700 ease-out-expo"
+                            priority
+                            sizes="(max-width: 768px) 80vw, 400px"
+                            onLoad={onMainLoad}
+                        />
                     </div>
                 ) : (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="text-center text-[#C9A063]/40">
-                            <p className="font-display text-sm">等待书籍归档</p>
-                        </div>
+                    <div className="text-center text-[#C9A063]/40">
+                        <p className="font-display text-sm tracking-[0.2em] uppercase">No Records</p>
                     </div>
                 )}
+            </div>
 
-                <div className="absolute inset-0 flex flex-col justify-end p-6 pointer-events-none z-30">
-                    {isLatest && (
-                        <div className="inline-flex items-center gap-2 mb-2 w-fit">
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-mono border border-[#C9A063]/50 text-[#C9A063] bg-[#C9A063]/10">
-                                LATEST
-                            </span>
-                        </div>
-                    )}
-                    <div className="flex items-center justify-between border-t border-[#C9A063]/30 pt-2">
-                        <span className="font-body text-lg text-[#E8E6DC]/80">{month.vol}</span>
-                        {month.bookCount > 0 && (
-                            <span className="font-mono text-xs text-[#C9A063]/80">
-                                {month.bookCount} BOOKS
-                            </span>
-                        )}
+            <div className="relative z-10 w-full mt-auto pointer-events-none">
+                {isLatest && (
+                    <div className="mb-3">
+                        <span className="px-2 py-1 rounded-[2px] text-[9px] font-mono tracking-widest border border-[#C9A063]/40 text-[#C9A063] bg-[#C9A063]/5 uppercase">
+                            Latest
+                        </span>
                     </div>
+                )}
+                <div className="flex items-end justify-between border-t border-[#C9A063]/20 pt-4">
+                    <span className="font-body text-base tracking-[0.15em] text-[#E8E6DC]/90 uppercase">{month.vol}</span>
+                    {month.bookCount > 0 && (
+                        <span className="font-mono text-[10px] tracking-[0.2em] text-[#C9A063]/60 uppercase">
+                            {month.bookCount} Books
+                        </span>
+                    )}
                 </div>
             </div>
-        </motion.div>
+        </div>
     );
 }
