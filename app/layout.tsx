@@ -9,10 +9,12 @@ export const metadata: Metadata = {
   description: "基于上海图书馆借阅数据的书目推荐项目",
   icons: {
     icon: [
-      { url: "/favicon.ico", sizes: "any" },
-      { url: "/icon.png", sizes: "32x32", type: "image/png" },
+      { url: "/ico_64.ico", sizes: "64x64", type: "image/x-icon" },
+      { url: "/ico_48.ico", sizes: "48x48", type: "image/x-icon" },
+      { url: "/ico_32.ico", sizes: "32x32", type: "image/x-icon" },
+      { url: "/ico_16.ico", sizes: "16x16", type: "image/x-icon" },
     ],
-    apple: "/apple-icon.png",
+    apple: "/logo_shl.png",
   },
 };
 
@@ -34,9 +36,6 @@ export default function RootLayout({
   return (
     <html lang="zh-CN">
       <head>
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="icon" href="/icon.png" sizes="32x32" />
-        <link rel="apple-touch-icon" href="/apple-icon.png" />
         <meta name="theme-color" content="#000000" />
       </head>
       <body className="antialiased" suppressHydrationWarning style={fontVars}>
