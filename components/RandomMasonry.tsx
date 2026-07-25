@@ -183,20 +183,36 @@ export default function RandomMasonry({ initialBooks, initialCursor, seed }: Ran
             </div>
 
             {/* Header Navigation */}
-            <div className="fixed top-0 left-0 right-0 z-50 flex justify-center items-start pt-6 pointer-events-none">
-                <div className="flex items-center gap-3 pointer-events-auto">
-                    <Link href="/" className="btn-random px-4 py-2 md:px-5 md:py-2.5 text-sm md:text-base">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                        </svg>
-                        <span>首页</span>
-                    </Link>
-                    <Link href="/archive" className="btn-random px-4 py-2 md:px-5 md:py-2.5 text-sm md:text-base">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                        </svg>
-                        <span>往期</span>
-                    </Link>
+            <div className="fixed top-0 left-0 right-0 z-50 pointer-events-none">
+                <div className="relative flex items-center justify-between px-6 py-6 md:px-8 md:py-8">
+                    {/* Logo - Left */}
+                    <div className="pointer-events-auto">
+                        <Link href="/" className="block opacity-70 hover:opacity-100 transition-opacity duration-300">
+                            <img src="/favicon.png" alt="书海回响" className="h-8 md:h-10 w-auto" />
+                        </Link>
+                    </div>
+
+                    {/* Spacer for center alignment */}
+                    <div className="flex-1" />
+
+                    {/* Center Navigation */}
+                    <div className="absolute left-1/2 -translate-x-1/2 pointer-events-auto flex items-center gap-3">
+                        <Link href="/" className="btn-random px-4 py-2 md:px-5 md:py-2.5 text-sm md:text-base">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                            </svg>
+                            <span>首页</span>
+                        </Link>
+                        <Link href="/archive" className="btn-random px-4 py-2 md:px-5 md:py-2.5 text-sm md:text-base">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                            </svg>
+                            <span>往期</span>
+                        </Link>
+                    </div>
+
+                    {/* Right spacer to balance layout */}
+                    <div className="flex-1" />
                 </div>
             </div>
 

@@ -95,6 +95,13 @@ export default function HomeHero({ images, targetLink, title, subtitle }: HomeHe
     return (
         <div className="relative w-full h-screen overflow-hidden flex flex-col items-center justify-center bg-[#1a1a1a]">
 
+            {/* Logo - Top Left */}
+            <div className="absolute top-6 left-6 md:top-8 md:left-8 z-[15] pointer-events-auto">
+                <a href="/" className="block opacity-70 hover:opacity-100 transition-opacity duration-300">
+                    <img src="/favicon.png" alt="书海回响" className="h-8 md:h-10 w-auto" />
+                </a>
+            </div>
+
             {/* 抽象线条装饰层 - 最底层 */}
             <HeroLineDecoration />
 
