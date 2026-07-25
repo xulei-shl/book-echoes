@@ -7,6 +7,13 @@ type FontVarStyle = CSSProperties & Record<string, string>;
 export const metadata: Metadata = {
   title: "书海回响",
   description: "基于上海图书馆借阅数据的书目推荐项目",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: "/apple-icon.png",
+  },
 };
 
 export default function RootLayout({
@@ -26,6 +33,12 @@ export default function RootLayout({
 
   return (
     <html lang="zh-CN">
+      <head>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/icon.png" sizes="32x32" />
+        <link rel="apple-touch-icon" href="/apple-icon.png" />
+        <meta name="theme-color" content="#000000" />
+      </head>
       <body className="antialiased" suppressHydrationWarning style={fontVars}>
         {children}
       </body>
